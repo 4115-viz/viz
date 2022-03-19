@@ -5,16 +5,16 @@
 %token RBRACKET LBRACE RBRACE COMMA COLON DOT SEMI ARRAY QUEUE STACK LINKEDNODE TREENODE
 %token EOF
 
-%token <bool> BLIT
+%token <bool> BOOL_LITERAL
 %token <string> ID 
-%token <int> INTLIT 
-%token <float> FLOATLIT /* not implemented */
-%token <string> STRINGLIT /* not implemented correctly */
+%token <int> INT_LITERAL 
+%token <float> FLOAT_LITERAL /* not implemented */
+%token <string> STRING_LITERAL /* not implemented correctly */
 
 /* need more tokens FOR THE LITERALS */
 
-%start program 
-%type <Ast.tokenseq> program 
+%start program_rule
+%type <Ast.program> program_rule 
 
 %%
 
@@ -54,10 +54,10 @@ one_token:
 | INT {"INT"}
 | INTLIT {"INTLIT: " ^ string_of_int $1}
 | STRING {"STRING"}
-| STRINGLIT {"STRINGLIT: " ^ $1}
+| STRING_LITERAL {"STRINGLIT: " ^ $1}
 | FLOAT {"FLOAT"}
 | BOOLEAN {"BOOLEAN"}
-| BLIT {"BOOL: " ^ string_of_bool $1}
+| BOOL_LITERAL {"BOOL: " ^ string_of_bool $1}
 | NONE {"NONE"}
 | ID {"ID: " ^ $1}
 
