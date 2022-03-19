@@ -9,8 +9,28 @@ git clone git@github.com:4115-viz/viz.git
 cd viz
 ```
 ### Building
+#### Build the Viz compiler files
+
 ```
+dune clean
+dune build
 ```
+
+#### Run the scanner test
+```
+dune exec bin/viz.exe
+```
+
+<!-- #### Compiler files
+-  `ast.ml`: abstract syntax tree (AST)--a list of strings for viz scanner (needs to be updated obviously) 
+-  `scanner.mll`: scanner
+-  `parser.mly`: parser -->
+
+<!-- #### Other files -->
+<!-- - `test.ml`: top-level file to test and run the scanner -->
+<!-- - `example.viz`: sample viz source code -->
+<!-- - `output.txt`: this will be the outputted scanned tokens -->
+
 ## Lexical structure
 
 ### Keywords
