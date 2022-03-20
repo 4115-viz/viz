@@ -13,13 +13,41 @@
 
 /* need more tokens FOR THE LITERALS */
 
-%start program_rule
-%type <Ast.program> program_rule 
+%start program
+%type <Ast.program> program 
 
 %%
 
 program:
-  tokens EOF { $1}
+  stmt_list EOF { $1 }
+
+stmt_list:
+  | { [] }
+  | stmt stmt_list { $1 :: $2 }
+
+stmt:
+  | expr SEMI { EXPR $1 }
+
+expr:
+  /* literal */
+  | BOOL_LITERAL { BoolLit $1 }
+  | INT_LITERAL { IntLit $1 }
+  | FLOAT_LITERAL { FloatLit $1 }
+
+  /* variable */
+  | ID { Id $1 }
+
+  /* function */
+  | ID LPAREN args_list RPAREN { FuncCall($1, $3) }
+
+args_list_optional:
+  | { [] }
+  | args_list { $1 }
+
+args_list:
+  | expr { [$1] }
+  | args_list COMMA expr { $1 :: $3 }
+
 
 tokens:
  /* nothing */ { [] }
@@ -52,7 +80,7 @@ one_token:
 
 /* our data types */
 | INT {"INT"}
-| INTLIT {"INTLIT: " ^ string_of_int $1}
+| INT_LITERAL {"INTLIT: " ^ string_of_int $1}
 | STRING {"STRING"}
 | STRING_LITERAL {"STRINGLIT: " ^ $1}
 | FLOAT {"FLOAT"}
