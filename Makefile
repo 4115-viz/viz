@@ -2,24 +2,24 @@
 # Viz Compiler Makefile
 #
 
-TARGETS = vizscanner vizparser ast test-file
+TARGETS = scanner parser ast
 
 .PHONY: default
 default: $(TARGETS)
 
 # build our current tester file
 # following the format from 
-.PHONY: test-file
-test-file:
-	ocamlbuild test.native
+# .PHONY: test-file
+# test-file:
+# 	ocamlbuild test.native
 
-.PHONY: vizscanner
+.PHONY: scanner
 vizscanner:
-	ocamlbuild vizscanner.native
+	ocamlbuild scanner.native
 
-.PHONY: vizparser
+.PHONY: parser
 vizscanner:
-	ocamlbuild vizparser.native
+	ocamlbuild parser.native
 
 .PHONY: ast
 vizscanner:
@@ -28,13 +28,13 @@ vizscanner:
 # clean the dir of the executable
 .PHONY: clean
 clean:
-	rm -rf *.native _build output.txt
+	dune clean
 
 # clean then build
 .PHONY: all
 all: clean default
 
 # test the scanner
-.PHONY: run-test 
-run-test:
-	./test.native < example.viz > output.txt
+# .PHONY: run-test 
+# run-test:
+# 	./test.native < example.viz > output.txt
