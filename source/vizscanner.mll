@@ -36,12 +36,12 @@ rule token = parse
 
 (* our data types *)
 | "int" {INT}
-| "-" ? digit+ as num {INTLIT(int_of_string num)} (* int literal *)
+| "-" ? digit+ as num { LITERAL(int_of_string num)} (* int literal *)
 | "@" letter (digit | letter | '_')* as varname { ID(varname) } (* variable name *)
 | "string" {STRING}
 (* | ("\"" | "\'") (digit | letter)* ("\"" | "\'") as str {STRINGLIT(str)} (* string literal *) *)
 | "float" {FLOAT}
-| "boolean" {BOOLEAN}
+| "bool" {BOOL}
 | "true" {BLIT(true)} (* boolean literal *)
 | "false" {BLIT(false)} (* boolean literal *)
 | "none" {NONE}
