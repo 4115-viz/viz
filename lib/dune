@@ -1,2 +1,5 @@
+(ocamlyacc parser)
+(ocamllex scanner)
+
 (library
- (name viz))
+  (name lib))

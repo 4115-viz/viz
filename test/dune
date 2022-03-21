@@ -1,2 +1,2 @@
 (test
- (name viz))
+ (name viz_test))

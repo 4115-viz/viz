@@ -1,7 +1,7 @@
 (* Scanner for Viz language *)
 
 {
-    open Vizparser
+    open Parser
     exception Viz_scan_error of string
 }
 
