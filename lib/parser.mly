@@ -2,7 +2,7 @@
     open Ast
 %}
 
-/*functional*
+/*functional*/
 %token FUNC RETURN
 %token LINK USE IN STEP AS
 
