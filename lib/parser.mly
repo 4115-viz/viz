@@ -1,8 +1,8 @@
 %token FUNC IF ELSE ELIF FOR WHILE INFINITE_LOOP RETURN BREAK CONTINUE TRY 
 %token CATCH RAISE LINK USE IN STEP AS INT STRING FLOAT BOOLEAN NONE
-%token PLUS MINUS MULT DIV MOD ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ EQ
-%token NEQ GTEQ LTEQ GT LT AND OR NOT QUESTION SEMI LPAREN RPAREN LBRACKET
-%token RBRACKET LBRACE RBRACE COMMA COLON DOT SEMI ARRAY QUEUE STACK LINKEDNODE TREENODE
+%token PLUS MINUS MULT DIV MOD ASSIGN PLUS_EQ MINUS_EQ TIMES_EQ DIV_EQ MOD_EQ EQ
+%token N_EQ GT_EQ LT_EQ GT LT AND OR NOT QUESTION SEMI LPAREN RPAREN LBRACKET
+%token RBRACKET LBRACE RBRACE COMMA COLON DOT SEMI ARRAY QUEUE STACK LINKED_NODE TREE_NODE
 %token EOF
 
 %token <bool> BOOL_LITERAL
@@ -13,12 +13,12 @@
 
 /* need more tokens FOR THE LITERALS */
 
-%start program
-%type <Ast.program> program 
+%start program_rule
+%type <Ast.program> program_rule 
 
 %%
 
-program:
+program_rule:
   stmt_list EOF { $1 }
 
 stmt_list:
@@ -26,7 +26,7 @@ stmt_list:
   | stmt stmt_list { $1 :: $2 }
 
 stmt:
-  | expr SEMI { EXPR $1 }
+  | expr SEMI { Expr $1 }
 
 expr:
   /* literal */
@@ -46,7 +46,7 @@ args_list_optional:
 
 args_list:
   | expr { [$1] }
-  | args_list COMMA expr { $1 :: $3 }
+  | expr COMMA args_list { $1 :: $3 }
 
 
 tokens:
@@ -98,17 +98,17 @@ one_token:
 
 /* assignment operators */
 | ASSIGN {"ASSIGN"}
-| PLUSEQ {"PLUSEQ"}
-| MINUSEQ {"MINUSEQ"}
-| TIMESEQ {"TIMESEQ"}
-| DIVEQ {"DIVEQ"}
-| MODEQ {"MODEQ"}
+| PLUS_EQ {"PLUS_EQ"}
+| MINUS_EQ {"MINUS_EQ"}
+| TIMES_EQ {"TIMES_EQ"}
+| DIV_EQ {"DIVEQ"}
+| MOD_EQ {"MODEQ"}
 
 /* relational operators */
 | EQ {"EQ"}
-| NEQ {"NEQ"}
-| GTEQ {"GTEQ"}
-| LTEQ {"LTEQ"}
+| N_EQ {"N_EQ"}
+| GT_EQ {"GT_EQ"}
+| LT_EQ {"LT_EQ"}
 | GT {"GT"}
 | LT {"LT"}
 | AND {"AND"}
@@ -132,5 +132,5 @@ one_token:
 | ARRAY      {"ARRAY"}
 | QUEUE      {"QUEUE"}
 | STACK      {"STACK"}
-| LINKEDNODE {"LINKEDNODE"}
-| TREENODE   {"TREENODE"}
+| LINKED_NODE {"LINKED_NODE"}
+| TREE_NODE   {"TREE_NODE"}

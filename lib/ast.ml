@@ -6,10 +6,12 @@ type typ =
   | StringType
 
 type bind = typ * string
+
 type expr =
   | BoolLit of bool
   | IntLit of int
-  | FloatLit of string
+  | FloatLit of float
+  | StringLit of string
   | Id of string
   | Assign of string * expr
   | FuncCall of string * expr list
@@ -27,5 +29,15 @@ and stmt =
 
 type program = stmt list
 
-let string_of_program l =
-  "\n\nScanned program: \n" ^ (List.fold_left (fun s e -> s ^ "\n" ^ e) "" l)
+let string_of_expr = function
+  | FuncCall(name, _) -> name ^ " = ";
+  | _ -> ""
+
+let string_of_stmt = function
+  | Expr(expr) -> string_of_expr expr ^ ";\n"
+  | _ -> "other"
+
+let string_of_program program =
+  "\n\nParsed program: \n\n" ^
+  String.concat "" (List.map string_of_stmt program) ^
+  "\n"
