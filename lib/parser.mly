@@ -22,11 +22,11 @@
 %token RBRACKET LBRACE RBRACE COMMA COLON DOT SEMI ARRAY QUEUE STACK LINKEDNODE TREENODE
 %token EOF
 
-%token <bool> BLIT
+%token <bool> BOOL_LITERAL
 %token <string> ID 
-%token <int> LITERAL 
-%token <float> FLOATLIT /* not implemented */
-%token <string> STRINGLIT /* not implemented correctly */
+%token <int> INT_LITERAL 
+%token <float> FLOAT_LITERAL /* not implemented */
+%token <string> STRING_LITERAL /* not implemented correctly */
 
 %left SEMI
 %right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
@@ -37,8 +37,8 @@
 
 /* need more tokens FOR THE LITERALS */
 
-%start program 
-%type <Ast.tokenseq> program 
+%start program_rule
+%type <Ast.program> program_rule 
 
 %%
 vdecl_list_rule:
@@ -78,8 +78,36 @@ expr_rule:
   | ID ASSIGN expr_rule           { Assign ($1, $3)       }
   | LPAREN expr_rule RPAREN       { $2                    }
 
-program:
-  vdecl_list_rule stmt_list_rule EOF { {locals=$1; body=$2} }
+program_rule:
+  stmt_list EOF { $1 }
+
+stmt_list:
+  | { [] }
+  | stmt stmt_list { $1 :: $2 }
+
+stmt:
+  | expr SEMI { Expr $1 }
+
+expr:
+  /* literal */
+  | BOOL_LITERAL { BoolLit $1 }
+  | INT_LITERAL { IntLit $1 }
+  | FLOAT_LITERAL { FloatLit $1 }
+
+  /* variable */
+  | ID { Id $1 }
+
+  /* function */
+  | ID LPAREN args_list RPAREN { FuncCall($1, $3) }
+
+args_list_optional:
+  | { [] }
+  | args_list { $1 }
+
+args_list:
+  | expr { [$1] }
+  | expr COMMA args_list { $1 :: $3 }
+
 
 tokens:
  /* nothing */ { [] }
@@ -112,12 +140,12 @@ one_token:
 
 /* our data types */
 | INT {"INT"}
-| LITERAL {"LITERAL: " ^ string_of_int $1}
+| INT_LITERAL {"INTLIT: " ^ string_of_int $1}
 | STRING {"STRING"}
-| STRINGLIT {"STRINGLIT: " ^ $1}
+| STRING_LITERAL {"STRINGLIT: " ^ $1}
 | FLOAT {"FLOAT"}
-| BOOL {"BOOL"}
-| BLIT {"BOOL: " ^ string_of_bool $1}
+| BOOLEAN {"BOOLEAN"}
+| BOOL_LITERAL {"BOOL: " ^ string_of_bool $1}
 | NONE {"NONE"}
 | ID {"ID: " ^ $1}
 
@@ -130,17 +158,17 @@ one_token:
 
 /* assignment operators */
 | ASSIGN {"ASSIGN"}
-| PLUSEQ {"PLUSEQ"}
-| MINUSEQ {"MINUSEQ"}
-| TIMESEQ {"TIMESEQ"}
-| DIVEQ {"DIVEQ"}
-| MODEQ {"MODEQ"}
+| PLUS_EQ {"PLUS_EQ"}
+| MINUS_EQ {"MINUS_EQ"}
+| TIMES_EQ {"TIMES_EQ"}
+| DIV_EQ {"DIVEQ"}
+| MOD_EQ {"MODEQ"}
 
 /* relational operators */
 | EQ {"EQ"}
-| NEQ {"NEQ"}
-| GTEQ {"GTEQ"}
-| LTEQ {"LTEQ"}
+| N_EQ {"N_EQ"}
+| GT_EQ {"GT_EQ"}
+| LT_EQ {"LT_EQ"}
 | GT {"GT"}
 | LT {"LT"}
 | AND {"AND"}
@@ -151,18 +179,18 @@ one_token:
 /* delimiters */
 | LPAREN  { "LPAREN" }
 | RPAREN  { "RPAREN" }
-| LBRACKET {"LBRACKET"}
-| RBRACKET {"RBRACKET"}
-| LBRACE {"LBRACE"}
-| RBRACE {"RBRACE"}
-| COMMA {"COMMA"}
-| COLON {"COLON"}
-| DOT {"DOT"}
+| LBRACKET { "LBRACKET" }
+| RBRACKET { "RBRACKET" }
+| LBRACE { "LBRACE" }
+| RBRACE { "RBRACE" }
+| COMMA { "COMMA" }
+| COLON { "COLON" }
+| DOT { "DOT" }
 | SEMI  { "SEMI" }
 
 /* ADT declarations */
-| ARRAY      {"ARRAY"}
-| QUEUE      {"QUEUE"}
-| STACK      {"STACK"}
-| LINKEDNODE {"LINKEDNODE"}
-| TREENODE   {"TREENODE"}
+| ARRAY      { "ARRAY" }
+| QUEUE      { "QUEUE" }
+| STACK      { "STACK" }
+| LINKED_NODE { "LINKED_NODE" }
+| TREE_NODE   { "TREE_NODE" }
