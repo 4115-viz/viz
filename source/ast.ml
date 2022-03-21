@@ -1,5 +1,6 @@
 type tokenseq = string list
 
+type bop = Add | Sub | Equal | Neq | Less | And | Or
 
 type typ = Int | Bool | Float | String | None
 
