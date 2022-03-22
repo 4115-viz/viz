@@ -13,7 +13,7 @@ and stmt =
 and func_decl = {
   typ: builtin_type;
   name: string;
-  body: stmt list
+  body: stmt list;
 }
 
 (* ----- Entry ----- *)
