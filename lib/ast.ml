@@ -20,32 +20,37 @@ and func_decl = {
 type program = stmt list
 
 (* ----- Print Function ----- *)
-let string_of_typ = function
+let fmt_typ = function
   | NoneType -> "Type(None)"
 
-let rec string_of_fcall name args = 
+let fmt_string x = String.concat "" ["\""; x; "\""]
+
+let rec fmt_fcall name args = 
   "FuncCall(" ^
-     "name: " ^ name ^
-     ", args: " ^ 
-      String.concat "\n" (List.map string_of_expr args) ^
+     "name: " ^ fmt_string name ^
+     ", args: " ^ fmt_expr_list args ^
   ")"
 
-and string_of_expr = function
-  | StrLit(x) -> "StrLit(\"" ^ x ^ "\")"
+and fmt_expr = function
+  | StrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
   | Id(x) -> "Id(" ^ x ^ ")"
-  | FuncCall(name, args) -> string_of_fcall name args 
+  | FuncCall(name, args) -> fmt_fcall name args 
 
-let rec string_of_fdecl fd =
+and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
+
+let rec fmt_fdecl fd =
   "Function(" ^ 
-      "name: " ^ fd.name ^
-      ", type: " ^ string_of_typ fd.typ ^
+      "name: " ^ fmt_string fd.name ^
+      ", type: " ^ fmt_typ fd.typ ^
     ")" ^ " {\n" ^ "  " ^
-    String.concat " \n" (List.map string_of_stmt fd.body)
+      fmt_stmt_list fd.body
     ^
     "\n}\n"
 
-and string_of_stmt = function
-  | Expr e -> string_of_expr e
-  | FuncDecl fd -> string_of_fdecl fd
+and fmt_stmt = function
+  | Expr e -> fmt_expr e
+  | FuncDecl fd -> fmt_fdecl fd
 
-let string_of_program sl = String.concat "\n" (List.map string_of_stmt sl)
+and fmt_stmt_list l = String.concat "\n" (List.map fmt_stmt l)
+
+let string_of_program p = fmt_stmt_list p
