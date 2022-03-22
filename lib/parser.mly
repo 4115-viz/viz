@@ -1,33 +1,58 @@
-/*type*/
-%token T_INT T_NONE
+%{
+open Ast
+%}
 
-/*delimiters*/
+/* keywords */
+%token FUNC
+
+/* type */
+%token T_NONE
+
+/* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON
 %token EOF
 
 %token <string> ID
-%token <string> STRING_LITERAL
+%token <string> LIT_STR
 
 %start program
-%type <Ast.tokenseq> program
+%type <Ast.program> program
 
 %%
 
 program:
-  tokens EOF { $1}
+  stmt_list EOF { $1 }
 
-tokens:
-   /* nothing */ { [] }
- | one_token tokens { $1 :: $2 }
+typ:
+  | T_NONE  { NoneType }
 
-one_token:
-  | SEMI  {  "SEMI" }
-  | T_INT { "Type: INT" }
-  | T_NONE { "Type: None" }
-  | COLON { "COLON" }
-  | LPAREN { "LPAREN" }
-  | RPAREN { "RPAREN" }
-  | LBRACE { "LBRACE" }
-  | RBRACE { "RBRACE" }
-  | ID { "ID: " ^ $1 }
-  | STRING_LITERAL {"String: " ^ $1}
+stmt_list:
+  | { [] }
+  | stmt stmt_list { $1 :: $2 }
+
+stmt:
+  | expr SEMI { Expr $1 }
+  | FUNC ID LPAREN RPAREN COLON typ LBRACE stmt_list RBRACE {
+      FuncDecl({ 
+        typ = $6;
+        name = $2;
+        body = $8
+      })
+    }
+
+expr:
+  /* literal */
+  | LIT_STR { StrLit $1 }
+
+  /* variable */
+  | ID { Id $1 }
+
+  /* function */
+  | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
+
+args_list_opt:
+  | { [] }
+  | args_list { $1 }
+
+args_list:
+  | expr { [$1] }

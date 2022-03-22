@@ -10,9 +10,9 @@ rule token = parse
 | [' ' '\t' '\r' '\n'] { token lexbuf}
 
 (* -------- keywords -------- *)
+| "func" { FUNC }
 
 (* -------- types -------- *)
-| "int"    { T_INT }
 | "none" { T_NONE }
 
 (* -------- arithmetic operators -------- *)
@@ -31,6 +31,6 @@ rule token = parse
 
 (* -------- literals -------- *)
 | letter (digit | letter | '_')* as lxm { ID(lxm) }
-| '"' ([^ '"']* as lxm) '"' { STRING_LITERAL(lxm) }
+| '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
 | eof { EOF }
 | _ as char { raise (Failure("unexpected character: " ^ Char.escaped char)) }
