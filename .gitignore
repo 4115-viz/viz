@@ -2,3 +2,7 @@
 output.txt
 _build
 viz.opam
+
+lib/parser.ml
+lib/parser.mli
+lib/parser.output

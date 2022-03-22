@@ -1,100 +1,36 @@
-(* Scanner for Viz language *)
-
 {
 open Parser
-exception Viz_scan_error of string
 }
 
 let digit  = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
 
 rule token = parse
-| [' ' '\t' '\r' '\n'] { token lexbuf} (* whitespace *)
-| "/*" { comment lexbuf } (* multi line comments *)
-| "//" { comment lexbuf } (* single line comment *)
-| eof  { EOF } (* end of file *)
+(* -------- whitespaces -------- *)
+| [' ' '\t' '\r' '\n'] { token lexbuf}
 
-(* reserved keywords *)
-| "func" { FUNC }
-| "if"   { IF }
-| "else" { ELSE }
-| "elif" { ELIF }
-| "for" { FOR }
-| "while" { WHILE }
-| "infinite_loop" { INFINITE_LOOP }
-| "return" { RETURN }
-| "break" { BREAK }
-| "continue" { CONTINUE }
-| "try" { TRY }
-| "catch" { CATCH }
-| "raise" { RAISE }
-| "link" { LINK }
-| "use" { USE }
-| "in" { IN }
-| "step" { STEP }
-| "as" { AS }
+(* -------- keywords -------- *)
 
-(* our data types *)
-| "int" { INT }
-| "-" ? digit+ as num { INT_LITERAL(int_of_string num) } (* int literal *)
-| "@" letter (digit | letter | '_')* as varname { ID(varname) } (* variable name *)
-| "string" { STRING }
-(* | ("\"" | "\'") (digit | letter)* ("\"" | "\'") as str {STRINGLIT(str)} (* string literal *) *)
-| "float" { FLOAT }
-| "boolean" { BOOLEAN }
-| "true" { BOOL_LITERAL(true) } (* boolean literal *)
-| "false" { BOOL_LITERAL(false) } (* boolean literal *)
-| "none" { NONE }
+(* -------- types -------- *)
+| "int"    { T_INT }
+| "none" { T_NONE }
 
-(* arithmetic operators *)
-| "+" { PLUS }
-| "-" { MINUS }
-| "*" { MULT }
-| "/" { DIV }
-| "%" { MOD }
+(* -------- arithmetic operators -------- *)
 
-(* assignment operators *)
-| "=" { ASSIGN }
-| "+=" { PLUS_EQ }
-| "-=" { MINUS_EQ }
-| "*=" { TIMES_EQ }
-| "/=" { DIV_EQ }
-| "%=" { MOD_EQ }
+(* -------- assignment operators -------- *)
 
-(* relational operators *)
-| "==" { EQ }
-| "!=" { N_EQ }
-| ">=" { GT_EQ }
-| "<=" { LT_EQ }
-| ">" { GT }
-| "<" { LT }
-| "and" { AND }
-| "or" { OR }
-| "not" { NOT }
-| "?" { QUESTION }
+(* -------- relational operators -------- *)
 
-(* delimiters *)
+(* -------- delimiters -------- *)
 | "("  { LPAREN }
 | ")"  { RPAREN }
-| "[" { LBRACKET }
-| "]" { RBRACKET }
-| "{" {LBRACE }
+| "{" { LBRACE }
 | "}" { RBRACE }
-| "," { COMMA }
 | ":" { COLON }
-| "." { DOT }
 | ";"  { SEMI }
 
-(* ADT declarations *)
-| "array"      { ARRAY }
-| "queue"      { QUEUE }
-| "stack"      { STACK }
-| "linkedNode" { LINKED_NODE }
-| "treeNode"   { TREE_NODE }
-
-| _ as char { raise (Viz_scan_error ("unexpected character: " ^ Char.escaped char)) }
-
-and comment = parse
-| "*/" { token lexbuf } (* end of multi line comment, head back to token *)
-| "\n" { token lexbuf } (* this is how we will end a single line comment *)
-| _    { comment lexbuf } (* want to ignore the rest of the noise *)
+(* -------- literals -------- *)
+| letter (digit | letter | '_')* as lxm { ID(lxm) }
+| '"' ([^ '"']* as lxm) '"' { STRING_LITERAL(lxm) }
+| eof { EOF }
+| _ as char { raise (Failure("unexpected character: " ^ Char.escaped char)) }
