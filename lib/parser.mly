@@ -8,12 +8,12 @@
 %token <string> ID
 %token <string> STRING_LITERAL
 
-%start program_rule
-%type <Ast.tokenseq> program_rule
+%start program
+%type <Ast.tokenseq> program
 
 %%
 
-program_rule:
+program:
   tokens EOF { $1}
 
 tokens:
