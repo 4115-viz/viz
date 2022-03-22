@@ -1,4 +1,4 @@
 (executable
-  (public_name viz)
-  (name viz)
+  (public_name vc)
+  (name vc)
   (libraries lib))
