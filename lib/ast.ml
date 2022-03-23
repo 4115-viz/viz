@@ -1,6 +1,6 @@
 type builtin_type = 
   | NoneType
-
+  | StrType
 type expr =
   | StrLit of string
   | Id of string
@@ -22,6 +22,7 @@ type program = stmt list
 (* ----- Print Function ----- *)
 let fmt_typ = function
   | NoneType -> "Type(None)"
+  | StrType -> "Type(Str)"
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 

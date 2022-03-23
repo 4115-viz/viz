@@ -24,7 +24,8 @@ program:
   stmt_list EOF { $1 }
 
 typ:
-  | T_NONE  { NoneType }
+  | T_NONE { NoneType }
+  | T_STR { StrType }
 
 stmt_list:
   | { [] }
