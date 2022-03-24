@@ -27,7 +27,8 @@ rule token = parse
 | "{" { LBRACE }
 | "}" { RBRACE }
 | ":" { COLON }
-| ";"  { SEMI }
+| ";" { SEMI }
+| "," { COMMA }
 
 (* -------- literals -------- *)
 | letter (digit | letter | '_')* as lxm { ID(lxm) }

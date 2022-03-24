@@ -12,6 +12,7 @@ type sstmt =
 and sfunc_decl = {
   styp: builtin_type;
   sname: string;
+  sparams: bind list;
   sbody: sstmt list;
 }
 

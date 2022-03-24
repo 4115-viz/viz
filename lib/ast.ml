@@ -6,6 +6,8 @@ type expr =
   | Id of string
   | FuncCall of string * expr list
 
+type bind = builtin_type * string
+
 and stmt =
   | Expr of expr
   | FuncDecl of func_decl
@@ -13,6 +15,7 @@ and stmt =
 and func_decl = {
   typ: builtin_type;
   name: string;
+  params: bind list;
   body: stmt list;
 }
 

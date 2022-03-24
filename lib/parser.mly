@@ -9,7 +9,7 @@ open Ast
 %token T_NONE T_STR
 
 /* delimiters */
-%token SEMI LPAREN RPAREN LBRACE RBRACE COLON
+%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA
 %token EOF
 
 %token <string> ID
@@ -33,11 +33,12 @@ stmt_list:
 
 stmt:
   | expr SEMI { Expr $1 }
-  | FUNC ID LPAREN RPAREN COLON typ LBRACE stmt_list RBRACE {
+  | FUNC ID LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE {
       FuncDecl({ 
-        typ = $6;
+        typ = $7;
         name = $2;
-        body = $8
+        params = $4;
+        body = $9;
       })
     }
 
@@ -50,6 +51,14 @@ expr:
 
   /* function */
   | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
+
+params_list_opt:
+  { [] }
+| params_list { $1 }
+
+params_list:
+  ID COLON typ { [($3, $1)] }
+| params_list COMMA ID COLON typ { ($5, $3) :: $1 }
 
 args_list_opt:
   | { [] }

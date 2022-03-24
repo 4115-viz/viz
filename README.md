@@ -18,7 +18,8 @@ dune build
 
 #### Run the scanner test
 ```
-dune exec bin/viz.exe
+dune exec -- vc test/helloworld.viz -a
+dune exec -- vc test/helloworld.viz -s
 ```
 
 <!-- #### Compiler files
