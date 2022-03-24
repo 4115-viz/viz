@@ -33,22 +33,22 @@ let rec fmt_sfcall name args =
 
 and fmt_sexpr_list l = String.concat "\n" (List.map fmt_sexpr l)
 
-and fmt_sexpr (_, se) =
+and fmt_sexpr (t, se) =
+  "(" ^ fmt_typ t ^ " : " ^ 
   (match se with
     | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
     | SId(x) -> "Id(" ^ x ^ ")"
     | SFuncCall(name, args) -> fmt_sfcall name args 
   )
 
-
 let rec fmt_sfdecl sfd = 
   "Function(" ^ 
-      "name: " ^ fmt_string sfd.sname ^
-      ", type: " ^ fmt_typ sfd.styp ^
-    ")" ^ " {\n" ^ "  " ^
-      fmt_sstmt_list sfd.sbody
-    ^
-    "\n}\n"
+    "name: " ^ fmt_string sfd.sname ^
+    ", type: " ^ fmt_typ sfd.styp ^
+  ")" ^ " {\n" ^ "  " ^
+    fmt_sstmt_list sfd.sbody
+  ^
+  "\n}\n"
 
 and fmt_sstmt = function
   | SExpr se -> fmt_sexpr se
