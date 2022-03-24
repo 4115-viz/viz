@@ -6,7 +6,7 @@ open Ast
 %token FUNC
 
 /* type */
-%token T_NONE
+%token T_NONE T_STR
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON
