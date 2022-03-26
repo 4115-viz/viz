@@ -3,6 +3,7 @@ type builtin_type =
   | StrType
   | IntType
 type expr =
+  | Assign of string * expr
   | IntLit of int
   | StrLit of string
   | Id of string
@@ -41,6 +42,7 @@ let rec fmt_fcall name args =
 and fmt_expr = function
   | StrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
   | IntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
+  | Assign(v, e) -> v ^ " = " ^ fmt_expr e
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) -> fmt_fcall name args 
 

@@ -54,6 +54,13 @@ let rec check_program (program : stmt list) =
       in match expr with
         | IntLit x -> (IntType, SIntLit x)
         | StrLit x -> (StrType, SStrLit x)
+        | Assign(v, e) as ex ->
+          let lt = check_id symbols v
+          and (rt, e') = check_expr symbols e in
+          let err = "illegal assignment " ^ fmt_typ lt ^ " = " ^
+              fmt_typ rt ^ " in " ^ fmt_expr ex
+          in
+          (check_assign lt rt err, SAssign(v, (rt, e')))
         | Id x -> (check_id symbols x, SId x)
         | FuncCall (name, args) -> check_call (name, args)
     in

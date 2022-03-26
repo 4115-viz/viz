@@ -40,6 +40,7 @@ program:
 typ:
   | T_NONE { NoneType }
   | T_STR { StrType }
+  | T_INT { IntType }
 
 stmt_list:
   | { [] }
@@ -66,6 +67,9 @@ expr:
 
   /* function */
   | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
+
+  /* assignment */
+  | ID COLON typ ASSIGN expr { Assign($1, $5) }
 
 params_list_opt:
   { [] }

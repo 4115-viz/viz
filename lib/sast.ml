@@ -2,6 +2,7 @@ open Ast
 
 type sexpr = builtin_type * sx
 and sx =
+  | SAssign of string * sexpr
   | SStrLit of string
   | SIntLit of int
   | SId of string
@@ -41,6 +42,7 @@ and fmt_sexpr (t, se) =
   (match se with
     | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
     | SIntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
+    | SAssign(v, e) -> v ^ " = " ^ fmt_sexpr e
     | SId(x) -> "Id(" ^ x ^ ")"
     | SFuncCall(name, args) -> fmt_sfcall name args 
   )
