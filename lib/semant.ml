@@ -52,6 +52,7 @@ let rec check_program (program : stmt list) =
         let sargs = List.map2 check_arg fd.params args
         in (fd.typ, SFuncCall(name, sargs))
       in match expr with
+        | IntLit x -> (IntType, SIntLit x)
         | StrLit x -> (StrType, SStrLit x)
         | Id x -> (check_id symbols x, SId x)
         | FuncCall (name, args) -> check_call (name, args)

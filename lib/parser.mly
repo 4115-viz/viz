@@ -2,11 +2,17 @@
 open Ast
 %}
 
+/* arithmetic */
+%token PLUS MINUS TIMES DIVIDE
+
+/* assignment */
+%token ASSIGN
+
 /* keywords */
 %token FUNC
 
 /* type */
-%token T_NONE T_STR
+%token T_NONE T_STR T_INT
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA
@@ -14,6 +20,14 @@ open Ast
 
 %token <string> ID
 %token <string> LIT_STR
+%token <int> LIT_INT
+
+/* precedence */
+%left SEMI
+%right ASSIGN
+%left PLUS MINUS
+%left TIMES DIVIDE
+
 
 %start program
 %type <Ast.program> program
@@ -45,6 +59,7 @@ stmt:
 expr:
   /* literal */
   | LIT_STR { StrLit $1 }
+  | LIT_INT { IntLit $1 }
 
   /* variable */
   | ID { Id $1 }

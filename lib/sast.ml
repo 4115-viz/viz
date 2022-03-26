@@ -3,6 +3,7 @@ open Ast
 type sexpr = builtin_type * sx
 and sx =
   | SStrLit of string
+  | SIntLit of int
   | SId of string
   | SFuncCall of string * sexpr list
   
@@ -22,6 +23,8 @@ type sprogram = sstmt list
 let fmt_typ = function
   | NoneType -> "Type(None)"
   | StrType -> "Type(Str)"
+  | IntType -> "Type(Int)"
+
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
@@ -37,6 +40,7 @@ and fmt_sexpr (t, se) =
   "(" ^ fmt_typ t ^ " : " ^ 
   (match se with
     | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
+    | SIntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
     | SId(x) -> "Id(" ^ x ^ ")"
     | SFuncCall(name, args) -> fmt_sfcall name args 
   )

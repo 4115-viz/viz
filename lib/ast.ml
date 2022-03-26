@@ -1,7 +1,9 @@
 type builtin_type = 
   | NoneType
   | StrType
+  | IntType
 type expr =
+  | IntLit of int
   | StrLit of string
   | Id of string
   | FuncCall of string * expr list
@@ -26,6 +28,7 @@ type program = stmt list
 let fmt_typ = function
   | NoneType -> "Type(None)"
   | StrType -> "Type(Str)"
+  | IntType -> "Type(Int)"
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
@@ -37,6 +40,7 @@ let rec fmt_fcall name args =
 
 and fmt_expr = function
   | StrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
+  | IntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) -> fmt_fcall name args 
 
