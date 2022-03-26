@@ -16,6 +16,7 @@ rule token = parse
 | "none" { T_NONE }
 | "int" { T_INT }
 | "string" { T_STR }
+| "bool" { T_BOOL }
 
 (* -------- arithmetic operators -------- *)
 | '+' { PLUS }
@@ -41,5 +42,7 @@ rule token = parse
 | letter (digit | letter | '_')* as lxm { ID(lxm) }
 | digit+ as lxm {LIT_INT(int_of_string lxm)}
 | '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
+| "true" { LIT_BOOL(true) }
+| "false" { LIT_BOOL(false) }
 | eof { EOF }
 | _ as char { raise (Failure("unexpected character: " ^ Char.escaped char)) }

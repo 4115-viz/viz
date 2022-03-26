@@ -12,7 +12,7 @@ open Ast
 %token FUNC
 
 /* type */
-%token T_NONE T_STR T_INT
+%token T_NONE T_STR T_INT T_BOOL
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA
@@ -21,6 +21,7 @@ open Ast
 %token <string> ID
 %token <string> LIT_STR
 %token <int> LIT_INT
+%token <bool> LIT_BOOL
 
 /* precedence */
 %left SEMI
@@ -41,6 +42,7 @@ typ:
   | T_NONE { NoneType }
   | T_STR { StrType }
   | T_INT { IntType }
+  | T_BOOL { BoolType }
 
 stmt_list:
   | { [] }
@@ -61,6 +63,7 @@ expr:
   /* literal */
   | LIT_STR { StrLit $1 }
   | LIT_INT { IntLit $1 }
+  | LIT_BOOL { BoolLit $1 }
 
   /* variable */
   | ID { Id $1 }

@@ -5,6 +5,7 @@ and sx =
   | SAssign of string * sexpr
   | SStrLit of string
   | SIntLit of int
+  | SBoolLit of bool
   | SId of string
   | SFuncCall of string * sexpr list
   
@@ -25,6 +26,7 @@ let fmt_typ = function
   | NoneType -> "Type(None)"
   | StrType -> "Type(Str)"
   | IntType -> "Type(Int)"
+  | BoolType -> "Type(Bool)"
 
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
@@ -42,6 +44,8 @@ and fmt_sexpr (t, se) =
   (match se with
     | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
     | SIntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
+    | SBoolLit(true) -> "BoolLit(true)"
+    | SBoolLit(false) -> "BoolLit(false)"
     | SAssign(v, e) -> v ^ " = " ^ fmt_sexpr e
     | SId(x) -> "Id(" ^ x ^ ")"
     | SFuncCall(name, args) -> fmt_sfcall name args 

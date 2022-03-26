@@ -61,6 +61,7 @@ let rec check_program (program : stmt list) =
               fmt_typ rt ^ " in " ^ fmt_expr ex
           in
           (check_assign lt rt err, SAssign(v, (rt, e')))
+        | BoolLit x -> (BoolType, SBoolLit x)
         | Id x -> (check_id symbols x, SId x)
         | FuncCall (name, args) -> check_call (name, args)
     in
