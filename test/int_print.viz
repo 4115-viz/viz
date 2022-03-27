@@ -1,4 +1,17 @@
 func main(): none {
   x: int = 1;
   print(x);
+
+  y: int = -1;
+  print(y);
+
+  // z: int = -0; parse error
+  z: int = 0;
+  print(z);
+
+  z1: int = 10000;
+  print(z1);
+
+  z2: int = -10000;
+  print(z2);
 }
