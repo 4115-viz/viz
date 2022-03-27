@@ -21,6 +21,7 @@ and func_decl = {
   typ: builtin_type;
   name: string;
   params: bind list;
+  locals: bind list;
   body: stmt list;
 }
 

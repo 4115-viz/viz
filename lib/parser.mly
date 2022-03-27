@@ -38,26 +38,27 @@ open Ast
 program:
   stmt_list EOF { $1 }
 
-typ:
-  | T_NONE { NoneType }
-  | T_STR { StrType }
-  | T_INT { IntType }
-  | T_BOOL { BoolType }
-
 stmt_list:
   | { [] }
   | stmt stmt_list { $1 :: $2 }
 
 stmt:
   | expr SEMI { Expr $1 }
-  | FUNC ID LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE {
+  | FUNC ID LPAREN params_list_opt RPAREN COLON typ LBRACE params_list_opt stmt_list RBRACE {
       FuncDecl({ 
-        typ = $7;
-        name = $2;
-        params = $4;
-        body = $9;
+        typ = $7; (* function return type *)
+        name = $2; (* function name *)
+        params = $4; (* function arguments *)
+        locals = $9; (* all declared variables *)
+        body = $10; (* function statements *)
       })
     }
+
+typ:
+  | T_NONE { NoneType }
+  | T_STR { StrType }
+  | T_INT { IntType }
+  | T_BOOL { BoolType }
 
 expr:
   /* literal */
@@ -66,20 +67,23 @@ expr:
   | LIT_BOOL { BoolLit $1 }
 
   /* variable */
-  | ID { Id $1 }
+  | ID  { Id $1 }
 
   /* function */
   | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
 
   /* assignment */
   | ID COLON typ ASSIGN expr { Assign($1, $5) }
+  | ID ASSIGN expr { Assign($1, $3) }
 
 params_list_opt:
   { [] }
 | params_list { $1 }
 
 params_list:
-  ID COLON typ { [($3, $1)] }
+  /* variable declaration, with default values */
+
+  ID COLON typ SEMI { [($3, $1)] }
 | params_list COMMA ID COLON typ { ($5, $3) :: $1 }
 
 args_list_opt:

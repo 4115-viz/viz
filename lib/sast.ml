@@ -16,6 +16,7 @@ and sfunc_decl = {
   styp: builtin_type;
   sname: string;
   sparams: bind list;
+  slocals: bind list;
   sbody: sstmt list;
 }
 

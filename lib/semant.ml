@@ -6,7 +6,7 @@ open Sast
 module StringMap = Map.Make(String)
 
 let builtin_funcs = [
-  {name = "print"; typ = NoneType; params = [(StrType, "x")]; body = []};
+  {name = "print"; typ = NoneType; params = [(StrType, "x")]; locals = []; body = []};
 ]
 
 (* Return a function from our symbol table *)
@@ -71,6 +71,7 @@ let rec check_program (program : stmt list) =
         styp = f.typ;
         sname = f.name;
         sparams = f.params;
+        slocals = f.locals;
         sbody = check_program f.body;
       }
       
