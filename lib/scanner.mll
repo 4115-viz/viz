@@ -44,7 +44,7 @@ rule token = parse
 (* -------- literals -------- *)
 | letter (digit | letter | '_')* as lxm { ID(lxm) }
 (*| "@" letter (digit | letter | '_')* as lxm { ID(String.sub lxm 1 ((String.length lxm) - 1)) }*)
-| digit+ as lxm {LIT_INT(int_of_string lxm)}
+| "0" | "-" ? ['1'-'9']+ ['0'-'9']*  as lxm {LIT_INT(int_of_string lxm)}
 | '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
 | "true" { LIT_BOOL(true) }
 | "false" { LIT_BOOL(false) }
