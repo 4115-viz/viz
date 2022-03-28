@@ -18,8 +18,9 @@ dune build
 
 #### Run the scanner test
 ```
-dune exec -- vc test/helloworld.viz -a
-dune exec -- vc test/helloworld.viz -s
+dune exec -- vc test/helloworld.viz -a    /* abstract syntax tree */
+dune exec -- vc test/helloworld.viz -s    /* semantically checked abstract syntax tree */
+dune exec -- vc test/helloworld.viz -ts   /* scan the tokens and send to stdout */
 ```
 
 <!-- #### Compiler files
