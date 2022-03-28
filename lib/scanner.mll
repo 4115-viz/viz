@@ -1,7 +1,23 @@
 {
 open Parser
 exception Viz_scan_error of string
+
+
+(* borrowed print test format from ctex *)
+let print_token t =
+    match t with
+      (* identifier *)
+      | ID(s) -> Printf.printf "ID(%s)\n" s
+      | FUNC -> Printf.printf "FUNC\n"
+      | _ -> Printf.printf "Unimplemented\n"
+
+(* nanoc scanner print code for testing *)
+(* type tokenseq = string list *)
+let string_of_program_tokens l =
+  "\n\nScanned program: \n" ^ (List.fold_left (fun s e -> s ^ "\n" ^ e) "" l)
+
 }
+
 
 let digit  = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
@@ -57,4 +73,26 @@ and single_comment = parse
  
  and multi_comment = parse
  | "*/" {token lexbuf} (* end of multi line comment, head back to token *)
- | _    {multi_comment lexbuf} (* want to ignore the rest of the noise *) 
+ | _    {multi_comment lexbuf} (* want to ignore the rest of the noise *)
+
+(*)
+(* get the characters from stdin *)
+{
+    (*)
+    ( fun to_test -> 
+        match to_test with 
+        | true ->
+            (
+                let buf = Lexing.from_channel stdin in 
+                let f = token buf in
+                print_endline (print_token f)
+            )
+        | false -> ()
+    ) *)
+    (* borrowed print test format from ctex *)
+    let print_token t =
+        match t with
+        (* identifier *)
+        | ID(s) -> Printf.sprintf "ID(%s)" s
+        | _ -> Printf.sprintf "Unimplemented"
+} *)
