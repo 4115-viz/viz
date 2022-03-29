@@ -15,7 +15,7 @@ let () =
   let channel = ref stdin in
   Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
 
-  match !action with
+  (* match !action with
   | ScanTest -> let lexbuf = Lexing.from_channel !channel in
                 (* lexm.sh via CTeX group project 4115*)
                 let token_list =
@@ -32,7 +32,18 @@ let () =
   | _ -> 
     let lexbuf = Lexing.from_channel !channel in
     let ast = Parser.program Scanner.token lexbuf in
-    let sast = Semant.check_program ast in
+    let sast = Semant.check ast in
     match !action with
       Ast -> ()
-    | _ -> print_string (Sast.string_of_sprogram sast)
+    | _ -> print_string (Sast.string_of_sprogram sast) *)
+
+    let lexbuf = Lexing.from_channel !channel in
+
+  let ast = Parser.program Scanner.token lexbuf in
+  match !action with
+    Ast -> print_string (Ast.string_of_program ast)
+  | _ -> let sast = Semant.check ast in
+    match !action with
+      Ast     -> ()
+    | _    -> print_string (Sast.string_of_sprogram sast)
+    (* | LLVM_IR -> print_string (Llvm.string_of_llmodule (Irgen.translate sast)) *)

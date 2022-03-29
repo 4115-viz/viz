@@ -10,16 +10,20 @@ and sx =
   | SFuncCall of string * sexpr list
   
 type sstmt =
+  | SBlock of sstmt list
   | SExpr of sexpr
-  | SFuncDecl of sfunc_decl
-and sfunc_decl = {
+  (* | SFuncDecl of sfunc_decl *)
+  | SReturn of sexpr
+
+type sfunc_decl = {
   styp: builtin_type;
   sname: string;
   sparams: bind list;
+  (* slocals: bind list; *)
   sbody: sstmt list;
 }
 
-type sprogram = sstmt list
+type sprogram = bind list * sfunc_decl list
 
 (* ----- Print Function ----- *)
 let fmt_typ = function
@@ -51,19 +55,36 @@ and fmt_sexpr (t, se) =
     | SFuncCall(name, args) -> fmt_sfcall name args 
   )
 
-let rec fmt_sfdecl sfd = 
+(* let rec fmt_sfdecl sfd = 
   "Function(" ^ 
     "name: " ^ fmt_string sfd.sname ^
     ", type: " ^ fmt_typ sfd.styp ^
   ")" ^ " {\n" ^ "  " ^
     fmt_sstmt_list sfd.sbody
   ^
-  "\n}\n"
+  "\n}\n" *)
 
 and fmt_sstmt = function
+  SBlock(sstmts) ->
+      "{\n" ^ String.concat "" (List.map fmt_sstmt sstmts) ^ "}\n"
   | SExpr se -> fmt_sexpr se
-  | SFuncDecl sfd -> fmt_sfdecl sfd
+  (* | SFuncDecl sfd -> fmt_sfdecl sfd *)
+  | SReturn(sexpr) -> "return " ^ fmt_sexpr sexpr ^ ";\n"
 
 and fmt_sstmt_list l = String.concat "\n" (List.map fmt_sstmt l)
 
-let string_of_sprogram sp = fmt_sstmt_list sp
+(* let string_of_sprogram sp = fmt_sstmt_list sp *)
+
+let string_of_svdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
+
+let string_of_sfdecl sfdecl =
+  "func " ^ sfdecl.sname ^ "(" ^ String.concat ", " (List.map snd sfdecl.sparams) ^
+  "): " ^ string_of_typ sfdecl.styp ^ " " ^ "\n{\n" ^
+  (* String.concat "" (List.map string_of_vdecl sfdecl.slocals) ^ *)
+  String.concat "" (List.map fmt_sstmt sfdecl.sbody) ^
+  "\n}\n"
+
+let string_of_sprogram (vars, funcs) =
+  "\n\nParsed program: \n\n" ^
+  String.concat "" (List.map string_of_svdecl vars) ^ "\n" ^
+  String.concat "\n" (List.map string_of_sfdecl funcs)

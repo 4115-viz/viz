@@ -11,6 +11,8 @@ open Ast
 /* keywords */
 %token FUNC
 
+%token BLOCK
+
 /* type */
 %token T_NONE T_STR T_INT T_BOOL
 
@@ -36,7 +38,7 @@ open Ast
 %%
 
 program:
-  stmt_list EOF { $1 }
+  decls EOF { $1 }
 
 typ:
   | T_NONE { NoneType }
@@ -44,20 +46,25 @@ typ:
   | T_INT { IntType }
   | T_BOOL { BoolType }
 
+decls:
+   /* nothing */ { ([], []) }
+ | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
+ | fdecl decls { (fst $2, ($1 :: snd $2)) }
+
+vdecl_list:
+  /*nothing*/ { [] }
+  | vdecl SEMI vdecl_list  { $1 :: $3 }
+
+vdecl:
+  typ ID { ($1, $2) }
+
 stmt_list:
   | { [] }
   | stmt stmt_list { $1 :: $2 }
 
 stmt:
   | expr SEMI { Expr $1 }
-  | FUNC ID LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE {
-      FuncDecl({ 
-        typ = $7;
-        name = $2;
-        params = $4;
-        body = $9;
-      })
-    }
+  | LBRACE stmt_list RBRACE { Block($2) }
 
 expr:
   /* literal */
@@ -73,6 +80,17 @@ expr:
 
   /* assignment */
   | ID COLON typ ASSIGN expr { Assign($1, $5) }
+
+fdecl:
+  FUNC ID LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE 
+  {
+    {
+      typ=$7;
+      name=$2;
+      params=$4;
+      body=$9
+    }
+  }
 
 params_list_opt:
   { [] }

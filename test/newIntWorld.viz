@@ -1,0 +1,7 @@
+func func1(x: int): none {
+    print(x);
+}
+
+func main(): none {
+    func1(1);
+}
