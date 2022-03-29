@@ -19,7 +19,7 @@ open Ast
 %token T_NONE T_STR T_INT T_BOOL T_FLOAT
 
 /* delimiters */
-%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA
+%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET
 %token EOF
 
 /* split id into two, nothing changes outside of parser file */

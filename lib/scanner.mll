@@ -23,6 +23,8 @@ let print_token t =
         | RBRACE -> Printf.printf "RBRACE\n"
         | LPAREN -> Printf.printf "LPAREN\n"
         | RPAREN -> Printf.printf "RPAREN\n"
+        | LBRACKET -> Printf.printf "LBRACKET\n"
+        | RBRACKET -> Printf.printf "RBRACKET\n"
         | SEMI   -> Printf.printf "SEMI\n"
         | PLUS   -> Printf.printf "PLUS\n"
         | MINUS  -> Printf.printf "MINUS\n"
@@ -133,6 +135,8 @@ rule token = parse
 (* -------- delimiters -------- *)
 | "("  { LPAREN }
 | ")"  { RPAREN }
+| "["  { LBRACKET }
+| "]"  { RBRACKET }
 | "{" { LBRACE }
 | "}" { RBRACE }
 | ":" { COLON }
@@ -160,4 +164,5 @@ and single_comment = parse
  
  and multi_comment = parse
  | "*/" {token lexbuf} (* end of multi line comment, head back to token *)
+ | "/*" {raise (Viz_scan_error ("cannot nest multi-line comments"))} (* no nested comments *)
  | _    {multi_comment lexbuf} (* want to ignore the rest of the noise *)
