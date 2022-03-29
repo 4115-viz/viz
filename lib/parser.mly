@@ -6,10 +6,14 @@ open Ast
 %token PLUS MINUS TIMES DIVIDE
 
 /* assignment */
-%token ASSIGN
+%token ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
+
+/* relational */
+%token EQ NEQ GTEQ LTEQ GT LT AND OR NOT 
 
 /* keywords */
-%token FUNC
+%token FUNC IF ELSE ELIF FOR WHILE INFINITE_LOOP RETURN BREAK
+%token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS 
 
 /* type */
 %token T_NONE T_STR T_INT T_BOOL T_FLOAT
