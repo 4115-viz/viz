@@ -1,6 +1,0 @@
-func main(): none {
-  x: bool = true;
-  y: bool = false;
-  print(x);
-  print(y);
-}
