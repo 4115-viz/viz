@@ -12,7 +12,7 @@ let print_token t =
       | LIT_BOOL(b) -> Printf.printf "LIT_BOOL(%B)\n" b
       | LIT_STR(s) -> Printf.printf "LIT_STR(%s)\n" s
       | LIT_INT(i) -> Printf.printf "LIT_INT(%d)\n" i
-      | LIT_FLOAT(fl) -> Printf.printf "LIT_INT(%f)\n" fl
+      | LIT_FLOAT(fl) -> Printf.printf "LIT_FLOAT(%f)\n" fl
       | FUNC   -> Printf.printf "FUNC\n"
       | COLON  -> Printf.printf "COLON\n"
       | T_NONE -> Printf.printf "T_NONE\n"
@@ -36,6 +36,7 @@ let print_token t =
 
 (* everything below actually creates tokens *)
 let digit  = ['0'-'9']
+let non_zero_digits = ['1'-'9']
 let letter = ['a'-'z' 'A'-'Z']
 
 rule token = parse
@@ -77,8 +78,8 @@ rule token = parse
 | "true" { LIT_BOOL(true) }
 | "false" { LIT_BOOL(false) }
 | '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
-| "0" | "-" ? ['1'-'9']+ ['0'-'9']*  as lxm {LIT_INT(int_of_string lxm)}
-| "0.0" | "-" ? digit* "." digit+  as lxm {LIT_FLOAT(float_of_string lxm)}
+| '0'+ | "-" ? non_zero_digits digit*  as lxm {LIT_INT(int_of_string lxm)}
+| '0'* "." '0'+ | "-" ? (non_zero_digits+ "." digit+ | "." digit+)  as lxm {LIT_FLOAT(float_of_string lxm)}
 
 (* --------- IDs ------------ *)
 | letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)
