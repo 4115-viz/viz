@@ -53,6 +53,7 @@ let rec check_program (program : stmt list) =
         in (fd.typ, SFuncCall(name, sargs))
       in match expr with
         | IntLit x -> (IntType, SIntLit x)
+        | FloatLit x -> (FloatType, SFloatLit x)
         | StrLit x -> (StrType, SStrLit x)
         | Assign(v, e) as ex ->
           let lt = check_id symbols v

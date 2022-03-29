@@ -3,9 +3,11 @@ type builtin_type =
   | StrType
   | IntType
   | BoolType
+  | FloatType
 type expr =
   | Assign of string * expr
   | IntLit of int
+  | FloatLit of float
   | StrLit of string
   | BoolLit of bool
   | Id of string
@@ -33,6 +35,7 @@ let fmt_typ = function
   | StrType -> "Type(Str)"
   | IntType -> "Type(Int)"
   | BoolType -> "Type(Bool)"
+  | FloatType -> "Type(Float)"
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
@@ -45,6 +48,7 @@ let rec fmt_fcall name args =
 and fmt_expr = function
   | StrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
   | IntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
+  | FloatLit(x) -> "FloatLit(" ^ fmt_string (string_of_float x) ^ ")"
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
   | Assign(v, e) -> v ^ " = " ^ fmt_expr e

@@ -5,6 +5,7 @@ and sx =
   | SAssign of string * sexpr
   | SStrLit of string
   | SIntLit of int
+  | SFloatLit of float
   | SBoolLit of bool
   | SId of string
   | SFuncCall of string * sexpr list
@@ -26,6 +27,7 @@ let fmt_typ = function
   | NoneType -> "Type(None)"
   | StrType -> "Type(Str)"
   | IntType -> "Type(Int)"
+  | FloatType -> "Type(Float)"
   | BoolType -> "Type(Bool)"
 
 
@@ -44,6 +46,7 @@ and fmt_sexpr (t, se) =
   (match se with
     | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
     | SIntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
+    | SFloatLit(x) -> "FloatLit(" ^ fmt_string (string_of_float x) ^ ")"
     | SBoolLit(true) -> "BoolLit(true)"
     | SBoolLit(false) -> "BoolLit(false)"
     | SAssign(v, e) -> v ^ " = " ^ fmt_sexpr e
