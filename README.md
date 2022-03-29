@@ -23,6 +23,18 @@ dune exec -- vc test/helloworld.viz -s    /* semantically checked abstract synta
 dune exec -- vc test/helloworld.viz -ts   /* scan the tokens and send to stdout */
 ```
 
+#### Run the automated test scripts
+```
+# scanner test files
+cd test/scanner
+./script-token-parsing.sh
+
+# parser test files
+TBD
+
+# other test files
+TBD
+```
 <!-- #### Compiler files
 -  `ast.ml`: abstract syntax tree (AST)--a list of strings for viz scanner (needs to be updated obviously) 
 -  `scanner.mll`: scanner
@@ -38,7 +50,7 @@ dune exec -- vc test/helloworld.viz -ts   /* scan the tokens and send to stdout 
 ### Keywords
 The following keywords are reserved and may not be used as identifiers.
 
-`function`, `if`, `else`, `return`, `for`
+`func`, `if`, `else`, `return`, `for`
 
 ### Comments
 Comments are treated as whitespace.
