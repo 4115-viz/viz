@@ -1,0 +1,15 @@
+
+// below are legal types variables
+@x
+@my_variable
+@x2
+
+// below are legal types variable declarations
+@x: int;
+@my_variable: bool;
+@my_str: string;
+
+// below are legal types of variable assignment
+@x: int = 5;
+@my_variable = true; // assuming it has been declared
+@my_str:string = "hello world";
