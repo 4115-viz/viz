@@ -12,15 +12,18 @@ open Ast
 %token FUNC
 
 /* type */
-%token T_NONE T_STR T_INT T_BOOL
+%token T_NONE T_STR T_INT T_BOOL T_FLOAT
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA
 %token EOF
 
-%token <string> ID
+/* split id into two, nothing changes outside of parser file */
+%token <string> ID_FUNC 
+%token <string> ID_VAR /* split so variables could have @ */
 %token <string> LIT_STR
 %token <int> LIT_INT
+%token <float> LIT_FLOAT
 %token <bool> LIT_BOOL
 
 /* precedence */
@@ -43,6 +46,7 @@ typ:
   | T_STR { StrType }
   | T_INT { IntType }
   | T_BOOL { BoolType }
+  | T_FLOAT { FloatType }
 
 stmt_list:
   | { [] }
@@ -50,7 +54,7 @@ stmt_list:
 
 stmt:
   | expr SEMI { Expr $1 }
-  | FUNC ID LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE {
+  | FUNC ID_FUNC LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE {
       FuncDecl({ 
         typ = $7;
         name = $2;
@@ -61,26 +65,27 @@ stmt:
 
 expr:
   /* literal */
-  | LIT_STR { StrLit $1 }
-  | LIT_INT { IntLit $1 }
-  | LIT_BOOL { BoolLit $1 }
+  | LIT_STR { StrLit($1) }
+  | LIT_INT { IntLit($1) }
+  | LIT_BOOL { BoolLit($1) }
+  | LIT_FLOAT { FloatLit($1) }
 
   /* variable */
-  | ID { Id $1 }
+  | ID_VAR { Id($1) }
 
   /* function */
-  | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
+  | ID_FUNC LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
 
   /* assignment */
-  | ID COLON typ ASSIGN expr { Assign($1, $5) }
+  | ID_VAR COLON typ ASSIGN expr { Assign($1, $5) }
 
 params_list_opt:
   { [] }
 | params_list { $1 }
 
 params_list:
-  ID COLON typ { [($3, $1)] }
-| params_list COMMA ID COLON typ { ($5, $3) :: $1 }
+  ID_VAR COLON typ { [($3, $1)] }
+| params_list COMMA ID_VAR COLON typ { ($5, $3) :: $1 }
 
 args_list_opt:
   | { [] }
