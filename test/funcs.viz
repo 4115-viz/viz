@@ -1,9 +1,7 @@
-z: int;
-
-func func1(x: int): none {
-    print(x);
+func func1(c: string): none {
+    print(c);
 }
 
 func main(): none {
-    func1(1);
+    func1("Hello World");
 }

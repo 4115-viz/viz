@@ -69,20 +69,38 @@ fdecl:
     }
   }
 
+/* formals_opt */
 params_list_opt:
-  { [] }
-| params_list { $1 }
+  /*nothing*/ { [] }
+  | params_list { $1 }
 
 params_list:
-  ID COLON typ { [($3, $1)] }
-| params_list COMMA ID COLON typ { ($5, $3) :: $1 }
+  vdecl { [$1] }
+  | vdecl COMMA params_list { $1 :: $3 }
 
-args_list_opt:
-  | { [] }
-  | args_list { $1 }
+// params_list_opt:
+//   { [] }
+// | params_list { $1 }
 
-args_list:
-  | expr { [$1] }
+// params_list:
+//   ID COLON typ { [($3, $1)] }
+// | params_list COMMA ID COLON typ { ($5, $3) :: $1 }
+
+// args_list_opt:
+//   | { [] }
+//   | args_list { $1 }
+
+// args_list:
+//   | expr { [$1] }
+
+/* args_opt*/
+args_opt:
+  /*nothing*/ { [] }
+  | args { $1 }
+
+args:
+  expr  { [$1] }
+  | expr COMMA args { $1::$3 }
 
 stmt_list:
   | { [] }
@@ -104,8 +122,5 @@ expr:
   | ID { Id $1 }
 
   /* function */
-  | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
+  | ID LPAREN args_opt RPAREN { FuncCall($1, $3) }
   | ID ASSIGN expr { Assign($1, $3) }
-  
-
-

@@ -114,9 +114,9 @@ let check (globals, functions) =
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     StringMap.add "print" {
-      typ = IntType;
+      typ = StrType;
       name = "print";
-      params = [(IntType, "x")];
+      params = [(StrType, "x")];
       (* locals = [];  *)
       body = [] } StringMap.empty
   in
