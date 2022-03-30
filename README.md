@@ -26,6 +26,12 @@ dune exec -- vc test/helloworld.viz -ts   /* scan the tokens and send to stdout 
 
 #### Run the automated test scripts
 ```
+# hello world test file
+./run_hello_world.sh
+
+# run the whole test suite
+./run_viz_tests.sh
+
 # scanner test files
 cd test/scanner
 ./script-token-parsing.sh
