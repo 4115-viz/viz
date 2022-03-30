@@ -40,46 +40,23 @@ open Ast
 program:
   decls EOF { $1 }
 
-typ:
-  | T_NONE { NoneType }
-  | T_STR { StrType }
-  | T_INT { IntType }
-  | T_BOOL { BoolType }
-
 decls:
    /* nothing */ { ([], []) }
  | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
  | fdecl decls { (fst $2, ($1 :: snd $2)) }
 
-vdecl_list:
-  /*nothing*/ { [] }
-  | vdecl SEMI vdecl_list  { $1 :: $3 }
+// vdecl_list:
+//   /*nothing*/ { [] }
+//   | vdecl SEMI vdecl_list  { $1 :: $3 }
 
 vdecl:
-  typ ID { ($1, $2) }
+  ID COLON typ { ($3, $1) }
 
-stmt_list:
-  | { [] }
-  | stmt stmt_list { $1 :: $2 }
-
-stmt:
-  | expr SEMI { Expr $1 }
-  | LBRACE stmt_list RBRACE { Block($2) }
-
-expr:
-  /* literal */
-  | LIT_STR { StrLit $1 }
-  | LIT_INT { IntLit $1 }
-  | LIT_BOOL { BoolLit $1 }
-
-  /* variable */
-  | ID { Id $1 }
-
-  /* function */
-  | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
-
-  /* assignment */
-  | ID COLON typ ASSIGN expr { Assign($1, $5) }
+typ:
+  | T_NONE { NoneType }
+  | T_STR { StrType }
+  | T_INT { IntType }
+  | T_BOOL { BoolType }
 
 fdecl:
   FUNC ID LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE 
@@ -106,3 +83,29 @@ args_list_opt:
 
 args_list:
   | expr { [$1] }
+
+stmt_list:
+  | { [] }
+  | stmt stmt_list { $1 :: $2 }
+
+stmt:
+  | expr SEMI { Expr $1 }
+  | LBRACE stmt_list RBRACE { Block($2) }
+  // /* assignment */
+  // | ID COLON typ ASSIGN expr { Assign($1, $5) }
+
+expr:
+  /* literal */
+  | LIT_STR { StrLit $1 }
+  | LIT_INT { IntLit $1 }
+  | LIT_BOOL { BoolLit $1 }
+
+  /* variable */
+  | ID { Id $1 }
+
+  /* function */
+  | ID LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
+  | ID ASSIGN expr { Assign($1, $3) }
+  
+
+
