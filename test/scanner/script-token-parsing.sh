@@ -2,7 +2,7 @@
 
 echo
 PWD=$(pwd)
-echo "Running Tests in: $PWD"
+echo "Running Scanner Tests in: $PWD"
 #echo "Will run all files using -ts dune exec flag and compare .out files with .ref"
 
 # scanner tests to run
@@ -100,7 +100,7 @@ echo "($num_passed / $num_tests) tests passed"
 
 # remove .out files
 echo
-echo "removing all the intermediate files in this test script"
+echo "removing all the intermediate files in $PWD"
 echo
 
 # comment this out to see the intermediary files
