@@ -1,91 +1,3 @@
-(* Semantic checking for the Viz compiler
-
-open Ast
-open Sast
-
-module StringMap = Map.Make(String)
-
-let builtin_funcs = [
-  {name = "print"; typ = NoneType; params = [(StrType, "x")]; body = []};
-]
-
-(* Return a function from our symbol table *)
-let find_func ctxt s = 
-  try StringMap.find s ctxt
-  with Not_found -> raise (Failure ("unrecognized function " ^ s))
-
-(* Semantic checking of the AST. Returns an SAST if successful,
-  throws an exception if something is wrong.
-
-  Check each global variable, then check each function *)
-let rec check_program (program : stmt list) =
-  let check_stmt (ctxt: func_decl StringMap.t) stmt =
-    (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-      StringMap.empty []
-    in
-
-    (* Return a variable from our local symbol table *)
-    let check_id (symbols: builtin_type StringMap.t ) id =
-      try StringMap.find id symbols
-      with Not_found -> raise (Failure ("undeclared identifier " ^ id))
-    in
-
-    (* Return a semantically-checked expression (typ, expr) *)
-    let rec check_expr (symbols: builtin_type StringMap.t) expr =
-      let check_assign ltyp rtyp err =
-        if ltyp = rtyp then ltyp else raise (Failure err)
-      in
-
-      let check_call (name, args) =
-        let fd = find_func ctxt name in
-        let params_length = List.length fd.params in
-        if List.length args != params_length then
-          raise (Failure ("expecting " ^ string_of_int params_length ^ 
-                          " arguments in " ^ name))
-        else let check_arg (ft, _) arg =
-          let (et, e') = check_expr symbols arg in
-          let err = "illegal argument found " ^ fmt_typ et ^
-          " expected " ^ fmt_typ ft ^ " in " ^ fmt_expr arg 
-        in (check_assign ft et err, e') in
-
-        let sargs = List.map2 check_arg fd.params args
-        in (fd.typ, SFuncCall(name, sargs))
-      in match expr with
-        | IntLit x -> (IntType, SIntLit x)
-        | StrLit x -> (StrType, SStrLit x)
-        | Assign(v, e) as ex ->
-          let lt = check_id symbols v
-          and (rt, e') = check_expr symbols e in
-          let err = "illegal assignment " ^ fmt_typ lt ^ " = " ^
-              fmt_typ rt ^ " in " ^ fmt_expr ex
-          in
-          (check_assign lt rt err, SAssign(v, (rt, e')))
-        | BoolLit x -> (BoolType, SBoolLit x)
-        | Id x -> (check_id symbols x, SId x)
-        | FuncCall (name, args) -> check_call (name, args)
-    in
-    
-    let check_function f = 
-      {
-        styp = f.typ;
-        sname = f.name;
-        sparams = f.params;
-        sbody = check_program f.body;
-      }
-      
-    in match stmt with 
-      | Expr e -> SExpr (check_expr symbols e)
-      | FuncDecl fd -> SFuncDecl (check_function fd)
-  in
-  let ctxt = 
-    let add_func map fd = StringMap.add fd.name fd map in
-    List.fold_left add_func StringMap.empty builtin_funcs
-  in
-  List.map (fun stmt -> check_stmt ctxt stmt) program *)
-
-  (* Semantic checking for the MicroC compiler *)
-
 open Ast
 open Sast
 
@@ -99,13 +11,13 @@ module StringMap = Map.Make(String)
 let check (globals, functions) =
 
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : (builtin_type * string) list) =
+  let check_binds (kind : string) (binds : (builtin_type * string * expr) list) =
     let rec dups = function
         [] -> ()
-      |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
+      |	((_,n1,_) :: (_,n2,_) :: _) when n1 = n2 ->
         raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
       | _ :: t -> dups t
-    in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
+    in dups (List.sort (fun (_,a,_) (_,b,_) -> compare a b) binds)
   in
 
   (* Make sure no globals duplicate *)
@@ -116,7 +28,7 @@ let check (globals, functions) =
     StringMap.add "print" {
       typ = StrType;
       name = "print";
-      params = [(StrType, "x")];
+      params = [(StrType, "x", StrLit(""))];
       (* locals = [];  *)
       body = [] } StringMap.empty
   in
@@ -157,8 +69,10 @@ let check (globals, functions) =
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+    let symbols = 
+      List.fold_left (fun m (ty, name, _) -> StringMap.add name ty m)
         StringMap.empty (globals @ func.params) (* @ func.locals *)
+
     in
 
     (* Return a variable from our local symbol table *)
@@ -173,6 +87,13 @@ let check (globals, functions) =
       | StrLit s -> (StrType, SStrLit s)
       | BoolLit l -> (BoolType, SBoolLit l)
       | Id var -> (type_of_identifier var, SId var)
+      | AssignAndInit(_, var, e) as ex ->
+        let lt = type_of_identifier var
+        and (rt, e') = check_expr e in
+        let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
+                  string_of_typ rt ^ " in " ^ string_of_expr ex
+        in
+        (check_assign lt rt err, SAssign(var, (rt, e')))
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
         and (rt, e') = check_expr e in
@@ -206,7 +127,7 @@ let check (globals, functions) =
         if List.length args != param_length then
           raise (Failure ("expecting " ^ string_of_int param_length ^
                           " arguments in " ^ string_of_expr call))
-        else let check_call (ft, _) e =
+        else let check_call (ft, _, _) e =
                let (et, e') = check_expr e in
                let err = "illegal argument found " ^ string_of_typ et ^
                          " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e

@@ -3,6 +3,7 @@ open Ast
 type sexpr = builtin_type * sx
 and sx =
   | SAssign of string * sexpr
+  | SAssignAndInit of builtin_type * string * sexpr
   | SStrLit of string
   | SIntLit of int
   | SBoolLit of bool
@@ -51,6 +52,7 @@ and fmt_sexpr (t, se) =
     | SBoolLit(true) -> "BoolLit(true)"
     | SBoolLit(false) -> "BoolLit(false)"
     | SAssign(v, e) -> v ^ " = " ^ fmt_sexpr e
+    | SAssignAndInit(t, v, e) -> v ^ ": " ^ string_of_typ t ^ fmt_sexpr e
     | SId(x) -> "Id(" ^ x ^ ")"
     | SFuncCall(name, args) -> fmt_sfcall name args 
   )
@@ -75,10 +77,11 @@ and fmt_sstmt_list l = String.concat "\n" (List.map fmt_sstmt l)
 
 (* let string_of_sprogram sp = fmt_sstmt_list sp *)
 
-let string_of_svdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
+let string_of_svdecl (t, id, _) = string_of_typ t ^ " " ^ id ^ ";\n"
 
 let string_of_sfdecl sfdecl =
-  "func " ^ sfdecl.sname ^ "(" ^ String.concat ", " (List.map snd sfdecl.sparams) ^
+  (* "func " ^ sfdecl.sname ^ "(" ^ String.concat ", " (List.map snd sfdecl.sparams) ^ *)
+  "func " ^ sfdecl.sname ^ "(" ^ String.concat ", " (List.map string_of_svdecl sfdecl.sparams) ^
   "): " ^ string_of_typ sfdecl.styp ^ " " ^ "\n{\n" ^
   (* String.concat "" (List.map string_of_vdecl sfdecl.slocals) ^ *)
   String.concat "" (List.map fmt_sstmt sfdecl.sbody) ^

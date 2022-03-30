@@ -1,7 +1,9 @@
+x: string = "Hello World";
+
 func func1(c: string): none {
     print(c);
 }
 
 func main(): none {
-    func1("Hello World");
+    func1(x);
 }

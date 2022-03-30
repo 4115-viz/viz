@@ -49,8 +49,23 @@ decls:
 //   /*nothing*/ { [] }
 //   | vdecl SEMI vdecl_list  { $1 :: $3 }
 
+// vdecl:
+//   // ID COLON typ { ($3, $1) }
+//   | ID COLON T_NONE { AssignAndInit(NoneType, $1, "None") }
+//   | ID COLON T_INT { AssignAndInit(IntType, $1, 0) }
+//   | ID COLON T_STR { AssignAndInit(StrType, $1, "") }
+//   | ID COLON T_BOOL { AssignAndInit(BoolType, $1, true) }
+//   // // /* assignment */
+//   | ID COLON typ ASSIGN expr { ($3, $1, $5) }
+
 vdecl:
-  ID COLON typ { ($3, $1) }
+  // ID COLON typ { ($3, $1) }
+  // | ID COLON T_NONE { (NoneType, $1, "None") }
+  | ID COLON T_INT { (IntType, $1, IntLit(0)) }
+  | ID COLON T_STR { (StrType, $1, StrLit "") }
+  | ID COLON T_BOOL { (BoolType, $1, BoolLit(true)) }
+  // // /* assignment */
+  | ID COLON typ ASSIGN expr { ($3, $1, $5) }
 
 typ:
   | T_NONE { NoneType }
@@ -109,8 +124,8 @@ stmt_list:
 stmt:
   | expr SEMI { Expr $1 }
   | LBRACE stmt_list RBRACE { Block($2) }
-  // /* assignment */
-  // | ID COLON typ ASSIGN expr { Assign($1, $5) }
+  // // /* assignment */
+  // | ID COLON typ ASSIGN expr { AssignAndInit($3, $1, $5) }
 
 expr:
   /* literal */

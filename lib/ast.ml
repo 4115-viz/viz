@@ -11,8 +11,9 @@ type expr =
   | BoolLit of bool
   | Id of string
   | FuncCall of string * expr list
+  | AssignAndInit of builtin_type * string * expr
 
-type bind = builtin_type * string
+type bind = builtin_type * string * expr
 
 type stmt =
   | Block of stmt list
@@ -39,6 +40,12 @@ let fmt_typ = function
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
+let string_of_typ = function
+    IntType -> "int"
+  | BoolType -> "bool"
+  | NoneType -> "none"
+  | StrType -> "string"
+
 let rec fmt_fcall name args = 
   "FuncCall(" ^
      "name: " ^ fmt_string name ^
@@ -51,6 +58,7 @@ and fmt_expr = function
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
   | Assign(v, e) -> v ^ " = " ^ fmt_expr e
+  | AssignAndInit(t, v, e) -> "AssignAndInit(" ^ v ^ ": " ^ string_of_typ t ^ fmt_expr e ^ ")"
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) -> fmt_fcall name args 
 
@@ -74,14 +82,9 @@ and fmt_stmt = function
 
 and fmt_stmt_list l = String.concat "\n" (List.map fmt_stmt l)
 
-let string_of_typ = function
-    IntType -> "int"
-  | BoolType -> "bool"
-  | NoneType -> "none"
-  | StrType -> "string"
-
 let rec string_of_expr = function
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | AssignAndInit(t, v, e) -> v ^ ": " ^ string_of_typ t ^ fmt_expr e
   | IntLit(l) -> string_of_int l
   | StrLit(s) -> s
   | BoolLit(true) -> "true"
@@ -90,12 +93,11 @@ let rec string_of_expr = function
   | FuncCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 
-(* let string_of_program p = fmt_stmt_list p *)
-
-let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
+let string_of_vdecl (t, id, e) = id ^ ": " ^ string_of_typ t ^ " = " ^ fmt_expr e ^ ";\n"
 
 let string_of_fdecl fdecl =
-  "func " ^ fdecl.name ^ "(" ^ String.concat ", " (List.map snd fdecl.params) ^
+  (* "func " ^ fdecl.name ^ "(" ^ String.concat ", " (List.map snd fdecl.params) ^ *)
+  "func " ^ fdecl.name ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.params) ^
   "): " ^ string_of_typ fdecl.typ ^ " " ^ "\n{\n" ^
   (* String.concat "" (List.map string_of_vdecl fdecl.locals) ^ *)
   String.concat "" (List.map fmt_stmt fdecl.body) ^
