@@ -1,0 +1,7 @@
+x:int = 6;
+y:int = 5;
+func main(): none {
+    x+y;
+    6+5;
+}
+z:int = 5;

@@ -9,6 +9,7 @@ and sx =
   | SBoolLit of bool
   | SId of string
   | SFuncCall of string * sexpr list
+  | SBinop of sexpr * op * sexpr
   
 type sstmt =
   | SBlock of sstmt list
@@ -55,6 +56,7 @@ and fmt_sexpr (t, se) =
     | SAssignAndInit(t, v, e) -> v ^ ": " ^ string_of_typ t ^ fmt_sexpr e
     | SId(x) -> "Id(" ^ x ^ ")"
     | SFuncCall(name, args) -> fmt_sfcall name args 
+    | SBinop (e1 , op, e2) -> fmt_sexpr e1 ^ " " ^ string_of_op op ^ " " ^ fmt_sexpr e2
   )
 
 (* let rec fmt_sfdecl sfd = 

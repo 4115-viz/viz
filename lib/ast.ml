@@ -1,3 +1,5 @@
+type op = Add | Sub
+
 type builtin_type = 
   | NoneType
   | StrType
@@ -12,6 +14,7 @@ type expr =
   | Id of string
   | FuncCall of string * expr list
   | AssignAndInit of builtin_type * string * expr
+  | Binop of expr * op * expr
 
 type bind = builtin_type * string * expr
 
@@ -61,6 +64,7 @@ and fmt_expr = function
   | AssignAndInit(t, v, e) -> "AssignAndInit(" ^ v ^ ": " ^ string_of_typ t ^ fmt_expr e ^ ")"
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) -> fmt_fcall name args 
+  | Binop (_, _, _) -> "in fmt_expr"
 
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
@@ -92,6 +96,12 @@ let rec string_of_expr = function
   | Id(s) -> s
   | FuncCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | Binop (_, _, _) -> "this is in string_of_expr"
+
+  (* Pretty-printing functions *)
+let string_of_op = function
+    Add -> "+"
+  | Sub -> "-"
 
 let string_of_vdecl (t, id, e) = id ^ ": " ^ string_of_typ t ^ " = " ^ fmt_expr e ^ ";\n"
 

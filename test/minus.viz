@@ -1,0 +1,5 @@
+x:int = 6;
+
+func main(): none {
+    6-5;
+}

@@ -1,7 +1,9 @@
 x: string = "Hello World";
+y:int = 6;
 
 func func1(c: string): none {
     print(c);
+    5+6;
 }
 
 func main(): none {

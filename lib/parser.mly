@@ -139,3 +139,6 @@ expr:
   /* function */
   | ID LPAREN args_opt RPAREN { FuncCall($1, $3) }
   | ID ASSIGN expr { Assign($1, $3) }
+
+  | expr PLUS   expr { Binop($1, Add,   $3)   }
+  | expr MINUS  expr { Binop($1, Sub,   $3)   }
