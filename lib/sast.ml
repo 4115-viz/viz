@@ -9,6 +9,7 @@ and sx =
   | SBoolLit of bool
   | SId of string
   | SFuncCall of string * sexpr list
+  | SBinop of sexpr * op * sexpr
   
 type sstmt =
   | SExpr of sexpr
@@ -33,6 +34,12 @@ let fmt_typ = function
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
+let fmt_op = function
+| Add -> "+"
+| Sub -> "-"
+| Mult -> "*"
+| Div -> "/"
+
 let rec fmt_sfcall name args = 
   "FuncCall(" ^
      "name: " ^ fmt_string name ^
@@ -51,7 +58,9 @@ and fmt_sexpr (t, se) =
     | SBoolLit(false) -> "BoolLit(false)"
     | SAssign(v, e) -> v ^ " = " ^ fmt_sexpr e
     | SId(x) -> "Id(" ^ x ^ ")"
-    | SFuncCall(name, args) -> fmt_sfcall name args 
+    | SFuncCall(name, args) -> fmt_sfcall name args
+    | SBinop(l, o, r) -> 
+      fmt_sexpr l ^ " " ^ fmt_op o ^ " " ^ fmt_sexpr r 
   )
 
 let rec fmt_sfdecl sfd = 

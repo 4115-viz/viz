@@ -51,6 +51,7 @@ let rec check_program (program : stmt list) =
 
         let sargs = List.map2 check_arg fd.params args
         in (fd.typ, SFuncCall(name, sargs))
+      
       in match expr with
         | IntLit x -> (IntType, SIntLit x)
         | FloatLit x -> (FloatType, SFloatLit x)
@@ -65,6 +66,27 @@ let rec check_program (program : stmt list) =
         | BoolLit x -> (BoolType, SBoolLit x)
         | Id x -> (check_id symbols x, SId x)
         | FuncCall (name, args) -> check_call (name, args)
+        | Binop(l, o, r) as ex-> 
+          let (ltype, l') = check_expr symbols l in
+          let (rtype, r') = check_expr symbols r in
+          (* we can only do binop on operands of same type *)
+          let compatible_types = (ltype = rtype) in
+          (* throw error, or return final_type for supported binops *)
+          let final_type = 
+            if compatible_types = false then
+              raise (Failure ("incompatible types for binary operator " ^
+                       fmt_typ ltype ^ " " ^ fmt_op o ^ " " ^
+                       fmt_typ rtype ^ " in " ^ fmt_expr ex))
+            
+            else           
+              (fun my_op -> match my_op with
+              | (Add | Sub | Mult | Div) when ltype = IntType && rtype = IntType -> IntType
+              | (Add | Sub | Mult | Div) when ltype = FloatType && rtype = FloatType -> FloatType
+              | _ -> raise (Failure ("No operator (" ^ fmt_op o ^ ") " ^ "to handle type (" ^
+                            fmt_typ ltype ^ ", " ^ fmt_typ rtype))
+              ) o
+          in (final_type, SBinop((ltype, l'), o, (rtype, r')))
+
     in
     
     let check_function f = 

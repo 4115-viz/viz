@@ -1,10 +1,13 @@
+type op = Add | Sub | Mult | Div
+
 type builtin_type = 
   | NoneType
   | StrType
   | IntType
   | BoolType
   | FloatType
-type expr =
+
+  type expr =
   | Assign of string * expr
   | IntLit of int
   | FloatLit of float
@@ -12,6 +15,8 @@ type expr =
   | BoolLit of bool
   | Id of string
   | FuncCall of string * expr list
+  | Binop of expr * op * expr
+
 
 type bind = builtin_type * string
 
@@ -37,6 +42,12 @@ let fmt_typ = function
   | BoolType -> "Type(Bool)"
   | FloatType -> "Type(Float)"
 
+let fmt_op = function
+| Add -> "+"
+| Sub -> "-"
+| Mult -> "*"
+| Div -> "/"
+
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
 let rec fmt_fcall name args = 
@@ -53,7 +64,9 @@ and fmt_expr = function
   | BoolLit(false) -> "BoolLit(false)"
   | Assign(v, e) -> v ^ " = " ^ fmt_expr e
   | Id(x) -> "Id(" ^ x ^ ")"
-  | FuncCall(name, args) -> fmt_fcall name args 
+  | FuncCall(name, args) -> fmt_fcall name args
+  | Binop(l, o, r) ->
+    fmt_expr l ^ " " ^ fmt_op o ^ " " ^ fmt_expr r 
 
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
