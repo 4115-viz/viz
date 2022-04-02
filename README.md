@@ -7,7 +7,10 @@ Viz is a general-purpose programming language that allows the visualization of d
 ```
 git clone git@github.com:4115-viz/viz.git
 cd viz
+
 ```
+We use dune to build and run our ocaml code.  Dune 3.0.3 required to run our code.  If you do not have it follow the steps here: https://ocaml.org/learn/tutorials/up_and_running.html
+
 ### Building
 #### Build the Viz compiler files
 
