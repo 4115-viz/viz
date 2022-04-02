@@ -108,6 +108,7 @@ rule token = parse
 | "int" { T_INT }
 | "string" { T_STR }
 | "bool" { T_BOOL }
+| "float" { T_FLOAT }
 
 (* -------- arithmetic operators -------- *)
 | '+' { PLUS }
