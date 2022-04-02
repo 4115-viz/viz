@@ -88,6 +88,7 @@ do
         ((num_passed++))
     else
         echo "Test $counter: $FILENAME failed"
+        echo $run_test
     fi
 
     ((counter++))
