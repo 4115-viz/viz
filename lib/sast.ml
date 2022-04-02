@@ -9,11 +9,13 @@ and sx =
   | SBoolLit of bool
   | SId of string
   | SFuncCall of string * sexpr list
-  | SBinop of sexpr * op * sexpr
-  
-type sstmt =
+  | SBinop of sexpr * bop * sexpr
+  | SUnop of uop * sexpr
+
+  type sstmt =
   | SExpr of sexpr
   | SFuncDecl of sfunc_decl
+
 and sfunc_decl = {
   styp: builtin_type;
   sname: string;
@@ -45,6 +47,11 @@ let fmt_op = function
 | Great -> ">"
 | Leq -> "<="
 | Geq -> ">="
+| And -> "and"
+| Or  -> "or"
+
+let fmt_uop = function
+| Not -> "not"
 
 let rec fmt_sfcall name args = 
   "FuncCall(" ^
@@ -65,8 +72,10 @@ and fmt_sexpr (t, se) =
     | SAssign(v, e) -> v ^ " = " ^ fmt_sexpr e
     | SId(x) -> "Id(" ^ x ^ ")"
     | SFuncCall(name, args) -> fmt_sfcall name args
-    | SBinop(l, o, r) -> 
-      fmt_sexpr l ^ " " ^ fmt_op o ^ " " ^ fmt_sexpr r 
+    | SBinop(l, bo, r) -> 
+      fmt_sexpr l ^ " " ^ fmt_op bo ^ " " ^ fmt_sexpr r 
+    | SUnop(uo, r) ->
+        fmt_uop uo ^ " " ^ fmt_sexpr r
   )
   ^ ")"
 

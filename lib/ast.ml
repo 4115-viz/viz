@@ -1,5 +1,7 @@
-type op = Add | Sub | Mult | Div | Eq | Neq | Less 
-        | Great | Leq | Geq
+type bop = Add | Sub | Mult | Div | Eq | Neq | Less 
+        | Great | Leq | Geq | And | Or
+
+type uop = Not
 
 type builtin_type = 
   | NoneType
@@ -16,8 +18,8 @@ type builtin_type =
   | BoolLit of bool
   | Id of string
   | FuncCall of string * expr list
-  | Binop of expr * op * expr
-
+  | Binop of expr * bop * expr
+  | Unop of uop * expr
 
 type bind = builtin_type * string
 
@@ -54,6 +56,11 @@ let fmt_op = function
 | Great -> ">"
 | Leq -> "<="
 | Geq -> ">="
+| And -> "and"
+| Or  -> "or"
+
+let fmt_uop = function
+| Not -> "not"
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
@@ -74,8 +81,10 @@ and fmt_expr e =
   | Assign(v, e) -> v ^ " = " ^ fmt_expr e
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) -> fmt_fcall name args
-  | Binop(l, o, r) ->
-    fmt_expr l ^ " " ^ fmt_op o ^ " " ^ fmt_expr r 
+  | Binop(l, bo, r) ->
+    fmt_expr l ^ " " ^ fmt_op bo ^ " " ^ fmt_expr r
+  | Unop(uo, r) ->
+    fmt_uop uo ^ " " ^ fmt_expr r
   )
   ^ ")"
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)

@@ -40,6 +40,7 @@ open Ast
 %left LT GT LTEQ GTEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
+%right NOT
 /* array subscripting, function call, member access (if needed) */
 %left LBRACKET RBRACKET LPAREN RPAREN DOT
 
@@ -73,7 +74,7 @@ stmt:
       })
     }
 
-/* somewhere here in expr, we need to handle parenthesis */
+/* somewhere here in expr, we need to handle parentheses */
 expr:
   /* literal */
   | LIT_STR { StrLit($1) }
@@ -83,12 +84,6 @@ expr:
 
   /* variable */
   | ID_VAR { Id($1) }
-
-  /* function */
-  | ID_FUNC LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
-
-  /* assignment */
-  | ID_VAR COLON typ ASSIGN expr { Assign($1, $5) }
 
   /* arithmetic */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
@@ -105,9 +100,18 @@ expr:
   | expr GTEQ    expr { Binop($1, Geq,   $3)   }
   
   /* logical ops */
-  /*| expr AND    expr { Binop($1, And,   $3)   }
+  | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
-  | NOT expr { Unop(Not, $1) } */
+  | NOT expr { Unop(Not, $2) }
+
+  /* Note: I can see us doing other unary ops like ++ -- and more
+     would just need to add it here */
+
+  /* function */
+  | ID_FUNC LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
+
+  /* assignment */
+  | ID_VAR COLON typ ASSIGN expr { Assign($1, $5) }
 
 params_list_opt:
   { [] }

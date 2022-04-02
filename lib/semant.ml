@@ -66,7 +66,21 @@ let rec check_program (program : stmt list) =
         | BoolLit x -> (BoolType, SBoolLit x)
         | Id x -> (check_id symbols x, SId x)
         | FuncCall (name, args) -> check_call (name, args)
-        | Binop(l, o, r) as ex-> 
+        | Unop(uo, r) as ex ->
+          let (rtype, r') = check_expr symbols r in
+          let final_type = 
+            (* if we add other unary operands, we may need to be more clever 
+            with type support. Right now, we are supporting Not, so this is ok.  
+            *)
+            if rtype != BoolType then
+              raise (Failure ("incompatible types for unary operator " ^
+              fmt_uop uo ^ " " ^ fmt_typ rtype ^ " in " ^ fmt_expr ex))
+            else
+              (fun my_uop -> match my_uop with 
+              | Not -> BoolType
+              ) uo
+            in (final_type, SUnop(uo, (rtype, r')))
+        | Binop(l, bo, r) as ex-> 
           let (ltype, l') = check_expr symbols l in
           let (rtype, r') = check_expr symbols r in
           (* we can only do binop on operands of same type *)
@@ -75,7 +89,7 @@ let rec check_program (program : stmt list) =
           let final_type = 
             if compatible_types = false then
               raise (Failure ("incompatible types for binary operator " ^
-                       fmt_typ ltype ^ " " ^ fmt_op o ^ " " ^
+                       fmt_typ ltype ^ " " ^ fmt_op bo ^ " " ^
                        fmt_typ rtype ^ " in " ^ fmt_expr ex))
             
             else           
@@ -85,10 +99,11 @@ let rec check_program (program : stmt list) =
               | (Eq | Neq) -> BoolType
               | (Leq | Geq | Less | Great) when (ltype = IntType && rtype = IntType ||
                                                  ltype = FloatType && rtype = FloatType) -> BoolType
-              | _ -> raise (Failure ("No operator (" ^ fmt_op o ^ ") " ^ "to handle type (" ^
+              | (And | Or) when (ltype = BoolType && rtype = BoolType) -> BoolType
+              | _ -> raise (Failure ("No operator (" ^ fmt_op bo ^ ") " ^ "to handle type (" ^
                             fmt_typ ltype ^ ", " ^ fmt_typ rtype))
-              ) o
-          in (final_type, SBinop((ltype, l'), o, (rtype, r')))
+              ) bo
+          in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
 
     in
     
