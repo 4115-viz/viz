@@ -19,7 +19,7 @@ open Ast
 %token T_NONE T_STR T_INT T_BOOL T_FLOAT
 
 /* delimiters */
-%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET
+%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT
 %token EOF
 
 /* split id into two, nothing changes outside of parser file */
@@ -30,12 +30,18 @@ open Ast
 %token <float> LIT_FLOAT
 %token <bool> LIT_BOOL
 
-/* precedence */
-%left SEMI
-%right ASSIGN
+/* precedence following C standard*/
+%left COMMA
+%left SEMI 
+%right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
+%left OR
+%left AND
+%left EQ NEQ
+%left LT GT LTEQ GTEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
-
+/* array subscripting, function call, member access (if needed) */
+%left LBRACKET RBRACKET LPAREN RPAREN DOT
 
 %start program
 %type <Ast.program> program
@@ -67,6 +73,7 @@ stmt:
       })
     }
 
+/* somewhere here in expr, we need to handle parenthesis */
 expr:
   /* literal */
   | LIT_STR { StrLit($1) }
@@ -90,17 +97,17 @@ expr:
   | expr DIVIDE expr { Binop($1, Div,   $3)   }
 
   /* logical binary ops */
-  /*| expr EQ     expr { Binop($1, Equal, $3)   }*/
-  /*| expr NEQ    expr { Binop($1, Neq,   $3)   }*/
-  /*| expr LT     expr { Binop($1, Less,  $3)   }
+  | expr  EQ    expr { Binop($1, Eq, $3)   }
+  | expr  NEQ   expr { Binop($1, Neq,   $3)   }
+  | expr LT     expr { Binop($1, Less,  $3)   }
   | expr GT     expr { Binop($1, Great, $3) }
   | expr LTEQ    expr { Binop($1, Leq,   $3)   }
   | expr GTEQ    expr { Binop($1, Geq,   $3)   }
-  | expr AND    expr { Binop($1, And,   $3)   }
-  | expr OR     expr { Binop($1, Or,    $3)   } */ 
-
-  /* logical unary ops */
-  /*| NOT expr { Unop(Not, $1) } */
+  
+  /* logical ops */
+  /*| expr AND    expr { Binop($1, And,   $3)   }
+  | expr OR     expr { Binop($1, Or,    $3)   }
+  | NOT expr { Unop(Not, $1) } */
 
 params_list_opt:
   { [] }

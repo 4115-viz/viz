@@ -1,4 +1,5 @@
-type op = Add | Sub | Mult | Div
+type op = Add | Sub | Mult | Div | Eq | Neq | Less 
+        | Great | Leq | Geq
 
 type builtin_type = 
   | NoneType
@@ -47,6 +48,12 @@ let fmt_op = function
 | Sub -> "-"
 | Mult -> "*"
 | Div -> "/"
+| Eq -> "=="
+| Neq -> "!="
+| Less -> "<"
+| Great -> ">"
+| Leq -> "<="
+| Geq -> ">="
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 
@@ -56,7 +63,9 @@ let rec fmt_fcall name args =
      ", args: " ^ fmt_expr_list args ^
   ")"
 
-and fmt_expr = function
+and fmt_expr e = 
+  "(" ^ 
+  (match e with 
   | StrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
   | IntLit(x) -> "IntLit(" ^ fmt_string (string_of_int x) ^ ")"
   | FloatLit(x) -> "FloatLit(" ^ fmt_string (string_of_float x) ^ ")"
@@ -67,20 +76,21 @@ and fmt_expr = function
   | FuncCall(name, args) -> fmt_fcall name args
   | Binop(l, o, r) ->
     fmt_expr l ^ " " ^ fmt_op o ^ " " ^ fmt_expr r 
-
+  )
+  ^ ")"
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
 let rec fmt_fdecl fd =
   "Function(" ^ 
       "name: " ^ fmt_string fd.name ^
       ", type: " ^ fmt_typ fd.typ ^
-    ")" ^ " {\n" ^ "  " ^
+    ")" ^ " {\n" ^
       fmt_stmt_list fd.body
     ^
     "\n}\n"
 
 and fmt_stmt = function
-  | Expr e -> fmt_expr e
+  | Expr e -> "  " ^ fmt_expr e
   | FuncDecl fd -> fmt_fdecl fd
 
 and fmt_stmt_list l = String.concat "\n" (List.map fmt_stmt l)

@@ -132,6 +132,13 @@ rule token = parse
 | "or" {OR}
 | "not" {NOT}
 
+(* -------- literals -------- *)
+| "true" { LIT_BOOL(true) }
+| "false" { LIT_BOOL(false) }
+| '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
+| '0'+ | "-" ? non_zero_digits digit*  as lxm {LIT_INT(int_of_string lxm)}
+| '0'* "." '0'+ | "-" ? (non_zero_digits+ "." digit+ | "." digit+)  as lxm {LIT_FLOAT(float_of_string lxm)}
+
 (* -------- delimiters -------- *)
 | "("  { LPAREN }
 | ")"  { RPAREN }
@@ -142,13 +149,7 @@ rule token = parse
 | ":" { COLON }
 | ";" { SEMI }
 | "," { COMMA }
-
-(* -------- literals -------- *)
-| "true" { LIT_BOOL(true) }
-| "false" { LIT_BOOL(false) }
-| '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
-| '0'+ | "-" ? non_zero_digits digit*  as lxm {LIT_INT(int_of_string lxm)}
-| '0'* "." '0'+ | "-" ? (non_zero_digits+ "." digit+ | "." digit+)  as lxm {LIT_FLOAT(float_of_string lxm)}
+| "." { DOT }
 
 (* --------- IDs ------------ *)
 | letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)

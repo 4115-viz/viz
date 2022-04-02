@@ -39,6 +39,12 @@ let fmt_op = function
 | Sub -> "-"
 | Mult -> "*"
 | Div -> "/"
+| Eq -> "=="
+| Neq -> "!="
+| Less -> "<"
+| Great -> ">"
+| Leq -> "<="
+| Geq -> ">="
 
 let rec fmt_sfcall name args = 
   "FuncCall(" ^
@@ -62,18 +68,19 @@ and fmt_sexpr (t, se) =
     | SBinop(l, o, r) -> 
       fmt_sexpr l ^ " " ^ fmt_op o ^ " " ^ fmt_sexpr r 
   )
+  ^ ")"
 
 let rec fmt_sfdecl sfd = 
   "Function(" ^ 
     "name: " ^ fmt_string sfd.sname ^
     ", type: " ^ fmt_typ sfd.styp ^
-  ")" ^ " {\n" ^ "  " ^
+  ")" ^ " {\n" ^
     fmt_sstmt_list sfd.sbody
   ^
   "\n}\n"
 
 and fmt_sstmt = function
-  | SExpr se -> fmt_sexpr se
+  | SExpr se -> "  " ^ fmt_sexpr se
   | SFuncDecl sfd -> fmt_sfdecl sfd
 
 and fmt_sstmt_list l = String.concat "\n" (List.map fmt_sstmt l)
