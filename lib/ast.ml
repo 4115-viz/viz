@@ -1,5 +1,5 @@
 type bop = Add | Sub | Mult | Div | Eq | Neq | Less 
-        | Great | Leq | Geq | And | Or
+        | Great | Leq | Geq | And | Or | Mod
 
 type uop = Not
 
@@ -50,6 +50,7 @@ let fmt_op = function
 | Sub -> "-"
 | Mult -> "*"
 | Div -> "/"
+| Mod -> "%"
 | Eq -> "=="
 | Neq -> "!="
 | Less -> "<"
@@ -58,6 +59,7 @@ let fmt_op = function
 | Geq -> ">="
 | And -> "and"
 | Or  -> "or"
+
 
 let fmt_uop = function
 | Not -> "not"

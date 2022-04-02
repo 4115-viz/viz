@@ -94,8 +94,8 @@ let rec check_program (program : stmt list) =
             
             else           
               (fun my_op -> match my_op with
-              | (Add | Sub | Mult | Div) when ltype = IntType && rtype = IntType -> IntType
-              | (Add | Sub | Mult | Div) when ltype = FloatType && rtype = FloatType -> FloatType
+              | (Add | Sub | Mult | Div | Mod) when ltype = IntType && rtype = IntType -> IntType
+              | (Add | Sub | Mult | Div | Mod) when ltype = FloatType && rtype = FloatType -> FloatType
               | (Eq | Neq) -> BoolType
               | (Leq | Geq | Less | Great) when (ltype = IntType && rtype = IntType ||
                                                  ltype = FloatType && rtype = FloatType) -> BoolType

@@ -3,7 +3,7 @@ open Ast
 %}
 
 /* arithmetic */
-%token PLUS MINUS TIMES DIVIDE
+%token PLUS MINUS TIMES DIVIDE MOD
 
 /* assignment */
 %token ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
@@ -39,7 +39,7 @@ open Ast
 %left EQ NEQ
 %left LT GT LTEQ GTEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE MOD
 %right NOT
 /* array subscripting, function call, member access (if needed) */
 %left LBRACKET RBRACKET LPAREN RPAREN DOT
@@ -90,7 +90,7 @@ expr:
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
   | expr TIMES  expr { Binop($1, Mult,  $3)   }
   | expr DIVIDE expr { Binop($1, Div,   $3)   }
-
+  | expr MOD    expr { Binop($1, Div,   $3)   }
   /* logical binary ops */
   | expr  EQ    expr { Binop($1, Eq, $3)   }
   | expr  NEQ   expr { Binop($1, Neq,   $3)   }

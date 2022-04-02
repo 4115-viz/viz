@@ -41,6 +41,7 @@ let fmt_op = function
 | Sub -> "-"
 | Mult -> "*"
 | Div -> "/"
+| Mod -> "%"
 | Eq -> "=="
 | Neq -> "!="
 | Less -> "<"

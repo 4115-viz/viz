@@ -31,6 +31,7 @@ let print_token t =
         | PLUS   -> Printf.printf "PLUS\n"
         | MINUS  -> Printf.printf "MINUS\n"
         | DIVIDE -> Printf.printf "DIVIDE\n"
+        | MOD -> Printf.printf "MOD\n"
         | TIMES  -> Printf.printf "TIMES\n"
         | ASSIGN -> Printf.printf "ASSIGN\n"
         | COMMA  -> Printf.printf "COMMA\n"
@@ -115,6 +116,7 @@ rule token = parse
 | '-' { MINUS }
 | '*' { TIMES }
 | '/' { DIVIDE }
+| '%' { MOD }
 
 (* -------- assignment operators -------- *)
 | '=' { ASSIGN }
