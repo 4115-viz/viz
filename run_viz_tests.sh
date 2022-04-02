@@ -6,4 +6,10 @@ echo "running master shell script from $PWD"
 echo "-------------------------------------"
 
 cd test/scanner
-BASH script-token-parsing.sh
+BASH script-token-scanning.sh
+
+#cd ../parser
+#BASH script-parsing.sh
+
+#cd ../semantic
+#BASH script-semantic.sh
