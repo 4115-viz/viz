@@ -30,7 +30,7 @@ do
     OUTFILE="$BASE.out"
 
     # execute the dune test
-    dune exec -- vc $FILENAME -ts > $OUTFILE 2>> "log.txt" 
+    dune exec -- vc $FILENAME -s > $OUTFILE 2>> "log.txt" 
 
     # get the diff
     run_test=$(diff $OUTFILE $REFFILE)
@@ -64,7 +64,7 @@ do
     touch $OUTFILE
     SUB="Entering directory"
     # execute the dune test
-    dune exec -- vc $FILENAME -ts 2> $TMPFILE
+    dune exec -- vc $FILENAME -s 2> $TMPFILE
     
     # need to pipe the stdout into temp file
     # trying to remove this pesky "Entering directory '/path/to/directory' 
