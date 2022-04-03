@@ -1,0 +1,14 @@
+
+// variable declarations: not yet implemented
+// this file needs to be updated when the grammar works...
+
+// variable declarations
+//@my_int: int;
+//@my_float: float;
+//@my_bool: bool;
+//@my_null_var: none;
+//@my_string: string;
+
+// how we would declare a list of arguments
+//@arg1: int, @arg2: string, @arg3: float
+@pass;

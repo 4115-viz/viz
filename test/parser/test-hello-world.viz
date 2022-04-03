@@ -1,0 +1,4 @@
+// write a complicated function call and see if it is parsed correctly
+func main(): none {
+    print("Hello World");
+}

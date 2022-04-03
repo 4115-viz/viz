@@ -60,7 +60,6 @@ let fmt_op = function
 | And -> "and"
 | Or  -> "or"
 
-
 let fmt_uop = function
 | Not -> "not"
 

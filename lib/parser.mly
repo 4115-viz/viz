@@ -91,6 +91,7 @@ expr:
   | expr TIMES  expr { Binop($1, Mult,  $3)   }
   | expr DIVIDE expr { Binop($1, Div,   $3)   }
   | expr MOD    expr { Binop($1, Div,   $3)   }
+  
   /* logical binary ops */
   | expr  EQ    expr { Binop($1, Eq, $3)   }
   | expr  NEQ   expr { Binop($1, Neq,   $3)   }

@@ -1,0 +1,25 @@
+// test binary logic
+
+// floats
+5.0 == 5.0;
+5.0 != 5.0;
+5.0 <= 5.0;
+6.5 >= 5.0;
+7.0 > 6.0;
+7.0 < 6.0;
+
+// ints
+5 == 5;
+5 != 5;
+5 <= 5;
+6 >= 5;
+7 > 6;
+7 < 6;
+
+// string equality
+"Hello" == "Hello";
+"Hello" != "World";
+
+// and, or logic
+true and false;
+true and false or true;
