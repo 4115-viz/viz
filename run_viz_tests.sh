@@ -8,8 +8,8 @@ echo "-------------------------------------"
 cd test/scanner
 BASH script-token-scanning.sh
 
-#cd ../parser
-#BASH script-parsing.sh
+cd ../parser
+BASH script-parsing.sh
 
 #cd ../semantic
 #BASH script-semantic.sh
