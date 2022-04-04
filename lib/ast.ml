@@ -109,7 +109,7 @@ let rec fmt_fdecl fd =
     "\n}\n"
 
 and fmt_stmt = function
-  | Expr e -> "  " ^ fmt_expr e
+  | Expr e -> fmt_expr e
   | VarDecl (b, e) -> fmt_vdecl (b, e)
   | FuncDecl fd -> fmt_fdecl fd
 
