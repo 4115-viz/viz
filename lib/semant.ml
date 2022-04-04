@@ -117,6 +117,9 @@ let rec check_program (program : stmt list) =
       
     in match stmt with 
       | Expr e -> SExpr (check_expr symbols e)
+      | VarDecl (b, e) -> (match e with
+          | None -> SVarDecl(b, None)
+          | Some(e) -> SVarDecl(b, Some(check_expr symbols e)))
       | FuncDecl fd -> SFuncDecl (check_function fd)
   in
   let ctxt = 

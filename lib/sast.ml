@@ -14,6 +14,7 @@ and sx =
 
   type sstmt =
   | SExpr of sexpr
+  | SVarDecl of bind * sexpr option
   | SFuncDecl of sfunc_decl
 
 and sfunc_decl = {
@@ -91,6 +92,7 @@ let rec fmt_sfdecl sfd =
 
 and fmt_sstmt = function
   | SExpr se -> "  " ^ fmt_sexpr se
+  | SVarDecl (_, _) -> "SVarDecl TODO"
   | SFuncDecl sfd -> fmt_sfdecl sfd
 
 and fmt_sstmt_list l = String.concat "\n" (List.map fmt_sstmt l)

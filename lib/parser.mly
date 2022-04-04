@@ -65,6 +65,7 @@ stmt_list:
 
 stmt:
   | expr SEMI { Expr $1 }
+  | ID_VAR COLON typ var_init_opt SEMI { VarDecl(($3, $1), $4) }
   | FUNC ID_FUNC LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE {
       FuncDecl({ 
         typ = $7;
@@ -112,7 +113,7 @@ expr:
   | ID_FUNC LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
 
   /* assignment */
-  | ID_VAR COLON typ ASSIGN expr { Assign($1, $5) }
+  | ID_VAR ASSIGN expr { Assign($1, $3) }
 
 params_list_opt:
   { [] }
@@ -128,3 +129,7 @@ args_list_opt:
 
 args_list:
   | expr { [$1] }
+
+var_init_opt:
+  | { None }
+  | ASSIGN expr { Some($2) }

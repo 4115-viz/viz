@@ -23,8 +23,12 @@ type builtin_type =
 
 type bind = builtin_type * string
 
+(* ----- Entry ----- *)
+type program = stmt list
+
 and stmt =
   | Expr of expr
+  | VarDecl of bind * expr option
   | FuncDecl of func_decl
 
 and func_decl = {
@@ -33,9 +37,6 @@ and func_decl = {
   params: bind list;
   body: stmt list;
 }
-
-(* ----- Entry ----- *)
-type program = stmt list
 
 (* ----- Print Function ----- *)
 let fmt_typ = function
@@ -90,19 +91,28 @@ and fmt_expr e =
   ^ ")"
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
+let fmt_vdecl ((t, n), e) =
+  "VarDecl(" ^
+    "name: " ^ fmt_string n ^
+    ", type: " ^ fmt_typ t ^
+    match e with
+    | None -> ""
+    | Some(e) -> ", value: " ^ fmt_expr e
+
 let rec fmt_fdecl fd =
   "Function(" ^ 
       "name: " ^ fmt_string fd.name ^
       ", type: " ^ fmt_typ fd.typ ^
-    ")" ^ " {\n" ^
-      fmt_stmt_list fd.body
+    ")" ^ " {\n\t" ^
+      fmt_stmt_list ~sp:"\n\t" fd.body
     ^
     "\n}\n"
 
 and fmt_stmt = function
   | Expr e -> "  " ^ fmt_expr e
+  | VarDecl (b, e) -> fmt_vdecl (b, e)
   | FuncDecl fd -> fmt_fdecl fd
 
-and fmt_stmt_list l = String.concat "\n" (List.map fmt_stmt l)
+and fmt_stmt_list ?(sp = "\n") l = String.concat sp (List.map fmt_stmt l)
 
 let string_of_program p = fmt_stmt_list p
