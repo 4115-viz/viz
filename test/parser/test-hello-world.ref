@@ -1,4 +1,4 @@
 Function(name: "main", type: Type(None)) {
-  (FuncCall(name: "print", args: (StrLit("Hello World"))))
+	  (FuncCall(name: "print", args: (StrLit("Hello World"))))
 }
 
