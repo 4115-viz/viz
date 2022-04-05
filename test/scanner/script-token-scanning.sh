@@ -7,8 +7,8 @@ echo "Running Scanner Tests in: $PWD"
 
 # scanner tests to run
 # -ts is a dune flag to print the tokens, we will pipe them to an out file
-# dune exec -- vc {test-filename} -ts >  {filename.out}
-# dune exec -- vc {fail-filename} -ts 2> {filename.out}
+# dune exec -- vizc {test-filename} -ts >  {filename.out}
+# dune exec -- vizc {fail-filename} -ts 2> {filename.out}
 
 #scanner_test_dir=/viz/test/scanner
 test_files='*.viz'
@@ -30,7 +30,7 @@ do
     OUTFILE="$BASE.out"
 
     # execute the dune test
-    dune exec -- vc $FILENAME -ts > $OUTFILE 2>> "log.txt" 
+    dune exec -- vizc $FILENAME -ts > $OUTFILE 2>> "log.txt" 
 
     # get the diff
     run_test=$(diff $OUTFILE $REFFILE)
@@ -64,7 +64,7 @@ do
     touch $OUTFILE
     SUB="Entering directory"
     # execute the dune test
-    dune exec -- vc $FILENAME -ts 2> $TMPFILE
+    dune exec -- vizc $FILENAME -ts 2> $TMPFILE
     
     # need to pipe the stdout into temp file
     # trying to remove this pesky "Entering directory '/path/to/directory' 

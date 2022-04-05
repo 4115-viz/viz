@@ -1,6 +1,6 @@
 Viz references
 
 1) lines 15-20 lexm.sh CTeX final project Fall 2021
-    Used for scanner testing code in vc.ml
+    Used for scanner testing code in vizc.ml
 2) microC, and all other lecture code
 ...

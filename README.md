@@ -22,9 +22,9 @@ dune build
 #### Run the scanner test
 ```
 # from /viz directory
-dune exec -- vc test/helloworld.viz -a    /* abstract syntax tree */
-dune exec -- vc test/helloworld.viz -s    /* semantically checked abstract syntax tree */
-dune exec -- vc test/helloworld.viz -ts   /* scan the tokens and send to stdout */
+dune exec -- vizc test/helloworld.viz -a    /* abstract syntax tree */
+dune exec -- vizc test/helloworld.viz -s    /* semantically checked abstract syntax tree */
+dune exec -- vizc test/helloworld.viz -ts   /* scan the tokens and send to stdout */
 ```
 
 #### Run the automated test scripts

@@ -10,4 +10,4 @@ if [ -z "$1" ]
 fi
 
 f="test/$1"
-eval "dune exec vc $f"
+eval "dune exec vizc $f"
