@@ -68,7 +68,7 @@ stmt:
 
 /* @x: string */
 vdecl:
-  ID_VAR COLON typ {($1, $3)}
+  ID_VAR COLON typ var_init_opt { VarDecl(($3, $1), $4) }
 
 vdecl_list:
   /*nothing*/ {[]}

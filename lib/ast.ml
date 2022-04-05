@@ -32,6 +32,8 @@ and stmt =
   | If of expr * stmt * stmt
   | While of expr * stmt
   | Return of expr
+  | VarDecl of bind * expr option
+  | FuncDecl of func_decl
 
 and func_decl = {
   typ: builtin_type;
@@ -75,6 +77,8 @@ let rec fmt_fcall name args =
      ", args: " ^ fmt_expr_list args ^
   ")"
 
+and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
+
 and fmt_expr e = 
   "(" ^ 
   (match e with 
@@ -92,7 +96,6 @@ and fmt_expr e =
     fmt_uop uo ^ " " ^ fmt_expr r
   )
   ^ ")"
-and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
 let fmt_vdecl ((t, n), e) =
   "VarDecl(" ^

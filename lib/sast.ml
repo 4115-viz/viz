@@ -18,6 +18,8 @@ and sx =
   | SIf of sexpr * sstmt * sstmt
   | SWhile of sexpr * sstmt
   | SReturn of sexpr
+  | SVarDecl of bind * sexpr option
+  | SFuncDecl of sfunc_decl
 
 and sfunc_decl = {
   styp: builtin_type;
