@@ -74,6 +74,13 @@ stmt:
         body = $9;
       })
     }
+  | IF LPAREN expr RPAREN stmt ELSE stmt {If($3, $5, $7)}
+  | LBRACE stmt_list RBRACE { Block($2)} /* want to be able to handle a block of stmts */
+  | RETURN expr SEMI { Return($2) } /* what about when we want to type `return;` */
+/*| WHILE
+  INFINITE_LOOP */
+  /*| ELIF LPAREN expr RPAREN stmt */
+  /*| FOR */
 
 /* somewhere here in expr, we need to handle parentheses */
 expr:
@@ -109,11 +116,14 @@ expr:
   /* Note: I can see us doing other unary ops like ++ -- and more
      would just need to add it here */
 
-  /* function */
+  /* function call */
   | ID_FUNC LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
+
+  /* remove clarifying parens */
+  | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 
 params_list_opt:
   { [] }

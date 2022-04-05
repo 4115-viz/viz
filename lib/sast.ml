@@ -16,6 +16,9 @@ and sx =
   | SExpr of sexpr
   | SVarDecl of bind * sexpr option
   | SFuncDecl of sfunc_decl
+  | SBlock of sstmt list
+  | SIf of sexpr * sstmt * sstmt
+  | SReturn of sexpr
 
 and sfunc_decl = {
   styp: builtin_type;
@@ -94,7 +97,11 @@ and fmt_sstmt = function
   | SExpr se -> "  " ^ fmt_sexpr se
   | SVarDecl (_, _) -> "SVarDecl TODO"
   | SFuncDecl sfd -> fmt_sfdecl sfd
-
+  | SBlock (stmts) ->
+    "{\n" ^ String.concat "" (List.map fmt_sstmt stmts) ^ "}\n"
+  | SReturn (expr) -> "return " ^ fmt_sexpr expr ^ ";\n" 
+  | SIf (e, s1, s2) -> "if (" ^ fmt_sexpr e ^ ")\n" ^
+                        fmt_sstmt s1 ^ "else\n" ^ fmt_sstmt s2
 and fmt_sstmt_list l = String.concat "\n" (List.map fmt_sstmt l)
 
 let string_of_sprogram sp = fmt_sstmt_list sp

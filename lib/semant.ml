@@ -17,9 +17,15 @@ let find_func ctxt s =
 (* Semantic checking of the AST. Returns an SAST if successful,
   throws an exception if something is wrong.
 
+    (* we should enforce this *)
+(* let _ = find_func "main" in (* Ensure "main" is defined *) *)
+
+(* we also need like a check binds funciton to ensure no duplicate definitions
+look at microC *)
+
   Check each global variable, then check each function *)
 let rec check_program (program : stmt list) =
-  let check_stmt (ctxt: func_decl StringMap.t) stmt =
+  let check_stmt (ctxt: func_decl StringMap.t) func = 
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
       StringMap.empty []
@@ -107,6 +113,13 @@ let rec check_program (program : stmt list) =
 
     in
     
+    let check_bool_expr e =
+      let (t, e') = check_expr symbols e in
+      match t with
+      | BoolType -> (t, e')
+      |  _ -> raise (Failure ("expected Boolean expression in " ^ fmt_expr e))
+    in
+    
     let check_function f = 
       {
         styp = f.typ;
@@ -114,13 +127,40 @@ let rec check_program (program : stmt list) =
         sparams = f.params;
         sbody = check_program f.body;
       }
-      
-    in match stmt with 
+    in   
+    let rec check_stmt_list = function
+        [] -> []
+      | Block sl :: sl'  -> check_stmt_list (sl @ sl') (* Flatten blocks *)
+      | s :: sl -> check_stmt s :: check_stmt_list sl
+    (* Return a semantically-checked statement i.e. containing sexprs *)
+    and check_stmt = function
+    (* match stmt with *)
       | Expr e -> SExpr (check_expr symbols e)
       | VarDecl (b, e) -> (match e with
           | None -> SVarDecl(b, None)
           | Some(e) -> SVarDecl(b, Some(check_expr symbols e)))
       | FuncDecl fd -> SFuncDecl (check_function fd)
+      | Block sl -> SBlock (check_stmt_list sl)
+      | If(e, st1, st2) ->
+        SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
+      (*| Return e ->
+        let (t, e') = check_expr symbols e in
+        (* let func_type =  *)
+        if t = func.styp then SReturn (t, e')
+        else raise (
+          Failure ("return gives " ^ fmt_typ t ^ " expected " ^
+          fmt_typ f.styp ^ " in " ^ fmt_expr e)
+          ) *)
+      | _ -> raise (Failure "unimplemented")
+      
+      (*in 
+      {
+        styp = func.typ;
+        sname = func.name;
+        sparams = func.params;
+        sbody = check_stmt_list func.body;
+      }*)
+
   in
   let ctxt = 
     let add_func map fd = StringMap.add fd.name fd map in

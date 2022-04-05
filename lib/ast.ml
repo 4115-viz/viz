@@ -10,7 +10,7 @@ type builtin_type =
   | BoolType
   | FloatType
 
-  type expr =
+type expr =
   | Assign of string * expr
   | IntLit of int
   | FloatLit of float
@@ -30,6 +30,9 @@ and stmt =
   | Expr of expr
   | VarDecl of bind * expr option
   | FuncDecl of func_decl
+  | Block of stmt list
+  | If of expr * stmt * stmt
+  | Return of expr
 
 and func_decl = {
   typ: builtin_type;
@@ -112,6 +115,11 @@ and fmt_stmt = function
   | Expr e -> "  " ^ fmt_expr e
   | VarDecl (b, e) -> fmt_vdecl (b, e)
   | FuncDecl fd -> fmt_fdecl fd
+  | Block (stmts) ->
+    "{\n" ^ String.concat "" (List.map fmt_stmt stmts) ^ "}\n"
+  | Return (expr) -> "return " ^ fmt_expr expr ^ ";\n" 
+  | If (e, s1, s2) -> "if (" ^ fmt_expr e ^ ")\n" ^
+                        fmt_stmt s1 ^ "else\n" ^ fmt_stmt s2
 
 and fmt_stmt_list ?(sp = "\n") l = String.concat sp (List.map fmt_stmt l)
 
