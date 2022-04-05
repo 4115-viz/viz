@@ -1,5 +1,6 @@
 func main(): none {
-  @x: string = "Hello World";
+  @x: string;
+  @x = "Hello World";
   print(@x);
   print("Hello World2");
 }

@@ -24,17 +24,20 @@ type builtin_type =
 type bind = builtin_type * string
 
 (* ----- Entry ----- *)
-type program = stmt list
+type program = bind list * func_decl list
 
 and stmt =
   | Expr of expr
-  | VarDecl of bind * expr option
-  | FuncDecl of func_decl
+  | Block of stmt list
+  | If of expr * stmt * stmt
+  | While of expr * stmt
+  | Return of expr
 
 and func_decl = {
   typ: builtin_type;
   name: string;
   params: bind list;
+  locals: bind list;
   body: stmt list;
 }
 

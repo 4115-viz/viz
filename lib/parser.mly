@@ -50,7 +50,7 @@ open Ast
 %%
 
 program:
-  stmt_list EOF { $1 }
+  decls EOF { $1 }
 
 typ:
   | T_NONE { NoneType }
@@ -65,15 +65,39 @@ stmt_list:
 
 stmt:
   | expr SEMI { Expr $1 }
-  | ID_VAR COLON typ var_init_opt SEMI { VarDecl(($3, $1), $4) }
-  | FUNC ID_FUNC LPAREN params_list_opt RPAREN COLON typ LBRACE stmt_list RBRACE {
-      FuncDecl({ 
-        typ = $7;
-        name = $2;
-        params = $4;
-        body = $9;
-      })
-    }
+
+/* @x: string */
+vdecl:
+  ID_VAR COLON typ {($1, $3)}
+
+vdecl_list:
+  /*nothing*/ {[]}
+  | vdecl SEMI vdecl_list {$1::$3}
+
+decls:
+  /* nothing */ {([], [])}
+  | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
+  | fdecl decls {(fst $2, ($1 :: snd $2))}
+
+/* function declaration */
+fdecl:
+  FUNC ID_FUNC LPAREN params_list_opt RPAREN COLON typ LBRACE vdecl_list stmt_list RBRACE {
+    FuncDecl({ 
+      typ = $7;
+      name = $2;
+      params = $4;
+      body = $10;
+      locals = $9
+    })
+  }
+
+params_list_opt:
+  { [] }
+  | params_list { $1 }
+
+params_list:
+  vdecl {[$1]}
+  | vdecl COMMA params_list { $1::$3 }
 
 /* somewhere here in expr, we need to handle parentheses */
 expr:
@@ -115,20 +139,13 @@ expr:
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
 
-params_list_opt:
-  { [] }
-| params_list { $1 }
-
-params_list:
-  ID_VAR COLON typ { [($3, $1)] }
-| params_list COMMA ID_VAR COLON typ { ($5, $3) :: $1 }
-
 args_list_opt:
   | { [] }
-  | args_list { $1 }
+  | args { $1 }
 
-args_list:
+args:
   | expr { [$1] }
+  | expr COMMA args {$1::$3}
 
 var_init_opt:
   | { None }

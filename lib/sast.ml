@@ -14,17 +14,20 @@ and sx =
 
   type sstmt =
   | SExpr of sexpr
-  | SVarDecl of bind * sexpr option
-  | SFuncDecl of sfunc_decl
+  | SBlock of sstmt list
+  | SIf of sexpr * sstmt * sstmt
+  | SWhile of sexpr * sstmt
+  | SReturn of sexpr
 
 and sfunc_decl = {
   styp: builtin_type;
   sname: string;
   sparams: bind list;
   sbody: sstmt list;
+  locals: bind list;
 }
 
-type sprogram = sstmt list
+type sprogram = bind list * sfunc_decl list
 
 (* ----- Print Function ----- *)
 let fmt_typ = function
