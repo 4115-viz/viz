@@ -1,6 +1,7 @@
 (* Semantic checking for the Viz compiler *)
 
 open Ast
+open Fmt_ast
 open Sast
 
 module StringMap = Map.Make(String)

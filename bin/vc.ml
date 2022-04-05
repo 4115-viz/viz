@@ -28,11 +28,11 @@ let () =
   | Ast ->
     let lexbuf = Lexing.from_channel !channel in
     let ast = Parser.program Scanner.token lexbuf in
-    print_endline (Ast.string_of_program ast)
+    print_endline (Fmt_ast.string_of_program ast)
   | _ -> 
     let lexbuf = Lexing.from_channel !channel in
     let ast = Parser.program Scanner.token lexbuf in
     let sast = Semant.check_program ast in
     match !action with
       Ast -> ()
-    | _ -> print_string (Sast.string_of_sprogram sast)
+    | _ -> print_string (Fmt_sast.string_of_sprogram sast)
