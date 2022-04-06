@@ -1,0 +1,6 @@
+func main(): none {
+  @x: string;
+  @x = "Hello World";
+  print(@x);
+  print("Hello World2");
+}
