@@ -52,6 +52,20 @@ open Ast
 program:
   decls EOF { $1 }
 
+decls:
+  /* nothing */ {([], [])}
+  | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
+  | fdecl decls {(fst $2, ($1 :: snd $2))}
+
+vdecl_list:
+  /*nothing*/ {[]}
+  | vdecl SEMI vdecl_list {$1::$3}
+
+/* @x: string */
+vdecl:
+  /* ID_VAR COLON typ var_init_opt { VarDecl(($3, $1), $4) } */
+  | ID_VAR COLON typ {($3, $1)}
+
 typ:
   | T_NONE { NoneType }
   | T_STR { StrType }
@@ -59,38 +73,32 @@ typ:
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
 
-stmt_list:
-  | { [] }
-  | stmt stmt_list { $1 :: $2 }
-
-stmt:
-  | expr SEMI { Expr $1 }
-
-/* @x: string */
-vdecl:
-  ID_VAR COLON typ var_init_opt { VarDecl(($3, $1), $4) }
-
-vdecl_list:
-  /*nothing*/ {[]}
-  | vdecl SEMI vdecl_list {$1::$3}
-
-decls:
-  /* nothing */ {([], [])}
-  | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
-  | fdecl decls {(fst $2, ($1 :: snd $2))}
-
 /* function declaration */
 fdecl:
-  FUNC ID_FUNC LPAREN params_list_opt RPAREN COLON typ LBRACE vdecl_list stmt_list RBRACE {
-    FuncDecl({ 
+  /* func with args */
+  | FUNC ID_FUNC LPAREN params_list_opt RPAREN COLON typ LBRACE vdecl_list stmt_list RBRACE {
+    { 
       typ = $7;
       name = $2;
       params = $4;
       body = $10;
-      locals = $9
-    })
+      locals = $9;
+    }
   }
-
+  /* This causes an error where the rule is never reduced
+     I was trying to handle a function without args, but I think that params_list_opt
+     already handles that case! Let's discuss 
+  func with no args
+  | FUNC ID_FUNC LPAREN RPAREN COLON typ LBRACE vdecl_list stmt_list RBRACE {
+    { 
+      typ = $6;
+      name = $2;
+      params = [];
+      body = $9;
+      locals = $8;
+    }
+  }
+  */
 params_list_opt:
   { [] }
   | params_list { $1 }
@@ -99,7 +107,20 @@ params_list:
   vdecl {[$1]}
   | vdecl COMMA params_list { $1::$3 }
 
-/* somewhere here in expr, we need to handle parentheses */
+stmt_list:
+  /* nothing */ { [] }
+  | stmt stmt_list { $1 :: $2 }
+
+stmt:
+  | expr SEMI { Expr $1 }
+  | IF LPAREN expr RPAREN stmt ELSE stmt {If($3, $5, $7)}
+  | LBRACE stmt_list RBRACE { Block($2)} /* want to be able to handle a block of stmts */
+  | RETURN expr SEMI { Return($2) } /* what about when we want to type `return;` */
+/*| WHILE
+  INFINITE_LOOP */
+  /*| ELIF LPAREN expr RPAREN stmt */
+  /*| FOR */
+
 expr:
   /* literal */
   | LIT_STR { StrLit($1) }
@@ -133,11 +154,14 @@ expr:
   /* Note: I can see us doing other unary ops like ++ -- and more
      would just need to add it here */
 
-  /* function */
+  /* function call */
   | ID_FUNC LPAREN args_list_opt RPAREN { FuncCall($1, $3) }
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
+
+  /* remove clarifying parens */
+  | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 
 args_list_opt:
   | { [] }
@@ -147,6 +171,6 @@ args:
   | expr { [$1] }
   | expr COMMA args {$1::$3}
 
-var_init_opt:
+/*var_init_opt:
   | { None }
-  | ASSIGN expr { Some($2) }
+  | ASSIGN expr { Some($2) } */
