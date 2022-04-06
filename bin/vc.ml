@@ -29,10 +29,17 @@ let () =
     let lexbuf = Lexing.from_channel !channel in
     let ast = Parser.program Scanner.token lexbuf in
     print_endline (Ast.string_of_program ast)
-  | _ -> 
+  | Sast -> 
     let lexbuf = Lexing.from_channel !channel in
     let ast = Parser.program Scanner.token lexbuf in
-    let sast = Semant.check_program ast in
-    match !action with
-      Ast -> ()
-    | _ -> print_string (Sast.string_of_sprogram sast)
+    let sast = Semant.check ast in
+    print_endline  (Sast.string_of_sprogram sast)
+  | Compile -> 
+    let lexbuf = Lexing.from_channel !channel in
+    let ast = Parser.program Scanner.token lexbuf in
+     (* _ in front of name allows us to suppress the fact we are
+        not using the _sast variable currently.
+     *)
+    let _sast = Semant.check ast in
+    ()
+    
