@@ -22,12 +22,12 @@ let () =
 	| Ast ->
 		let lexbuf = Lexing.from_channel !channel in
 		let ast = Parser.program Scanner.token lexbuf in
-		print_endline (Ast.string_of_program ast)
+		print_endline (Ast_fmt.string_of_program ast)
 	| Sast -> 
 		let lexbuf = Lexing.from_channel !channel in
 		let ast = Parser.program Scanner.token lexbuf in
 		let sast = Semant.check ast in
-		print_endline  (Sast.string_of_sprogram sast)
+		print_endline  (Sast_fmt.string_of_sprogram sast)
 	| Compile -> 
 		let lexbuf = Lexing.from_channel !channel in
 		let ast = Parser.program Scanner.token lexbuf in

@@ -2,6 +2,7 @@
 
 open Ast
 open Sast
+open Ast_fmt
 
 module StringMap = Map.Make(String)
 
