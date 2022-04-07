@@ -7,8 +7,9 @@ exception Viz_scan_error of string
 let print_token t =
     match t with
         (* identifier *)
-        (*| ID_VAR(s)  -> Printf.printf "ID_VAR(%s)\n" s
-        | ID_FUNC(s)  -> Printf.printf "ID_FUNC(%s)\n" s *)
+        | ID_VAR(s)  -> Printf.printf "ID_VAR(%s)\n" s
+        | ID_VAR_DECL(s)  -> Printf.printf "ID_VAR_DECL(%s)\n" s
+        | ID_FUNC(s)  -> Printf.printf "ID_FUNC(%s)\n" s
         | LIT_BOOL(b) -> Printf.printf "LIT_BOOL(%B)\n" b
         | LIT_STR(s) -> Printf.printf "LIT_STR(%s)\n" s
         | LIT_INT(i) -> Printf.printf "LIT_INT(%d)\n" i
@@ -157,10 +158,11 @@ rule token = parse
 | "." { DOT }
 
 (* --------- IDs ------------ *)
-(*| letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)*)
-(*| "@" letter (digit | letter | '_')* as lxm { ID_VAR(String.sub lxm 1 ((String.length lxm) - 1)) } (* variable names need @ *)*)
+| letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)
+| "@@" letter (digit | letter | '_')* as lxm { ID_VAR_DECL(String.sub lxm 2 ((String.length lxm) - 2)) } (* variable decl needs @@ *)
+| "@" letter (digit | letter | '_')* as lxm { ID_VAR(String.sub lxm 1 ((String.length lxm) - 1)) } (* variable access need @ *)
 
-| letter (digit | letter | '_')* as lxm { ID(lxm) }
+
 
 (* -------- Other ----------- *)
 | eof { EOF }

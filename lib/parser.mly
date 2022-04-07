@@ -23,12 +23,10 @@ open Ast
 %token EOF
 
 /* split id into two, nothing changes outside of parser file */
-/*
-%token <string> ID_FUNC 
-%token <string> ID_VAR
-*/
 
-%token <string> ID
+%token <string> ID_FUNC /* function names */
+%token <string> ID_VAR /* variable access or assign */
+%token <string> ID_VAR_DECL /* variable decl */
 %token <string> LIT_STR
 %token <int> LIT_INT
 %token <float> LIT_FLOAT
@@ -67,9 +65,9 @@ vdecl_list:
   | vdecl SEMI vdecl_list  {  $1 :: $3 }
   | vdecl_assign SEMI vdecl_list {$1 :: $3}
 
-/* @x: string */
+/* @@x: string; */
 vdecl:
-  typ ID {($1, $2)}
+  | ID_VAR_DECL COLON typ {($3, $1)}
 
 vdecl_assign:
   vdecl ASSIGN expr { fst ((fst $1, snd $1), Assign(snd $1, $3))}
@@ -84,22 +82,22 @@ typ:
 
 /* function declaration */
 fdecl:
-  /* func with args */
-  | vdecl LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE 
+  /* func with args */ 
+  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON typ LBRACE vdecl_list stmt_list RBRACE
   {
     { 
-      rtyp = fst $1;
-      fname = snd $1;
-      formals = $3;
-      locals = $6;
-      body = $7;
+      rtyp = $7;
+      fname = $2;
+      formals = $4;
+      locals = $9;
+      body = $10;
     }
   }
 
 /* formals_opt */
 formals_opt:
   /*nothing*/ { [] }
-  | formals_list { $1 }
+| formals_list { $1 }
 
 formals_list:
   vdecl { [$1] }
@@ -125,7 +123,7 @@ expr:
   | LIT_FLOAT { FloatLit($1) }
 
   /* variable */
-  | ID { Id($1) }
+  | ID_VAR { Id($1) }
 
   /* arithmetic */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
@@ -148,13 +146,13 @@ expr:
   | NOT   expr        { Unop(Not, $2) }
 
   /* assignment */
-  | ID ASSIGN expr { Assign($1, $3) }
+  | ID_VAR ASSIGN expr { Assign($1, $3) }
 
   /* remove clarifying parens */
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 
   /* function call */
-  | ID LPAREN args_opt RPAREN { FuncCall($1, $3) }
+  | ID_FUNC LPAREN args_opt RPAREN { FuncCall($1, $3) }
 
   
 
