@@ -59,10 +59,10 @@ and string_of_stmt = function
   | Block (stmts) ->
     "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
   | Return (expr) -> "return " ^ string_of_expr expr ^ ";\n" 
-  | If (e, s1, s2) -> "if (" ^ string_of_expr e ^ ")\n" ^
-                        string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
+  | If (e, s1, s2) -> let if_block = "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 
+                      in if s2 = No_op then if_block else if_block ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-
+  | No_op -> "No Op"
 
 
 (*let string_of_vdecl ((t, n), e) = *)

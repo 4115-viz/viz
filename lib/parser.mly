@@ -9,7 +9,7 @@ open Ast
 %token ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
 
 /* relational */
-%token EQ NEQ GTEQ LTEQ GT LT AND OR NOT 
+%token EQ NEQ GTEQ LTEQ GT LT AND OR NOT QUESTION
 
 /* keywords */
 %token FUNC IF ELSE ELIF FOR WHILE INFINITE_LOOP RETURN BREAK
@@ -110,10 +110,38 @@ stmt_list:
 
 stmt:
   | expr SEMI                               { Expr $1      }
-  | LBRACE stmt_list RBRACE                 { Block $2 }
-  | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
+  
+  /*| LBRACE stmt_list RBRACE                 { Block $2 } */
+  /*| IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }*/
+  | if_stmt                                 { $1 }
+  | block                                   { $1 }
   | WHILE LPAREN expr RPAREN stmt           { While ($3, $5)  }
   | RETURN expr SEMI                        { Return $2      }
+  | expr QUESTION stmt COLON stmt           { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
+
+block: 
+  | LBRACE stmt_list RBRACE                 { Block $2 }
+
+if_stmt:
+  | IF LPAREN expr RPAREN block else_stmt    { If($3, $5, $6) } /* if else? */
+  /*| IF LPAREN expr RPAREN stmt              { If($3, $5, No_op)     } */ /* if */
+
+else_stmt:
+  /* no else block */ { No_op }
+  | ELSE stmt { $2 }
+
+/* IDK how to do elif yet, may just wait
+elif_stmt:
+  | ELIF LPAREN expr RPAREN block { ... }
+
+if_stmt:
+    | 'if' named_expression ':' block elif_stmt 
+    | 'if' named_expression ':' block [else_block] 
+elif_stmt:
+    | 'elif' named_expression ':' block elif_stmt 
+    | 'elif' named_expression ':' block [else_block] 
+*/
+
 
 expr:
   /* literal */

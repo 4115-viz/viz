@@ -29,7 +29,8 @@ type stmt =
   | If of expr * stmt * stmt
   | While of expr * stmt
   | Return of expr
-
+  | No_op
+  
 type bind = typ * string
 
 type func_def = {
