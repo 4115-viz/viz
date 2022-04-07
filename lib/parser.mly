@@ -36,12 +36,16 @@ open Ast
 
 
 /* precedence following C standard*/
-%right ASSIGN
+%left COMMA
+%left SEMI 
+%right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
 %left OR
 %left AND
 %left EQ NEQ
-%left LT
+%left LT GT LTEQ GTEQ
 %left PLUS MINUS
+%left TIMES DIVIDE MOD
+%right NOT
 
 
 %start program
@@ -57,8 +61,6 @@ decls:
    /* nothing */ { ([], [])               }
  | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
  | fdecl decls { (fst $2, ($1 :: snd $2)) }
-
- 
 
 vdecl_list:
   /*nothing*/ { [] }
@@ -124,15 +126,22 @@ expr:
   /* arithmetic */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
+  | expr TIMES  expr { Binop($1, Mult,  $3)   }
+  | expr DIVIDE expr { Binop($1, Div,   $3)   }
+  | expr MOD    expr { Binop($1, Div,   $3)   }
 
   /* logical binary ops */
-  | expr  EQ    expr { Binop($1, Eq, $3)   }
-  | expr  NEQ   expr { Binop($1, Neq,   $3)   }
-  | expr  LT    expr { Binop($1, Less,  $3)   }
+  | expr  EQ      expr { Binop($1, Eq, $3)   }
+  | expr  NEQ     expr { Binop($1, Neq,   $3)   }
+  | expr  LT      expr { Binop($1, Less,  $3)   }
+  | expr  GT      expr { Binop($1, Great, $3) }
+  | expr  LTEQ    expr { Binop($1, Leq,   $3)   }
+  | expr  GTEQ    expr { Binop($1, Geq,   $3)   }
 
   /* logical ops */
-  | expr AND    expr { Binop($1, And,   $3)   }
-  | expr OR     expr { Binop($1, Or,    $3)   }
+  | expr  AND    expr { Binop($1, And,   $3)   }
+  | expr  OR     expr { Binop($1, Or,    $3)   }
+  | NOT   expr        { Unop(Not, $2) }
 
   /* assignment */
   | ID ASSIGN expr { Assign($1, $3) }

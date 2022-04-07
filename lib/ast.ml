@@ -127,26 +127,7 @@ let string_of_fdecl fdecl =
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
-(*let rec fmt_fdecl fd =
-    "Function(" ^ 
-        "name: " ^ fmt_string fd.name ^
-        ", type: " ^ string_of_typ fd.typ ^
-      ")" ^ " {\n\t" ^
-        fmt_stmt_list ~sp:"\n\t" fd.body
-      ^
-      "\n}\n"
-  
-and fmt_stmt_list ?(sp = "\n") l = String.concat sp (List.map string_of_stmt l)
-*)
-
 let string_of_program (vars, funcs) =
   "\n\nParsed program: \n\n" ^
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)
-
-(* let string_of_program p = fmt_stmt_list p *)
-(*let string_of_program (vars, funcs) =
-  "\n\nParsed program: \n\n" ^
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map fmt_fdecl funcs)
-*)
