@@ -1,9 +1,9 @@
-type bop = Add | Sub | Mult | Div | Eq | Neq | Less 
-        | Great | Leq | Geq | And | Or | Mod
+type bop = Add | Sub | Eq | Neq | Less | And | Or
+          | Mult | Div | Great | Leq | Geq | Mod
 
 type uop = Not
 
-type builtin_type = 
+type typ = 
   | NoneType
   | StrType
   | IntType
@@ -11,12 +11,14 @@ type builtin_type =
   | FloatType
 
 type expr =
-  | Assign of string * expr
   | StrLit of string
   | IntLit of int
   | FloatLit of float
   | BoolLit of bool
+
   | Id of string
+
+  | Assign of string * expr
   | FuncCall of string * expr list
   | Binop of expr * bop * expr
   | Unop of uop * expr
@@ -25,17 +27,15 @@ type stmt =
   | Expr of expr
   | Block of stmt list
   | If of expr * stmt * stmt
-  (*| While of expr * stmt *)
+  | While of expr * stmt
   | Return of expr
-  (*| VarDecl of bind * expr option *)
-  (*| FuncDecl of func_decl*) (* don't think this applies anymore *)
 
-type bind = builtin_type * string
+type bind = typ * string
 
 type func_def = {
-  typ: builtin_type;
-  name: string;
-  params: bind list;
+  rtyp: typ;
+  fname: string;
+  formals: bind list;
   locals: bind list;
   body: stmt list;
 }
@@ -59,6 +59,13 @@ let string_of_op = function
 | And   -> "and"
 | Or    -> "or"
 
+let string_of_typ = function
+  | NoneType  -> "Type(None)"
+  | StrType   -> "Type(Str)"
+  | IntType   -> "Type(Int)"
+  | BoolType  -> "Type(Bool)"
+  | FloatType -> "Type(Float)"
+
 let string_of_uop = function
 | Not -> "not"
 
@@ -70,6 +77,7 @@ let rec string_of_expr = function
   | FloatLit(x) -> "FloatLit(" ^ string_of_float x ^ ")"
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
+
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) ->
@@ -80,6 +88,15 @@ let rec string_of_expr = function
   | Unop(uo, r) ->
     string_of_uop uo ^ " " ^ string_of_expr r
 
+and fmt_fcall name args = 
+  "FuncCall(" ^
+     "name: " ^ fmt_string name ^
+     ", args: " ^ fmt_expr_list args ^
+  ")"
+  
+and fmt_expr_list l = String.concat "\n" (List.map string_of_expr l)
+
+
 and string_of_stmt = function
 
   | Expr e -> "  " ^ string_of_expr e
@@ -88,23 +105,9 @@ and string_of_stmt = function
   | Return (expr) -> "return " ^ string_of_expr expr ^ ";\n" 
   | If (e, s1, s2) -> "if (" ^ string_of_expr e ^ ")\n" ^
                         string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
-  (*| VarDecl (b, e) -> fmt_vdecl (b, e)*)
-  (* | FuncDecl fd -> fmt_fdecl fd *) (* don't think this applies anymore *)
-  (*| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s*)
+  | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-and fmt_fcall name args = 
-  "FuncCall(" ^
-     "name: " ^ fmt_string name ^
-     ", args: " ^ fmt_expr_list args ^
-  ")"
-and fmt_expr_list l = String.concat "\n" (List.map string_of_expr l)
 
-let string_of_typ = function
-  | NoneType  -> "Type(None)"
-  | StrType   -> "Type(Str)"
-  | IntType   -> "Type(Int)"
-  | BoolType  -> "Type(Bool)"
-  | FloatType -> "Type(Float)"
 
 (* let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n" *)
 (*let string_of_vdecl ((t, n), e) = *)
@@ -117,8 +120,8 @@ let string_of_vdecl (t, n) =
     | Some(e) -> ", value: " ^ string_of_expr e *)
 
 let string_of_fdecl fdecl =
-  string_of_typ fdecl.typ ^ " " ^
-  fdecl.name ^ "(" ^ String.concat ", " (List.map snd fdecl.params) ^
+  string_of_typ fdecl.rtyp ^ " " ^
+  fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^

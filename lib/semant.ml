@@ -13,7 +13,7 @@ module StringMap = Map.Make(String)
 let check (globals, functions) =
 
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : (builtin_type * string) list) =
+  let check_binds (kind : string) (binds : (typ * string) list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -38,9 +38,9 @@ let check (globals, functions) =
   
   let built_in_decls =
     StringMap.add "print" {
-      typ = IntType;
-      name = "print";
-      params = [(IntType, "x")];
+      rtyp = IntType;
+      fname = "print";
+      formals = [(IntType, "x")];
       locals = []; 
       body = [] 
       } StringMap.empty
@@ -48,10 +48,10 @@ let check (globals, functions) =
 
   (* Add function name to symbol table *)
   let add_func map fd =
-    let built_in_err = "function " ^ fd.name ^ " may not be defined"
-    and dup_err = "duplicate function " ^ fd.name
+    let built_in_err = "function " ^ fd.fname ^ " may not be defined"
+    and dup_err = "duplicate function " ^ fd.fname
     and make_err er = raise (Failure er)
-    and n = fd.name (* Name of the function *)
+    and n = fd.fname (* Name of the function *)
     in match fd with (* No duplicate functions or redefinitions of built-ins *)
       _ when StringMap.mem n built_in_decls -> make_err built_in_err
     | _ when StringMap.mem n map -> make_err dup_err
@@ -72,7 +72,7 @@ let check (globals, functions) =
 
   let check_func func =
     (* Make sure no formals or locals are void or duplicates *)
-    check_binds "formal" func.params;
+    check_binds "formal" func.formals;
     check_binds "local" func.locals;
 
     (* Raise an exception if the given rvalue type cannot be assigned to
@@ -83,7 +83,7 @@ let check (globals, functions) =
 
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        StringMap.empty (globals @ func.params @ func.locals )
+        StringMap.empty (globals @ func.formals @ func.locals )
     in
 
     (* Return a variable from our local symbol table *)
@@ -106,6 +106,7 @@ let check (globals, functions) =
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
+
       | Binop(l, bo, r) as ex-> 
         let (ltype, l') = check_expr l in
         let (rtype, r') = check_expr r in
@@ -144,9 +145,9 @@ let check (globals, functions) =
             | Not -> BoolType
             ) uo
           in (final_type, SUnop(uo, (rtype, r')))
-      | FuncCall(name, args) as call ->
-        let fd = find_func name in
-        let param_length = List.length fd.params in
+      | FuncCall(fname, args) as call ->
+        let fd = find_func fname in
+        let param_length = List.length fd.formals in
         if List.length args != param_length then
           raise (Failure ("expecting " ^ string_of_int param_length ^
                           " arguments in " ^ string_of_expr call))
@@ -156,8 +157,8 @@ let check (globals, functions) =
                           " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
                 in (check_assign ft et err, e')
           in
-          let args' = List.map2 check_call fd.params args
-          in (fd.typ, SFuncCall(name, args'))
+          let args' = List.map2 check_call fd.formals args
+          in (fd.rtyp, SFuncCall(fname, args'))
     in
 
     let check_bool_expr e =
@@ -191,24 +192,20 @@ let check (globals, functions) =
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> SBlock (check_stmt_list sl)
       | Expr e -> SExpr (check_expr e)
-      (*| VarDecl (b, e) -> (match e with
-        | None -> SVarDecl(b, None)
-        | Some(e) -> SVarDecl(b, Some(check_expr e)))*)
-      (*| FuncDecl fd -> SFuncDecl (check_function fd)*)
       | If(e, st1, st2) ->
         SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
-      (*| While(e, st) ->
-        SWhile(check_bool_expr e, check_stmt st) *)
+      | While(e, st) ->
+        SWhile(check_bool_expr e, check_stmt st)
       | Return e ->
         let (t, e') = check_expr e in
-        if t = func.typ then SReturn (t, e')
+        if t = func.rtyp then SReturn (t, e')
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-                     string_of_typ func.typ ^ " in " ^ string_of_expr e))
+                     string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
     in (* body of check_func *)
-    { styp = func.typ;
-      sname = func.name;
-      sparams = func.params;
+    { srtyp = func.rtyp;
+      sfname = func.fname;
+      sformals = func.formals;
       slocals  = func.locals;
       sbody = check_stmt_list func.body
     }
