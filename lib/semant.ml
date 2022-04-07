@@ -38,9 +38,9 @@ let check (globals, functions) =
   
   let built_in_decls =
     StringMap.add "print" {
-      rtyp = IntType;
+      rtyp = NoneType;
       fname = "print";
-      formals = [(IntType, "x")];
+      formals = [(StrType, "x")];
       locals = []; 
       body = [] 
       } StringMap.empty
@@ -79,6 +79,13 @@ let check (globals, functions) =
        the given lvalue type *)
     let check_assign lvaluet rvaluet err =
       if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    in
+
+    let string_conversion et e err =
+    (* convert the first expression result to string *)
+      if et == NoneType then raise (Failure err)
+      else if et != StrType then e
+      else e
     in
 
     (* Build local symbol table of variables for this function *)
@@ -155,10 +162,12 @@ let check (globals, functions) =
                 let (et, e') = check_expr e in
                 let err = "illegal argument found " ^ string_of_typ et ^
                           " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-                in (check_assign ft et err, e')
-          in
-          let args' = List.map2 check_call fd.formals args
-          in (fd.rtyp, SFuncCall(fname, args'))
+                in 
+                if fd.fname == "print" then (ft, string_conversion et e' err) (*convert to string*)
+                else (check_assign ft et err, e')
+        in
+        let args' = List.map2 check_call fd.formals args
+        in (fd.rtyp, SFuncCall(fname, args'))
     in
 
     let check_bool_expr e =

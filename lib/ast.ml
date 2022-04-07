@@ -109,7 +109,6 @@ and string_of_stmt = function
 
 
 
-(* let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n" *)
 (*let string_of_vdecl ((t, n), e) = *)
 let string_of_vdecl (t, n) =
   "VarDecl(" ^

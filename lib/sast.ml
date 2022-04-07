@@ -35,22 +35,30 @@ type sprogram = bind list * sfunc_def list
 (* ----- Print Function ----- *)
 let rec string_of_sexpr (t, se) =
   "(" ^ string_of_typ t ^ " : " ^ 
-  (match se with
-    | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
-    | SIntLit(x) -> "IntLit(" ^ string_of_int x ^ ")"
-    | SFloatLit(x) -> "FloatLit(" ^ string_of_float x ^ ")"
-    | SBoolLit(true) -> "BoolLit(true)"
-    | SBoolLit(false) -> "BoolLit(false)"
+  if t == StrType then "(" ^ 
+      string_s se
+    ^ ")"
+  else
+    string_s se 
+  ^ ")"
 
-    | SId(x) -> "Id(" ^ x ^ ")"
-    
-    | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
-    | SFuncCall(name, args) -> fmt_sfcall name args
-    | SBinop(l, bo, r) -> 
-      string_of_sexpr l ^ " " ^ string_of_op bo ^ " " ^ string_of_sexpr r 
-    | SUnop(uo, r) ->
-        string_of_uop uo ^ " " ^ string_of_sexpr r
-  ) ^ ")"
+and string_s se =
+      (match se with
+      | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
+      | SIntLit(x) -> "IntLit(" ^ string_of_int x ^ ")"
+      | SFloatLit(x) -> "FloatLit(" ^ string_of_float x ^ ")"
+      | SBoolLit(true) -> "BoolLit(true)"
+      | SBoolLit(false) -> "BoolLit(false)"
+
+      | SId(x) -> "Id(" ^ x ^ ")"
+      
+      | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
+      | SFuncCall(name, args) -> fmt_sfcall name args
+      | SBinop(l, bo, r) -> 
+        string_of_sexpr l ^ " " ^ string_of_op bo ^ " " ^ string_of_sexpr r 
+      | SUnop(uo, r) ->
+          string_of_uop uo ^ " " ^ string_of_sexpr r
+    )
 
 and string_of_sstmt = function
   | SExpr se -> "  " ^ string_of_sexpr se ^ ";\n"
