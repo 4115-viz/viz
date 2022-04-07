@@ -65,10 +65,14 @@ decls:
 vdecl_list:
   /*nothing*/ { [] }
   | vdecl SEMI vdecl_list  {  $1 :: $3 }
+  | vdecl_assign SEMI vdecl_list {$1 :: $3}
 
 /* @x: string */
 vdecl:
   typ ID {($1, $2)}
+
+vdecl_assign:
+  vdecl ASSIGN expr { fst ((fst $1, snd $1), Assign(snd $1, $3))}
 
 typ:
   | T_NONE { NoneType }

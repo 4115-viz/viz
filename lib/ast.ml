@@ -113,7 +113,7 @@ and string_of_stmt = function
 let string_of_vdecl (t, n) =
   "VarDecl(" ^
     "name: " ^ fmt_string n ^
-    ", type: " ^ string_of_typ t ^"\n"(* ^
+    ", type: " ^ string_of_typ t ^")\n"(* ^
     match e with
     | None -> ""
     | Some(e) -> ", value: " ^ string_of_expr e *)
