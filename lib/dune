@@ -1,5 +1,8 @@
 (ocamlyacc parser)
 (ocamllex scanner)
 
+(include_subdirs unqualified)
+
 (library
-  (name lib))
+  (name lib)
+)
