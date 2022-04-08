@@ -63,7 +63,11 @@ and string_of_stmt = function
                       in if s2 = No_op then if_block else if_block ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | No_op -> "No Op"
-
+  | For(var_init, predicate, update, block_code) ->
+    "For Loop (variable: "   ^ string_of_expr var_init ^ ", " ^
+               "predicate: " ^ string_of_expr predicate ^ ", " ^
+               "update: "    ^ string_of_expr update ^ ") {\n\t" ^
+              string_of_stmt block_code ^ "}\n"
 
 (*let string_of_vdecl ((t, n), e) = *)
 let string_of_vdecl (t, n) =

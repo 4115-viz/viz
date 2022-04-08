@@ -38,6 +38,11 @@ and string_of_sstmt = function
       if s2 = SNo_op then if_block else if_block ^ "else\n" ^ string_of_sstmt s2
   | SWhile(se, s) -> "while (" ^ string_of_sexpr se ^ ") " ^ string_of_sstmt s
   | SNo_op -> "No Op"
+  | SFor(var_init, predicate, update, block_code) ->
+    "For Loop (variable: "   ^ string_of_sexpr var_init ^ ", " ^
+               "predicate: " ^ string_of_sexpr predicate ^ ", " ^
+               "update: "    ^ string_of_sexpr update ^ ") {\n\t" ^
+              string_of_sstmt block_code ^ "}\n"
 
 and fmt_sfcall name args = 
   "FuncCall(" ^
