@@ -204,10 +204,13 @@ let check (globals, functions) =
       | Expr e -> SExpr (check_expr e)
       | If(e, st1, st2) ->
         
-        (* note *)
-        (* we need to check for st2 being a No_op ??? *)
-        (* i think we would need to check_stmt later on in code gen ?*)
-        SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
+        (* note: we need to check for st2 being a No_op *)
+        (* this case is if without else *)
+        if check_stmt st2 = SNo_op then
+          SIf(check_bool_expr e, check_stmt st1, SBlock([]))
+        (* this case is if/else *)
+        else
+          SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
       | For(e1, e2, e3, st) ->
