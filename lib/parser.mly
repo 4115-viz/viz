@@ -115,9 +115,13 @@ stmt:
   /*| IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }*/
   | if_stmt                                 { $1 }
   | block                                   { $1 }
-  | WHILE LPAREN expr RPAREN stmt           { While ($3, $5)  }
+  | loop                                    { $1 }
   | RETURN expr SEMI                        { Return $2      }
   | expr QUESTION stmt COLON stmt           { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
+
+loop:
+  | WHILE expr stmt           { While ($2, $3)  }
+  | INFINITE_LOOP stmt        { While (BoolLit(true), $2)  }
 
 block: 
   | LBRACE stmt_list RBRACE                 { Block $2 }
