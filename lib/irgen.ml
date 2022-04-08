@@ -30,11 +30,11 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context
-  and void_t = L.void_type    context
-  and float_t = L.double_type context 
-  and str_t  = L.pointer_type   (L.i8_type context) in
+  and void_t     = L.void_type    context
+  and float_t    = L.double_type context 
+  and str_t      = L.pointer_type   (L.i8_type context) in
 
-  (* Return the LLVM type for a MicroC type *)
+  (* Return the LLVM type for a Viz type *)
   let ltype_of_typ = function
       A.IntType   -> i32_t
     | A.BoolType  -> i1_t
@@ -108,7 +108,9 @@ let translate (globals, functions) =
 
     (* Construct code for an expression; return its value *)
     let rec build_expr builder ((_, e) : sexpr) = match e with
-        SLiteral i  -> L.const_int i32_t i
+        SStrLit s -> L.build_global_stringptr s "str" builder
+      | SIntLit i  -> L.const_int i32_t i
+      | SFloatLit f -> L.const_float float_t f
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in
@@ -117,19 +119,29 @@ let translate (globals, functions) =
         let e1' = build_expr builder e1
         and e2' = build_expr builder e2 in
         (match op with
-           A.Add     -> L.build_add
-         | A.Sub     -> L.build_sub
-         | A.And     -> L.build_and
-         | A.Or      -> L.build_or
-         | A.Equal   -> L.build_icmp L.Icmp.Eq
-         | A.Neq     -> L.build_icmp L.Icmp.Ne
-         | A.Less    -> L.build_icmp L.Icmp.Slt
+          A.Add     -> L.build_add
+        | A.Sub     -> L.build_sub
+        | A.Eq      -> L.build_icmp L.Icmp.Eq
+        | A.Neq     -> L.build_icmp L.Icmp.Ne
+        | A.Less    -> L.build_icmp L.Icmp.Slt
+        | A.And     -> L.build_and
+        | A.Or      -> L.build_or
+        | A.Mult    -> L.build_mul
+        | A.Div     -> L.build_sdiv
+        | A.Great   -> L.build_icmp L.Icmp.Sgt
+        | A.Leq     -> L.build_icmp L.Icmp.Sle
+        | A.Geq     -> L.build_icmp L.Icmp.Sge
+        | A.Mod     -> L.build_srem
         ) e1' e2' "tmp" builder
-      | SCall ("print", [e]) ->
+      | SUnop(_, e) ->
+        let (_, _) = e in
+        let e' = build_expr builder e in
+        L.build_not e' "tmp" builder
+      | SFuncCall ("print", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
           "printf" builder
-      | SCall (f, args) ->
-        let (fdef, fdecl) = StringMap.find f function_decls in
+      | SFuncCall (f, args) ->
+        let (fdef, _) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in
         let result = f ^ "_result" in
         L.build_call fdef (Array.of_list llargs) result builder
