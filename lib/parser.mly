@@ -110,23 +110,42 @@ stmt_list:
 
 stmt:
   | expr SEMI                               { Expr $1      }
-  
+  | logic_expr                              { Expr $1 }
   /*| LBRACE stmt_list RBRACE                 { Block $2 } */
   /*| IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }*/
   | if_stmt                                 { $1 }
   | block                                   { $1 }
   | loop                                    { $1 }
   | RETURN expr SEMI                        { Return $2      }
-  | expr QUESTION stmt COLON stmt           { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
+
+logic_expr: /* within control flow, we dont want SEMI involved in our exprs */
+  | expr { $1}
 
 loop:
   | WHILE expr stmt           { While ($2, $3)  }
   | INFINITE_LOOP stmt        { While (BoolLit(true), $2)  }
+  /*| FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt
+                                            { For($3, $5, $7, $9)   } */
+  /*| FOR ID_VAR IN LIT_INT DOT DOT DOT end_condition LIT_INT increment
+
+end_condition:
+  | 
+
+increment: */
+  /* nothing */ 
+
+/*
+for counter in starting_num ... <ending condition>ending_num step step_number
+ condition    
+    < > <= >=
+ step_number defaults to 1 if there is nothing present
+*/
 
 block: 
   | LBRACE stmt_list RBRACE                 { Block $2 }
 
 if_stmt:
+  | expr QUESTION stmt COLON stmt            { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
   | IF LPAREN expr RPAREN block else_stmt    { If($3, $5, $6) } /* if else? */
   /*| IF LPAREN expr RPAREN stmt              { If($3, $5, No_op)     } */ /* if */
 
