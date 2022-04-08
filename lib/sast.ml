@@ -20,8 +20,10 @@ type sstmt =
   | SExpr of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SWhile of sexpr * sstmt
+  | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr
-
+  | SNo_op
+  
 type sfunc_def = {
   srtyp: typ;
   sfname: string;

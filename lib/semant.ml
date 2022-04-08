@@ -203,15 +203,25 @@ let check (globals, functions) =
         Block sl -> SBlock (check_stmt_list sl)
       | Expr e -> SExpr (check_expr e)
       | If(e, st1, st2) ->
-        SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
+        
+        (* note: we need to check for st2 being a No_op *)
+        (* this case is if without else *)
+        if check_stmt st2 = SNo_op then
+          SIf(check_bool_expr e, check_stmt st1, SBlock([]))
+        (* this case is if/else *)
+        else
+          SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
+      | For(e1, e2, e3, st) ->
+          SFor(check_expr e1, check_bool_expr e2, check_expr e3, check_stmt st)
       | Return e ->
         let (t, e') = check_expr e in
         if t = func.rtyp then SReturn (t, e')
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
                      string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
+      | No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)
     in (* body of check_func *)
     { srtyp = func.rtyp;
       sfname = func.fname;

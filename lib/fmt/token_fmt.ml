@@ -62,7 +62,8 @@ let string_of_token (t : token) : string  =
     | MINUSEQ -> "MINUSEQ"
     | TIMESEQ -> "TIMESEQ"
     | DIVEQ -> "DIVEQ"
-    | MODEQ -> "MODEQ"       
+    | MODEQ -> "MODEQ"
+    | QUESTION -> "TERNARY_IF_STATEMENT"       
     | _ -> "Unimplemented"
 
 (* lexm.sh via CTeX group project 4115*)

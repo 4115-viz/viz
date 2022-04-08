@@ -9,7 +9,7 @@ open Ast
 %token ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
 
 /* relational */
-%token EQ NEQ GTEQ LTEQ GT LT AND OR NOT 
+%token EQ NEQ GTEQ LTEQ GT LT AND OR NOT QUESTION
 
 /* keywords */
 %token FUNC IF ELSE ELIF FOR WHILE INFINITE_LOOP RETURN BREAK
@@ -110,10 +110,66 @@ stmt_list:
 
 stmt:
   | expr SEMI                               { Expr $1      }
-  | LBRACE stmt_list RBRACE                 { Block $2 }
-  | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | WHILE LPAREN expr RPAREN stmt           { While ($3, $5)  }
+  | logic_expr                              { Expr $1 }
+  | if_stmt                                 { $1 }
+  | block                                   { $1 }
+  | loop                                    { $1 }
   | RETURN expr SEMI                        { Return $2      }
+/* TODO 
+  | BREAK
+  | CONTINUE
+*/
+
+logic_expr: /* within control flow, we dont want SEMI involved in our exprs */
+  | expr { $1 }
+
+loop:
+  | WHILE expr stmt           { While ($2, $3)  }
+  | INFINITE_LOOP stmt        { While (BoolLit(true), $2)  }
+  /* for counter in starting_num ... <ending condition>ending_num step step_number */
+  | FOR ID_VAR IN LIT_INT DOT DOT DOT end_condition LIT_INT increment stmt
+            {
+                let var_init   = Assign($2, IntLit($4)) in (* ex: i = 0 *)
+                let predicate  = Binop(IntLit($4), $8, IntLit($9)) in (* ex: i < 5 *)
+                let update     = Assign( $2, Binop(Id($2), Add, $10) ) in (* ex: i = i + 1 *)
+                let block_code = $11 in
+                For(var_init, predicate, update, block_code)
+            }
+
+end_condition:
+  | LT   { Less   }
+  | GT   { Great  }
+  | GTEQ { Geq    }
+  | LTEQ { Leq    }
+  | EQ   { Eq     }
+
+increment:
+  /* dont define increment, default to 1 */ { IntLit(1) } 
+  | STEP LIT_INT { IntLit($2)}
+
+block: 
+  | LBRACE stmt_list RBRACE                 { Block $2 }
+
+if_stmt:
+  | expr QUESTION stmt COLON stmt            { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
+  | IF LPAREN expr RPAREN block else_stmt    { If($3, $5, $6) } /* covers if and if/else */
+
+else_stmt:
+  /* no else block */ { No_op }
+  | ELSE stmt { $2 }
+
+/* IDK how to do elif yet, may just wait
+elif_stmt:
+  | ELIF LPAREN expr RPAREN block { ... }
+
+if_stmt:
+    | 'if' named_expression ':' block elif_stmt 
+    | 'if' named_expression ':' block [else_block] 
+elif_stmt:
+    | 'elif' named_expression ':' block elif_stmt 
+    | 'elif' named_expression ':' block [else_block] 
+*/
+
 
 expr:
   /* literal */

@@ -33,10 +33,16 @@ and string_of_sstmt = function
   | SBlock (sstmts) ->
     "{\n" ^ String.concat "" (List.map string_of_sstmt sstmts) ^ "}\n"
   | SReturn (sexpr) -> "return " ^ string_of_sexpr sexpr ^ ";\n" 
-  | SIf (se, s1, s2) -> "if (" ^ string_of_sexpr se ^ ")\n" ^
-      string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
+  | SIf (se, s1, s2) -> let if_block = "if (" ^ string_of_sexpr se ^ ")\n" ^
+      string_of_sstmt s1 in 
+      if s2 = SNo_op then if_block else if_block ^ "else\n" ^ string_of_sstmt s2
   | SWhile(se, s) -> "while (" ^ string_of_sexpr se ^ ") " ^ string_of_sstmt s
-
+  | SNo_op -> "No Op"
+  | SFor(var_init, predicate, update, block_code) ->
+    "For Loop (variable: "   ^ string_of_sexpr var_init ^ ", " ^
+               "predicate: " ^ string_of_sexpr predicate ^ ", " ^
+               "update: "    ^ string_of_sexpr update ^ ") {\n\t" ^
+              string_of_sstmt block_code ^ "}\n"
 
 and fmt_sfcall name args = 
   "FuncCall(" ^

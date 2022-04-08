@@ -1,0 +1,37 @@
+// want an if with elif statement too
+
+func main(): none {
+    
+    /*
+        if/else
+    */
+    if (3 < 4) {
+        print("this is true");
+        
+        /*
+            nested if/else
+        */
+        if (true) {
+            print("nested if");
+        } else {
+            print("nested else");
+        }
+    
+    } else {
+        print("this is false");
+        
+        /* 
+            if/no else
+        */
+        if (true) {
+            print("nested if with no else stmt");
+        }
+    }
+
+    /*
+        lets try ternary if / else
+    */
+    true == true ? print("correct") : print("incorrect")
+    false == false ? while (true) { print("correct"); print("yay"); } : print("incorrect")
+}
+

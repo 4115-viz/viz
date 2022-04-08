@@ -69,6 +69,7 @@ rule token = parse
 | "and" {AND}
 | "or" {OR}
 | "not" {NOT}
+| "?" {QUESTION}
 
 (* -------- literals -------- *)
 | "true" { LIT_BOOL(true) }
