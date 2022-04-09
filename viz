@@ -1,6 +1,12 @@
-#!/usr/bin/env bash
+# This shell script shamelessly borrow lot from pocaml: 
+# https://github.com/Pocaml/Pocaml/blob/main/pocamlc
+# Thank you, pocaml team! 
 
+#!/usr/bin/env bash
+LLC=llc
+CC=cc
 VIZ="dune exec -- vc"
+builtins_ar="viz_builtins.a"
 build_dir="_build"
 
 Usage() {
@@ -11,19 +17,56 @@ Usage() {
   exit 0;
 }
 
+# Build the C static library of builtin functions.
+BuildCLib() {
+  cd lib/builtins
+  make clean
+  make
+  cp ${builtins_ar} ../../${build_dir}
+  cd ../..
+}
+
 [ $# -eq 0 ] && Usage
 
 
 fpath=$1
 fname=${fpath##*/}
-echo $fname
+[[ $fname != *.viz ]] && Usage
 
-# if [[ $fname -ne *.viz ]] && Usage
 
-basename=${fname%.viz*}
-echo $basename
+Run() {
+  basename=${fname%.viz*}
+  echo
+  echo "========== viz 0.0.0 =========="
+  echo "File name:"
+  echo "$fname"
+  echo
+  echo "---"
+  echo "Translating Viz to LLVM code..."
+  # viz source code -> llvm code
+  $VIZ $fpath > ${build_dir}/${basename}.ll
+  echo "Done."
+  echo 
+  echo "---"
+  echo "Build the builtin c static library"
+  BuildCLib
+  echo "Done."
+  echo
+  echo "---"
+  echo "Compiling the LLVM code..."
+  cd ${build_dir}
+  $LLC -relocation-model=pic ${basename}.ll > ${basename}.s
+  $CC -o ${basename}.exe ${basename}.s ${builtins_ar}
+  echo "Done. Generated executable \"${basename}.exe\"."
+  echo
+  echo "---"
+  echo "Running the executable \"${basename}.exe\""
+  echo
+  ./${basename}.exe
+}
 
-# $VIZ $fname > ${build_dir}/${basename}.ll
+Run
+
 
 
 
