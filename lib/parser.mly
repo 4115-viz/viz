@@ -156,23 +156,10 @@ if_stmt:
   | IF LPAREN expr RPAREN block %prec NOELSE    { If($3, $5, Block[]) } /* covers if */
   | IF LPAREN expr RPAREN block else_stmt       { If($3, $5, $6) } /* covers if/else */
   
-
 else_stmt:
-  /* no else block  { No_op } */
+  | ELIF LPAREN expr RPAREN block %prec NOELSE { If($3, $5, Block[]) }
+  | ELIF LPAREN expr RPAREN block else_stmt { If($3, $5, $6) }
   | ELSE stmt { $2 }
-
-/* IDK how to do elif yet, may just wait
-elif_stmt:
-  | ELIF LPAREN expr RPAREN block { ... }
-
-if_stmt:
-    | 'if' named_expression ':' block elif_stmt 
-    | 'if' named_expression ':' block [else_block] 
-elif_stmt:
-    | 'elif' named_expression ':' block elif_stmt 
-    | 'elif' named_expression ':' block [else_block] 
-*/
-
 
 expr:
   /* literal */
