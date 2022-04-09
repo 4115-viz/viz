@@ -1,6 +1,7 @@
 // want an if with elif statement too
 
 func main(): none {
+    @@x: int = 5;
     
     /*
         if/else
@@ -26,6 +27,18 @@ func main(): none {
         if (true) {
             print("nested if with no else stmt");
         }
+    }
+
+    /*
+        else if
+    */
+
+    if (@x < 5) {
+        print("x is less than 5");
+    } elif (@x == 5) {
+        print("x is equal to 5");
+    } else {
+        print("x is larger than 5");
     }
 
     /*
