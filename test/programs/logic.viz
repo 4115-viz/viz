@@ -32,6 +32,9 @@ func main(): none {
         lets try ternary if / else
     */
     true == true ? print("correct") : print("incorrect")
-    false == false ? while (true) { print("correct"); print("yay"); } : print("incorrect")
+    
+    // these are now errors
+    //1 < 2 ? print("yes"); : print("no");
+    //false == false ? while (true) { print("correct"); print("yay"); } : print("incorrect")
 }
 

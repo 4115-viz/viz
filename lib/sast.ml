@@ -19,6 +19,7 @@ type sstmt =
   | SBlock of sstmt list
   | SExpr of sexpr
   | SIf of sexpr * sstmt * sstmt
+  | SIfTern of sexpr * sexpr * sexpr
   | SWhile of sexpr * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr

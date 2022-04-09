@@ -61,6 +61,9 @@ and string_of_stmt = function
   | Return (expr) -> "return " ^ string_of_expr expr ^ ";\n" 
   | If (e, s1, s2) -> let if_block = "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1
                       in if s2 = Block([]) then if_block else if_block ^ "else\n" ^ string_of_stmt s2
+  | IfTern (e1, e2, e3) -> "ifTern (" ^ string_of_expr e1 ^ ")\n" ^ string_of_expr e2 ^
+                        "else\n" ^ string_of_expr e3
+              
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | For(var_init, predicate, update, block_code) ->
     "For Loop (variable: "   ^ string_of_expr var_init ^ ", " ^

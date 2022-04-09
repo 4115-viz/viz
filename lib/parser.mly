@@ -111,7 +111,7 @@ stmt_list:
 
 stmt:
   | expr SEMI                               { Expr $1      }
-  | logic_expr                              { Expr $1 }
+  /*| logic_expr                              { Expr $1 } */
   | if_stmt                                 { $1 }
   | block                                   { $1 }
   | loop                                    { $1 }
@@ -121,8 +121,8 @@ stmt:
   | CONTINUE
 */
 
-logic_expr: /* within control flow, we dont want SEMI involved in our exprs */
-  | expr { $1 }
+/*logic_expr: within control flow, we dont want SEMI involved in our exprs 
+  | expr { $1 } */
 
 loop:
   | WHILE expr stmt           { While ($2, $3)  }
@@ -152,7 +152,7 @@ block:
   | LBRACE stmt_list RBRACE                 { Block $2 }
 
 if_stmt:
-  | expr QUESTION stmt COLON stmt               { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
+  | expr QUESTION expr COLON expr               { IfTern($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
   | IF LPAREN expr RPAREN block %prec NOELSE    { If($3, $5, Block[]) } /* covers if */
   | IF LPAREN expr RPAREN block else_stmt       { If($3, $5, $6) } /* covers if/else */
   

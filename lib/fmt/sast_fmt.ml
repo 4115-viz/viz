@@ -36,6 +36,8 @@ and string_of_sstmt = function
   | SIf (se, s1, s2) -> let if_block = "if (" ^ string_of_sexpr se ^ ")\n" ^
       string_of_sstmt s1 in 
       if s2 = SBlock([]) then if_block else if_block ^ "else\n" ^ string_of_sstmt s2
+  | SIfTern (se1, se2, se3) -> "ifTern (" ^ string_of_sexpr se1 ^ ")\n" ^ string_of_sexpr se2 ^
+          "else\n" ^ string_of_sexpr se3
   | SWhile(se, s) -> "while (" ^ string_of_sexpr se ^ ") " ^ string_of_sstmt s
   | SFor(var_init, predicate, update, block_code) ->
     "For Loop (variable: "   ^ string_of_sexpr var_init ^ ", " ^
