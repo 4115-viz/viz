@@ -2,7 +2,8 @@
 
 func main(): none {
     @@x: int = 5;
-    
+    @@y: bool = true;
+
     /*
         if/else
     */
@@ -37,6 +38,8 @@ func main(): none {
         print("x is less than 5");
     } elif (@x == 5) {
         print("x is equal to 5");
+    } elif (@y == true) {
+        print("testing multiple elif, @y is true");
     } else {
         print("x is larger than 5");
     }
