@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+VIZ="dune exec -- vc"
+build_dir="_build"
+
+Usage() {
+  echo
+  echo "usage: viz <name_of_file.viz>"
+  echo 
+
+  exit 0;
+}
+
+[ $# -eq 0 ] && Usage
+
+
+fpath=$1
+fname=${fpath##*/}
+echo $fname
+
+# if [[ $fname -ne *.viz ]] && Usage
+
+basename=${fname%.viz*}
+echo $basename
+
+# $VIZ $fname > ${build_dir}/${basename}.ll
+
+
+

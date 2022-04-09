@@ -1,9 +1,9 @@
 (ocamlyacc parser)
+
 (ocamllex scanner)
 
 (include_subdirs unqualified)
 
 (library
-  (name lib)
-  (libraries llvm)
-)
+ (name lib)
+ (libraries llvm llvm.analysis))

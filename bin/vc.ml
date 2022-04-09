@@ -27,12 +27,7 @@ let () =
 		| ScanTest -> ()
 		| Sast -> print_endline  (Sast_fmt.string_of_sprogram sast)
 		| LLVM_IR -> print_string (Llvm.string_of_llmodule (Irgen.translate sast))
-		| Compile -> 
-			let lexbuf = Lexing.from_channel !channel in
-			let ast = Parser.program Scanner.token lexbuf in
-			(* _ in front of name allows us to suppress the fact we are
-					not using the _sast variable currently.
-			*)
-			let _sast = Semant.check ast in
-			()
+		| Compile -> let m = Irgen.translate sast in
+			Llvm_analysis.assert_valid_module m;
+			print_string (Llvm.string_of_llmodule m)
 			

@@ -1,4 +1,4 @@
-func main(): none {
+func main(): int {
   @@x: string;
   @x = "Hello World";
   print(@x);
