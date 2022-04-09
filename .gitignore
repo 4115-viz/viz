@@ -6,4 +6,9 @@ viz.opam
 lib/parser.ml
 lib/parser.mli
 lib/parser.output
+
+# llvm code
 **/*.ll
+
+# static library
+**/*.a
