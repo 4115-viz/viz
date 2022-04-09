@@ -8,12 +8,14 @@ func main(): none {
     @b -= 1.1;
     @b *= 1.1;
     @b /= 1.1;
+    @b %= 1.1;
 
     // int 
     @a += 1;
     @a -= 1;
     @a *= 1;
     @a /= 1; 
+    @a %= 1; 
 
     // assigneq with an expr on right hand side
     @a += 1+5;
