@@ -1,6 +1,7 @@
 type bop = Add | Sub | Eq | Neq | Less | And | Or
           | Mult | Div | Great | Leq | Geq | Mod
-
+          | Pleq | Mineq | Diveq | Modeq | Timeseq
+          
 type uop = Not
 
 type typ = 

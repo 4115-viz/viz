@@ -1,0 +1,35 @@
+// testing complex assignment
+func main(): none {
+    @@a: int = 10;
+    @@b: float = -10.5;
+    
+    // float 
+    @b += 1.0;
+    @b -= 1.1;
+    @b *= 1.1;
+    @b /= 1.1;
+
+    // int 
+    @a += 1;
+    @a -= 1;
+    @a *= 1;
+    @a /= 1; 
+
+    // assigneq with an expr on right hand side
+    @a += 1+5;
+    @a -= 1*5;
+    @a *= 1%5; 
+
+    // Someone please look at this ... 
+
+    // as an aside, these two will fail
+    //1 / 0;
+    //1.0 / 0.0;
+    
+    // but this passes semantics, see note
+    //1.0 / (1.0 - 1.0); // this may just be a runtime error, I dont think we can check
+                          // for this at semantics time
+    
+    // but, why does this not fail?
+    // @a /= 0;
+}

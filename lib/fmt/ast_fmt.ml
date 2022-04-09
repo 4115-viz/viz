@@ -14,6 +14,11 @@ let string_of_op = function
 | Geq   -> ">="
 | And   -> "and"
 | Or    -> "or"
+| Pleq -> "+="
+| Mineq -> "-="
+| Diveq -> "/="
+| Modeq -> "%="
+| Timeseq -> "*="
 
 let string_of_typ = function
   | NoneType  -> "Type(None)"

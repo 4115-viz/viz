@@ -181,7 +181,7 @@ expr:
   | LIT_BOOL { BoolLit($1) }
   | LIT_FLOAT { FloatLit($1) }
 
-  /* variable */
+  /* variable access */
   | ID_VAR { Id($1) }
 
   /* arithmetic */
@@ -206,7 +206,12 @@ expr:
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
-
+  | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Pleq, $3))}
+  | ID_VAR MINUSEQ expr { Assign($1, Binop(Id($1), Mineq, $3))} 
+  | ID_VAR TIMESEQ expr { Assign($1, Binop(Id($1), Timeseq, $3))}
+  | ID_VAR DIVEQ expr { Assign($1, Binop(Id($1), Diveq, $3))}
+  | ID_VAR MODEQ expr { Assign($1, Binop(Id($1), Modeq, $3))}
+  
   /* remove clarifying parens */
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 

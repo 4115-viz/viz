@@ -129,8 +129,19 @@ let check (globals, functions) =
           
           else           
             (fun my_op -> match my_op with
-            | (Add | Sub | Mult | Div | Mod) when ltype = IntType && rtype = IntType -> IntType
-            | (Add | Sub | Mult | Div | Mod) when ltype = FloatType && rtype = FloatType -> FloatType
+            | (Add | Sub | Mult | Mod | Pleq | Mineq | Modeq | Timeseq | Diveq) when ltype = IntType && rtype = IntType -> IntType
+            | (Add | Sub | Mult | Mod | Pleq | Mineq | Modeq | Timeseq | Diveq) when ltype = FloatType && rtype = FloatType -> FloatType
+            | (Diveq | Div) when ltype = IntType && rtype = IntType -> 
+              (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
+              let () = print_endline (string_of_expr r) in 
+              if r = IntLit(0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
+                                            ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
+                    else IntType
+            | (Diveq | Div) when ltype = FloatType && rtype = FloatType -> 
+              (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
+              if r = FloatLit(0.0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
+                                              ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
+                    else FloatType
             | (Eq | Neq) -> BoolType
             | (Leq | Geq | Less | Great) when (ltype = IntType && rtype = IntType ||
                                                 ltype = FloatType && rtype = FloatType) -> BoolType
