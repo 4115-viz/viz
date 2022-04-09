@@ -13,7 +13,7 @@ open Ast
 
 /* keywords */
 %token FUNC IF ELSE ELIF FOR WHILE INFINITE_LOOP RETURN BREAK
-%token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS 
+%token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS RANGE
 
 /* type */
 %token T_NONE T_STR T_INT T_BOOL T_FLOAT
@@ -34,6 +34,7 @@ open Ast
 
 
 /* precedence following C standard*/
+%nonassoc NOELSE
 %left COMMA
 %left SEMI 
 %right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
@@ -127,12 +128,12 @@ loop:
   | WHILE expr stmt           { While ($2, $3)  }
   | INFINITE_LOOP stmt        { While (BoolLit(true), $2)  }
   /* for counter in starting_num ... <ending condition>ending_num step step_number */
-  | FOR ID_VAR IN LIT_INT DOT DOT DOT end_condition LIT_INT increment stmt
+  | FOR ID_VAR IN LIT_INT RANGE end_condition LIT_INT increment stmt
             {
                 let var_init   = Assign($2, IntLit($4)) in (* ex: i = 0 *)
-                let predicate  = Binop(IntLit($4), $8, IntLit($9)) in (* ex: i < 5 *)
-                let update     = Assign( $2, Binop(Id($2), Add, $10) ) in (* ex: i = i + 1 *)
-                let block_code = $11 in
+                let predicate  = Binop(IntLit($4), $6, IntLit($7)) in (* ex: i < 5 *)
+                let update     = Assign( $2, Binop(Id($2), Add, $8) ) in (* ex: i = i + 1 *)
+                let block_code = $9 in
                 For(var_init, predicate, update, block_code)
             }
 
@@ -151,11 +152,13 @@ block:
   | LBRACE stmt_list RBRACE                 { Block $2 }
 
 if_stmt:
-  | expr QUESTION stmt COLON stmt            { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
-  | IF LPAREN expr RPAREN block else_stmt    { If($3, $5, $6) } /* covers if and if/else */
+  | expr QUESTION stmt COLON stmt               { If($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
+  | IF LPAREN expr RPAREN block %prec NOELSE    { If($3, $5, Block[]) } /* covers if */
+  | IF LPAREN expr RPAREN block else_stmt       { If($3, $5, $6) } /* covers if/else */
+  
 
 else_stmt:
-  /* no else block */ { No_op }
+  /* no else block  { No_op } */
   | ELSE stmt { $2 }
 
 /* IDK how to do elif yet, may just wait

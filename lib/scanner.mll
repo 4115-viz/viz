@@ -36,6 +36,7 @@ rule token = parse
 | "in" {IN}
 | "step" {STEP}
 | "as" {AS}
+| "..." {RANGE} (* used in the for loop construct *)
 
 (* -------- types -------- *)
 | "none" { T_NONE }

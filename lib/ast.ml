@@ -30,7 +30,6 @@ type stmt =
   | While of expr * stmt
   | For of expr * expr * expr * stmt
   | Return of expr
-  | No_op
   
 type bind = typ * string
 

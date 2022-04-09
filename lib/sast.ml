@@ -22,7 +22,6 @@ type sstmt =
   | SWhile of sexpr * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr
-  | SNo_op
   
 type sfunc_def = {
   srtyp: typ;
