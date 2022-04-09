@@ -152,7 +152,7 @@ block:
   | LBRACE stmt_list RBRACE                 { Block $2 }
 
 if_stmt:
-  | expr QUESTION expr COLON expr               { IfTern($1, $3, $5) } /* (1 > 2) ? print("true") : print("false") */
+  | expr QUESTION expr COLON expr               { If($1, Expr($3), Expr($5)) } /* (1 > 2) ? print("true") : print("false") */
   | IF LPAREN expr RPAREN block %prec NOELSE    { If($3, $5, Block[]) } /* covers if */
   | IF LPAREN expr RPAREN block else_stmt       { If($3, $5, $6) } /* covers if/else */
   
