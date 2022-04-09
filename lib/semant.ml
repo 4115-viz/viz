@@ -211,8 +211,6 @@ let check (globals, functions) =
         (* this case is if/else *)
         else *)
           SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
-      | IfTern(e1, e2, e3) -> 
-          SIfTern(check_bool_expr e1, check_expr e2, check_expr e3)
       | While(e, st) ->
         SWhile(check_bool_expr e, check_stmt st)
       | For(e1, e2, e3, st) ->
