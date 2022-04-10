@@ -64,7 +64,8 @@ let string_of_token (t : token) : string  =
     | DIVEQ -> "DIVEQ"
     | MODEQ -> "MODEQ"
     | QUESTION -> "QUESTION"
-    | RANGE -> "RANGE"      
+    | RANGE -> "RANGE"    
+    | BAR -> "BAR"  
     | _ -> "Unimplemented"
 
 (* lexm.sh via CTeX group project 4115*)

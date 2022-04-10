@@ -1,7 +1,7 @@
 type bop = Add | Sub | Eq | Neq | Less | And | Or
           | Mult | Div | Great | Leq | Geq | Mod
-          | Pleq | Mineq | Diveq | Modeq | Timeseq
-          
+
+
 type uop = Not
 
 type typ = 
@@ -16,13 +16,12 @@ type expr =
   | IntLit of int
   | FloatLit of float
   | BoolLit of bool
-
   | Id of string
-
   | Assign of string * expr
   | FuncCall of string * expr list
   | Binop of expr * bop * expr
   | Unop of uop * expr
+  | TypeCast of typ * expr
 
 type stmt =
   | Expr of expr

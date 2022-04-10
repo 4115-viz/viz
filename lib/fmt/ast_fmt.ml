@@ -14,11 +14,7 @@ let string_of_op = function
 | Geq   -> ">="
 | And   -> "and"
 | Or    -> "or"
-| Pleq -> "+="
-| Mineq -> "-="
-| Diveq -> "/="
-| Modeq -> "%="
-| Timeseq -> "*="
+
 
 let string_of_typ = function
   | NoneType  -> "Type(None)"
@@ -38,7 +34,6 @@ let rec string_of_expr = function
   | FloatLit(x) -> "FloatLit(" ^ string_of_float x ^ ")"
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
-
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) ->
@@ -48,7 +43,8 @@ let rec string_of_expr = function
     string_of_expr l ^ " " ^ string_of_op bo ^ " " ^ string_of_expr r
   | Unop(uo, r) ->
     string_of_uop uo ^ " " ^ string_of_expr r
-
+  | TypeCast(t, e) -> "Casting " ^ string_of_expr e ^ "->" ^ string_of_typ t ^ "\n"
+  
 and fmt_fcall name args = 
   "FuncCall(" ^
      "name: " ^ fmt_string name ^

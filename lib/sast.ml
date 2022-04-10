@@ -6,14 +6,12 @@ and sx =
   | SIntLit of int
   | SFloatLit of float
   | SBoolLit of bool
-
   | SId of string
-
   | SBinop of sexpr * bop * sexpr
   | SAssign of string * sexpr
-
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
+  | STypeCast of typ * sexpr
 
 type sstmt =
   | SBlock of sstmt list

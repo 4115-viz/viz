@@ -79,6 +79,7 @@ rule token = parse
 | '0'+ | "-" ? non_zero_digits digit*  as lxm {LIT_INT(int_of_string lxm)}
 (*| '0'* "." '0'+ | "-" ? (non_zero_digits+ "." digit+ | "." digit+)  as lxm {LIT_FLOAT(float_of_string lxm)} *)
 | "-" ? digit* "." digit+ as lxm { LIT_FLOAT(float_of_string lxm) }
+
 (* -------- delimiters -------- *)
 | "("  { LPAREN }
 | ")"  { RPAREN }
@@ -90,13 +91,12 @@ rule token = parse
 | ";" { SEMI }
 | "," { COMMA }
 | "." { DOT }
+| "|" { BAR }
 
 (* --------- IDs ------------ *)
 | letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)
 | "@@" letter (digit | letter | '_')* as lxm { ID_VAR_DECL(String.sub lxm 2 ((String.length lxm) - 2)) } (* variable decl needs @@ *)
 | "@" letter (digit | letter | '_')* as lxm { ID_VAR(String.sub lxm 1 ((String.length lxm) - 1)) } (* variable access need @ *)
-
-
 
 (* -------- Other ----------- *)
 | eof { EOF }

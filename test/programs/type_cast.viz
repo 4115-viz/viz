@@ -1,0 +1,35 @@
+func main(): none {
+
+    @@my_int: int;
+    @@my_bool: bool;
+    @@my_str: string;
+    @@my_float: float;
+
+    //
+    // currently don't implement a cast to NoneType
+    //
+
+    @my_int = |as int| "5"; // from int string 
+    @my_int = |as int| "5.0"; // from float string 
+    @my_int = |as int| 5.0; // from float
+    @my_int = |as int| 5; // from int
+    //@my_int = |as int| false; // from none, this is an error
+    //@my_int = |as int| true; // from bool, this is an error
+
+
+    @my_str = |as string| 5; // string from int 
+    @my_str = |as string| (5.0 + 5.0); // string from float
+    //@my_str = |as string| 5.0 + 5.0; // string from float, this fails tho
+    @my_str = |as string| true; // string from bool 
+    @my_str = |as string| false; // string from bool
+    @my_str = |as string| "hello world"; // string from string
+ 
+    @my_float = |as float| 5; // float from int
+    @my_float = |as float| "5"; // float from string 
+    @my_float = |as float| "5.0"; // float from string 
+    @my_float = |as float| 5.0; // float from float 
+
+    @my_bool = |as bool| "true"; // bool from string
+
+    //@my_bool = |as none| true; //failure cannot cast to NoneType
+}

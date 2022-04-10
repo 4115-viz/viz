@@ -17,15 +17,14 @@ and string_s se =
       | SFloatLit(x) -> "FloatLit(" ^ string_of_float x ^ ")"
       | SBoolLit(true) -> "BoolLit(true)"
       | SBoolLit(false) -> "BoolLit(false)"
-
       | SId(x) -> "Id(" ^ x ^ ")"
-      
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
       | SFuncCall(name, args) -> fmt_sfcall name args
       | SBinop(l, bo, r) -> 
         string_of_sexpr l ^ " " ^ string_of_op bo ^ " " ^ string_of_sexpr r 
       | SUnop(uo, r) ->
           string_of_uop uo ^ " " ^ string_of_sexpr r
+      | STypeCast(st, se) -> "(Casting " ^ string_of_sexpr se ^ "->" ^ string_of_typ st ^ "\n"
     )
 
 and string_of_sstmt = function

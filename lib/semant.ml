@@ -129,15 +129,15 @@ let check (globals, functions) =
           
           else           
             (fun my_op -> match my_op with
-            | (Add | Sub | Mult | Mod | Pleq | Mineq | Modeq | Timeseq | Diveq) when ltype = IntType && rtype = IntType -> IntType
-            | (Add | Sub | Mult | Mod | Pleq | Mineq | Modeq | Timeseq | Diveq) when ltype = FloatType && rtype = FloatType -> FloatType
-            | (Diveq | Div) when ltype = IntType && rtype = IntType -> 
+            | (Add | Sub | Mult | Mod ) when ltype = IntType && rtype = IntType -> IntType
+            | (Add | Sub | Mult | Mod ) when ltype = FloatType && rtype = FloatType -> FloatType
+            | (Div) when ltype = IntType && rtype = IntType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
               let () = print_endline (string_of_expr r) in 
               if r = IntLit(0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
                                             ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
                     else IntType
-            | (Diveq | Div) when ltype = FloatType && rtype = FloatType -> 
+            | (Div) when ltype = FloatType && rtype = FloatType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
               if r = FloatLit(0.0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
                                               ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
@@ -180,6 +180,37 @@ let check (globals, functions) =
         in
         let args' = List.map2 check_call fd.formals args
         in (fd.rtyp, SFuncCall(fname, args'))
+      | TypeCast(ty, expr) -> 
+        let (rtype, r') = check_expr expr in (* thing we want to cast *)
+        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ string_of_typ ty1 ^ " to " ^ string_of_typ ty2  )) )
+        in let casted_expr = 
+            (match ty with
+                  | IntType -> 
+                          (* i think the actual casting may be done here, or in LLVM not entirely sure
+                              I originlally had each of the subcases cast but I couldnt get the return type correctly
+                          *)
+                          ( match rtype with 
+                          | IntType | FloatType | StrType -> r'
+                          | _ -> err rtype ty
+                          )
+                  | FloatType ->
+                          ( match rtype with 
+                          | IntType | FloatType | StrType -> r'
+                          | _ -> err rtype ty
+                          )
+                  | StrType ->
+                          ( match rtype with 
+                          | IntType | FloatType | StrType | BoolType -> r' (* there is in fact of string_of_bool cast in ocaml *)
+                          | _ -> err rtype ty
+                          )
+                  | BoolType ->
+                          ( match rtype with 
+                          | StrType -> r' (* there is in fact a bool_of_string cast in ocaml *)
+                          | _ -> err rtype ty
+                          )
+                  | NoneType -> raise (Failure ("Cannot cast to NoneType" ))
+            )
+        in (ty, casted_expr) 
     in
 
     let check_bool_expr e =
