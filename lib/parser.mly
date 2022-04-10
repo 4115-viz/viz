@@ -19,7 +19,7 @@ open Ast
 %token T_NONE T_STR T_INT T_BOOL T_FLOAT
 
 /* delimiters */
-%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT
+%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
 %token EOF
 
 /* split id into two, nothing changes outside of parser file */
@@ -32,7 +32,6 @@ open Ast
 %token <float> LIT_FLOAT
 %token <bool> LIT_BOOL
 
-
 /* precedence following C standard*/
 %nonassoc NOELSE
 %left COMMA
@@ -44,7 +43,7 @@ open Ast
 %left LT GT LTEQ GTEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%right NOT
+%right NOT BAR /* bar is used in typecast, this precedence is like c cast right assoc */
 
 
 %start program
@@ -176,7 +175,7 @@ expr:
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
   | expr TIMES  expr { Binop($1, Mult,  $3)   }
   | expr DIVIDE expr { Binop($1, Div,   $3)   }
-  | expr MOD    expr { Binop($1, Div,   $3)   }
+  | expr MOD    expr { Binop($1, Mod,   $3)   }
 
   /* logical binary ops */
   | expr  EQ      expr { Binop($1, Eq, $3)   }
@@ -193,11 +192,11 @@ expr:
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
-  | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Pleq, $3))}
-  | ID_VAR MINUSEQ expr { Assign($1, Binop(Id($1), Mineq, $3))} 
-  | ID_VAR TIMESEQ expr { Assign($1, Binop(Id($1), Timeseq, $3))}
-  | ID_VAR DIVEQ expr { Assign($1, Binop(Id($1), Diveq, $3))}
-  | ID_VAR MODEQ expr { Assign($1, Binop(Id($1), Modeq, $3))}
+  | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Add, $3))}
+  | ID_VAR MINUSEQ expr { Assign($1, Binop(Id($1), Sub, $3))} 
+  | ID_VAR TIMESEQ expr { Assign($1, Binop(Id($1), Mult, $3))}
+  | ID_VAR DIVEQ expr { Assign($1, Binop(Id($1), Div, $3))}
+  | ID_VAR MODEQ expr { Assign($1, Binop(Id($1), Mod, $3))}
   
   /* remove clarifying parens */
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
@@ -205,7 +204,8 @@ expr:
   /* function call */
   | ID_FUNC LPAREN args_opt RPAREN { FuncCall($1, $3) }
 
-  
+  /* just need to ensure that this is right associative */
+  | BAR AS typ BAR expr {TypeCast($3, $5)}  
 
 /* args_opt*/
 args_opt:
