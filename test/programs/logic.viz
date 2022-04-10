@@ -1,20 +1,19 @@
 // want an if with elif statement too
 
 func main(): none {
-    @@x: int = 5;
-    @@y: bool = true;
+
 
     /*
         if/else
     */
     if (3 < 4) {
-        print("this is true");
+        print("this is true"); // want to print this
         
         /*
             nested if/else
         */
         if (true) {
-            print("nested if");
+            print("nested if"); // want to print this
         } else {
             print("nested else");
         }
@@ -29,28 +28,60 @@ func main(): none {
             print("nested if with no else stmt");
         }
     }
+    print("------------------------");
 
     /*
-        else if
+        if/else
     */
-
-    if (@x < 5) {
-        print("x is less than 5");
-    } elif (@x == 5) {
-        print("x is equal to 5");
-    } elif (@y == true) {
-        print("testing multiple elif, @y is true");
-    } else {
-        print("x is larger than 5");
-    }
-
-    /*
-        lets try ternary if / else
-    */
-    true == true ? print("correct") : print("incorrect")
+    if (3 < 4) {
+        print("this is true"); // want to print this
+        
+        /*
+            nested if/else
+        */
+        if (true == false) {
+            print("nested if");
+        } else {
+            print("nested else"); // want to print this
+        }
     
-    // these are now errors
-    //1 < 2 ? print("yes"); : print("no");
-    //false == false ? while (true) { print("correct"); print("yay"); } : print("incorrect")
+    } else {
+        print("this is false");
+        
+        /* 
+            if/no else
+        */
+        if (true) {
+            print("nested if with no else stmt");
+        }
+    }
+    print("------------------------");
+
+    /*
+        if/else
+    */
+    if (3 > 4) {
+        print("this is true"); 
+        
+        /*
+            nested if/else
+        */
+        if (true == false) {
+            print("nested if");
+        } else {
+            print("nested else");
+        }
+    
+    } else {
+        print("this is false"); // want to print this
+        
+        /* 
+            if/no else
+        */
+        if (true) {
+            print("nested if with no else stmt"); // want to print this
+        }
+    }
+    print("------------------------");
 }
 

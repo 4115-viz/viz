@@ -4,23 +4,38 @@ func main(): none {
     @@b: float = -10.5;
     
     // float 
+    print("testing complex assingment for floats");
     @b += 1.0;
+    print(@b);
     @b -= 1.1;
+    print(@b);
     @b *= 1.1;
+    print(@b);
     @b /= 1.1;
+    print(@b);
     @b %= 1.1;
 
     // int 
+    print("testing complex assingment for ints");
     @a += 1;
+    print(@a);
     @a -= 1;
+    print(@a);
     @a *= 1;
+    print(@a);
     @a /= 1; 
-    @a %= 1; 
+    print(@a);
+    @a %= 1;
+    print(@a); 
 
     // assigneq with an expr on right hand side
+    print("testing complex assingment (with expr on rhs) for ints");
     @a += 1+5;
+    print(@a); 
     @a -= 1*5;
+    print(@a); 
     @a *= 1%5; 
+    print(@a); 
 
     // Someone please look at this ... 
 

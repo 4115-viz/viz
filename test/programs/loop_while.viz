@@ -1,0 +1,12 @@
+func main(): none {
+    
+    // variable decls
+    @@i: int = 0;
+
+    // normal while loop construct
+    while (@i < 10) {
+        print("this is true");
+        @i = @i + 1;
+    }
+
+}

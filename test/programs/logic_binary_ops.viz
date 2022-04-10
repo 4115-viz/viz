@@ -1,0 +1,23 @@
+func main(): none {
+
+  print("Assigning bool expressions to variables");
+  @@b1: bool = (1 == 1); // true
+  @@b2: bool = (1 != 1); // false
+  @@b3: bool = (5 < 4); // false
+  @@b4: bool = (5 > 4); // true
+  @@b5: bool = (4 <= 5); // false 
+  @@b6: bool = (5 >= 5); // true
+  @@b7: bool = (true and true); // true
+  @@b8: bool = (false or false); // false 
+
+  print("printing results");
+  print(@b1);
+  print(@b2);
+  print(@b3);
+  print(@b4);
+  print(@b5);
+  print(@b6);
+  print(@b7);
+  print(@b8);
+
+}  

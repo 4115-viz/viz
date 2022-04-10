@@ -6,25 +6,11 @@
 func main(): none {
     
     // variable decls
-    @@i: int = 0;
     @@ctr: int;
     @@ctr2: int;
     @@ctr3: int;
     @@ctr4: int;
     @@ctr5: int;
-
-    // normal while loop construct
-    while (@i < 10) {
-        print("this is true");
-        @i = @i + 1;
-    }
-
-    // map this infinite_loop to while (true)
-    // this will be parsed as a while loop where
-    // true is the condition
-    infinite_loop {
-        print("let do this forever");
-    }
 
     // try out our for loop with all aspects
     for @ctr in 1 ... <10 step 2{

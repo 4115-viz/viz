@@ -1,0 +1,10 @@
+func main(): none {
+    
+    // map this infinite_loop to while (true)
+    // this will be parsed as a while loop where
+    // true is the condition
+    infinite_loop {
+        print("let do this forever");
+    }
+
+}

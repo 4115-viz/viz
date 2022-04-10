@@ -1,0 +1,31 @@
+func main(): none {
+    
+    print("Assigning arithmetic expression to variables");
+    @@x: int = 1+1;
+    @@y: int = 1-1;
+    @@z: int = 1*5;
+    @@a: int = 5/5;
+    @@b: int = 5%4;
+
+    @@x1: float = 1.0+1.0;
+    @@y1: float = 1.0-1.0;
+    @@z1: float = 1.0*5.0;
+    @@a1: float = 5.0/5.0;
+    @@b1: float = 5.0%4.0;
+
+    print("print results from int arithmetic");
+    print(@x);
+    print(@y);
+    print(@z);
+    print(@a);
+    print(@b);
+
+    print("------------------------------------");
+    
+    print("print results from float arithmetic");
+    print(@x1);
+    print(@y1);
+    print(@z1);
+    print(@a1);
+    print(@b1);
+}
