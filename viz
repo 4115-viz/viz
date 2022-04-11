@@ -3,6 +3,9 @@
 # Thank you, pocaml team! 
 
 #!/usr/bin/env bash
+# stop script when a command returns with non-zero
+set -e
+
 LLC=llc
 CC=cc
 VIZ="dune exec -- vc"
@@ -37,11 +40,19 @@ CompileAndRun() {
   echo "Translating Viz to LLVM code..."
   # viz source code -> llvm code
   $VIZ $fpath > ${build_dir}/${basename}.ll
+  if [ $? -ne 0 ]; then
+    echo "Failed while translating Viz to LLVM code"
+    exit;
+  fi
   echo "Done."
   echo 
   echo "---"
-  echo "Build the builtin c static library"
+  echo "Building the builtin c static library"
   BuildCLib
+  if [ $? -ne 0 ]; then
+    echo "Failed while building the builtin c static library"
+    exit;
+  fi
   echo "Done."
   echo
   echo "---"
@@ -49,6 +60,10 @@ CompileAndRun() {
   cd ${build_dir}
   $LLC -relocation-model=pic ${basename}.ll > ${basename}.s
   $CC -o ${basename}.exe ${basename}.s ${builtins_ar}
+  if [ $? -ne 0 ]; then
+    echo "Failed Compiling the LLVM code..."
+    exit;
+  fi
   echo "Done. Generated executable \"${basename}.exe\"."
   echo
   echo "---"

@@ -3,6 +3,10 @@
 # Thank you, pocaml team! 
 
 #!/usr/bin/env bash
+
+# stop script when a command returns with non-zero
+set -e
+
 DOCKER_TAG=viz
 DOCKER_WORK_DIR=/home/viz
 
@@ -17,7 +21,7 @@ Usage() {
 Run() {
   echo
   echo "---"
-  echo "Building the docker image using Dockerfile..." 
+  echo "Building the docker image using Dockerfile, it will take a while..." 
   docker build -t $DOCKER_TAG . > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo "docker build failed"
@@ -30,7 +34,11 @@ Run() {
   echo
   echo "---"
   echo "Starting the docker container..."
+  echo
+  echo
+  echo ">>> Running in the docker container \"$DOCKER_TAG\" <<<"
   docker run -v "$(pwd)":"$DOCKER_WORK_DIR" -w="$DOCKER_WORK_DIR" $DOCKER_TAG /bin/bash -c "./viz $fpath"
+  echo 
 }
 
 [ $# -eq 0 ] && Usage

@@ -19,6 +19,8 @@ RUN apt-get -yq update && \
     cmake \
     opam
 
+RUN ln -s /usr/bin/lli-11 /usr/bin/lli
+RUN ln -s /usr/bin/llc-11 /usr/bin/llc
 RUN opam init --auto-setup --yes --disable-sandboxing
 
 WORKDIR '/viz'
