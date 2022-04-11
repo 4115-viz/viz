@@ -1,4 +1,5 @@
-func main(): none {
+func main(): none { // this fails
+//func main(): int { // this runs
     
     // variable decls
     @@i: int = 0;
@@ -8,5 +9,5 @@ func main(): none {
         print("this is true");
         @i = @i + 1;
     }
-
+//    return 0;
 }

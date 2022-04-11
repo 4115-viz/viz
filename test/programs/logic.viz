@@ -1,7 +1,7 @@
 // want an if with elif statement too
 
-func main(): none {
-
+//func main(): none {
+func main(): int {
 
     /*
         if/else
@@ -83,5 +83,6 @@ func main(): none {
         }
     }
     print("------------------------");
+    return 0;
 }
 
