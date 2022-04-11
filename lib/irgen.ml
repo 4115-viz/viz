@@ -194,7 +194,7 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         L.builder_at_end context end_bb
-      | SFor(_, _, _, _) -> builder (* TODO: SFor *)
+      | SFor(var_init, predicate, update, block_code) -> builder (* TODO: SFor *)
 
     in
     (* Build the code for each statement in the function *)

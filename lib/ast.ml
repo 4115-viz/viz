@@ -22,6 +22,9 @@ type expr =
   | Binop of expr * bop * expr
   | Unop of uop * expr
   | TypeCast of typ * expr
+  (* | ArrayAccess of string * expr
+  | ArrayAssign of string * expr * expr
+  | ArrayLength of string  *)
 
 type stmt =
   | Expr of expr

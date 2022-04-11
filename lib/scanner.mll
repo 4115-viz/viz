@@ -36,6 +36,7 @@ rule token = parse
 | "in" {IN}
 | "step" {STEP}
 | "as" {AS}
+| "array" {ARRAY}
 | "..." {RANGE} (* used in the for loop construct *)
 
 (* -------- types -------- *)

@@ -16,7 +16,7 @@ open Ast
 %token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS RANGE
 
 /* type */
-%token T_NONE T_STR T_INT T_BOOL T_FLOAT
+%token T_NONE T_STR T_INT T_BOOL T_FLOAT ARRAY
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
@@ -78,6 +78,7 @@ typ:
   | T_INT { IntType }
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
+  // | ARRAY BAR typ BAR {ArrT($2, $4)}
 
 
 /* function declaration */
