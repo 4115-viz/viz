@@ -26,15 +26,7 @@ BuildCLib() {
   cd ../..
 }
 
-[ $# -eq 0 ] && Usage
-
-
-fpath=$1
-fname=${fpath##*/}
-[[ $fname != *.viz ]] && Usage
-
-
-Run() {
+CompileAndRun() {
   basename=${fname%.viz*}
   echo
   echo "========== viz 0.0.0 =========="
@@ -65,7 +57,14 @@ Run() {
   ./${basename}.exe
 }
 
-Run
+[ $# -eq 0 ] && Usage
+
+
+fpath=$1
+fname=${fpath##*/}
+[[ $fname != *.viz ]] && Usage
+
+CompileAndRun
 
 
 
