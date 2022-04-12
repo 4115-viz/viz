@@ -15,6 +15,7 @@ and string_s se =
       | SStrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
       | SIntLit(x) -> "IntLit(" ^ string_of_int x ^ ")"
       | SFloatLit(x) -> "FloatLit(" ^ string_of_float x ^ ")"
+      | SNoneLit  -> "NoneLit(NONE)" (* used for return statement *)
       | SBoolLit(true) -> "BoolLit(true)"
       | SBoolLit(false) -> "BoolLit(false)"
       | SId(x) -> "Id(" ^ x ^ ")"

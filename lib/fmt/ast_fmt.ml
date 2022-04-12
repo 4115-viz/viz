@@ -32,6 +32,7 @@ let rec string_of_expr = function
   | StrLit(x) -> "StrLit(" ^ fmt_string x ^ ")"
   | IntLit(x) -> "IntLit(" ^ string_of_int x ^ ")"
   | FloatLit(x) -> "FloatLit(" ^ string_of_float x ^ ")"
+  | NoneLit  -> "NoneLit(NONE)" (* used for return statement *)
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e

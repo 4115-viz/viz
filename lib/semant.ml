@@ -106,6 +106,7 @@ let check (globals, functions) =
       | FloatLit x -> (FloatType, SFloatLit x)
       | StrLit x -> (StrType, SStrLit x)
       | BoolLit x -> (BoolType, SBoolLit x)
+      | NoneLit   -> (NoneType, SNoneLit)
       | Id var -> (type_of_identifier var, SId var)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var

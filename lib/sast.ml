@@ -6,6 +6,7 @@ and sx =
   | SIntLit of int
   | SFloatLit of float
   | SBoolLit of bool
+  | SNoneLit
   | SId of string
   | SBinop of sexpr * bop * sexpr
   | SAssign of string * sexpr

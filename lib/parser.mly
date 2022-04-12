@@ -115,12 +115,17 @@ stmt:
   | if_stmt                                 { $1 }
   | block                                   { $1 }
   | loop                                    { $1 }
-  | RETURN expr SEMI                        { Return $2      }
+  | return_statement SEMI                   { $1 }
+  /*| RETURN expr SEMI                        { Return $2      }*/
 /* TODO 
   | BREAK
   | CONTINUE
 */
 
+return_statement:
+  /* return; i.e. for nonetype return */   
+  | RETURN                              { Return NoneLit }
+  | RETURN expr                         { Return $2      }
 /*logic_expr: within control flow, we dont want SEMI involved in our exprs 
   | expr { $1 } */
 
@@ -163,9 +168,9 @@ else_stmt:
 
 expr:
   /* literal */
-  | LIT_STR { StrLit($1) }
-  | LIT_INT { IntLit($1) }
-  | LIT_BOOL { BoolLit($1) }
+  | LIT_STR   { StrLit($1)   }
+  | LIT_INT   { IntLit($1)   }
+  | LIT_BOOL  { BoolLit($1)  }
   | LIT_FLOAT { FloatLit($1) }
 
   /* variable access */

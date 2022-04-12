@@ -54,6 +54,12 @@ let translate (globals, functions) =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let print_func : L.llvalue =
     L.declare_function "print" print_t the_module in
+  let print_func_int : L.llvalue =
+    L.declare_function "print_int" print_t the_module in
+  let print_func_float : L.llvalue =
+    L.declare_function "print_float" print_t the_module in
+  let print_func_bool : L.llvalue =
+    L.declare_function "print_bool" print_t the_module in
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
@@ -70,6 +76,11 @@ let translate (globals, functions) =
   let build_function_body fdecl =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
+
+    (* lets map all other print types to the print("%s") that we currently have *)
+    let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
+    and bool_format_str = L.build_global_stringptr "%B\n" "fmt" builder
+    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -110,6 +121,7 @@ let translate (globals, functions) =
       | SIntLit i  -> L.const_int i32_t i
       | SFloatLit f -> L.const_float float_t f
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
+      | SNoneLit -> L.const_null void_t
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in
         ignore(L.build_store e' (lookup s) builder); e'
@@ -138,11 +150,28 @@ let translate (globals, functions) =
       | SFuncCall ("print", [e]) ->
         L.build_call print_func [| (build_expr builder e) |]
           "print" builder
+      | SFuncCall ("print_int", [e])  ->
+        L.build_call print_func_int [| int_format_str ; (build_expr builder e) |]
+          "print_int" builder
+      | SFuncCall ("print_float", [e])  ->
+        L.build_call print_func_float [| bool_format_str ; (build_expr builder e) |]
+          "print_float" builder
+      | SFuncCall ("print_bool", [e])  ->
+        L.build_call print_func_bool [| float_format_str ; (build_expr builder e) |]
+          "print_bool" builder
       | SFuncCall (f, args) ->
         let (fdef, _) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in
-        let result = f ^ "_result" in
+        (*let result = f ^ "_result" in *)
+        
+        (* had to borrow this from Edward's MicroC to complete the NoneType return call *)
+
+        let result = (match fdecl.srtyp with 
+                        A.NoneType -> ""
+                      | _ -> f ^ "_result") in
+
         L.build_call fdef (Array.of_list llargs) result builder
+
       | STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
         L.build_call print_func [| (build_expr builder e) |]
         "print" builder 
@@ -163,7 +192,14 @@ let translate (globals, functions) =
     let rec build_stmt builder = function
         SBlock sl -> List.fold_left build_stmt builder sl
       | SExpr e -> ignore(build_expr builder e); builder
-      | SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder
+      (*| SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder*)
+      (* borrowed from Edward's MicroC so that we can return void types *)
+      | SReturn e -> ignore(match fdecl.srtyp with
+                              (* Special "return nothing" instr *)
+                              A.NoneType -> L.build_ret_void builder 
+                              (* Build return statement *)
+                            | _ -> L.build_ret (build_expr builder e) builder );
+                     builder
       | SIf (predicate, then_stmt, else_stmt) ->
         let bool_val = build_expr builder predicate in
 
@@ -202,8 +238,13 @@ let translate (globals, functions) =
     let func_builder = build_stmt builder (SBlock fdecl.sbody) in
 
     (* Add a return if the last block falls off the end *)
-    add_terminal func_builder (L.build_ret (L.const_int i32_t 0))
-
+    (*add_terminal func_builder (L.build_ret (L.const_int i32_t 0))*)
+    
+    (* borrowed from Edward's MicroC so we can get non int return values to compile*)
+    add_terminal func_builder (match fdecl.srtyp with
+        A.NoneType -> L.build_ret_void
+      | A.FloatType -> L.build_ret (L.const_float float_t 0.0)
+      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
 
   List.iter build_function_body functions;

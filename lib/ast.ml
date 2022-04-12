@@ -16,6 +16,7 @@ type expr =
   | IntLit of int
   | FloatLit of float
   | BoolLit of bool
+  | NoneLit
   | Id of string
   | Assign of string * expr
   | FuncCall of string * expr list
