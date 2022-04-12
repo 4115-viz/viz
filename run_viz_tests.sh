@@ -13,3 +13,6 @@ BASH script-parsing.sh
 
 #cd ../semantic
 #BASH script-semantic.sh
+
+cd ../programs
+BASH script-test-programs.sh
