@@ -1,0 +1,18 @@
+func hello(): none {
+
+    print("hello guys");
+    return;
+}
+
+func hello2(): string {
+    return "hello my friends";
+}
+
+func main(): none {
+
+    hello();
+    print(hello2());
+
+    // we could also type
+    //return;
+}
