@@ -2,6 +2,9 @@ func main(): none {
     @@a: int = 10;
     @@b: float = -10.5;
 
+    print_int(@a);
+    print_float(@b);
+/*
     // float 
     print("testing complex assingment for floats");
     @b += 1.0;
@@ -35,4 +38,5 @@ func main(): none {
     print_int(@a); 
     @a *= 1%5; 
     print_int(@a);
+*/
 }
