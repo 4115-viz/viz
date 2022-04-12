@@ -2,5 +2,17 @@ Viz references
 
 1) lines 15-20 lexm.sh CTeX final project Fall 2021
     Used for scanner testing code in vc.ml
-2) microC, and all other lecture code
+2) Guo's microC, and all other lecture code
+3) Edward's microC, for issue with return statement, 
+needed help with figuring out why we couldnt return on a void function.
+also, for inspiration for printing all of our various data types. I borrowed
+the int_format_string construct and extended it to all of our various datatypes.
+becasue, if we cant print, then there is no way to fully debug.
+    * also needed to borrow the return void check within the function call. All of these
+    three issues went hand in hand.
+    * also borrowed the final return check for the add_terminal builder. That goes
+    hand in hand with what I wrote above. I just want to be able to compile and get
+    these small things out of the way so we can end up building lists/arrays/objects
+4) python grammar, insert doc ______. used it as inspiration for some
+of our conditional logic stuff
 ...

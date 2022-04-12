@@ -34,8 +34,24 @@ cd test/scanner
 # parser test files
 TBD
 
-# other test files
-TBD
+# All test programs
+cd test/programs
+./script-test-programs
+```
+
+#### How to compile and run programs!
+```
+# build viz docker image
+docker build -t viz .
+
+# make sure you have docker installed and running
+
+# run a test program
+./vizDocker test/programs/helloworld.viz
+
+# run all test programs
+cd test/programs
+./script-test-programs
 ```
 <!-- #### Compiler files
 -  `ast.ml`: abstract syntax tree (AST)--a list of strings for viz scanner (needs to be updated obviously) 
