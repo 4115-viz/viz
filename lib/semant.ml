@@ -38,13 +38,16 @@ let check (globals, functions) =
  *)
   
   let built_in_decls =
-    StringMap.add "print" {
-      rtyp = NoneType;
-      fname = "print";
-      formals = [(StrType, "x")];
-      locals = []; 
-      body = [] 
-      } StringMap.empty
+      let add_bind map (name, ty) = StringMap.add name {
+        rtyp = NoneType;
+        fname = name;
+        formals = [(ty, "x")];
+        locals = [];
+        body = [] } map
+      in List.fold_left add_bind StringMap.empty [("print", StrType);
+                                                  ("print_int", IntType);
+                                                  ("print_float", FloatType);
+                                                  ("print_bool", BoolType)]
   in
 
   (* Add function name to symbol table *)
