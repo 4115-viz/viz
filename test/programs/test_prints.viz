@@ -1,9 +1,10 @@
-func test_prints(@@x: float, @@y: int, @@z: string): none {
+func test_prints(@@x: float, @@y: int, @@z: string, @@h: bool): none {
     print_float(@x);
     print_int(@y);
     print(@z);
+    print_bool(@h);
 }
 
 func main(): none {
-    test_prints(-10.5, 100, "Hello world");
+    test_prints(-10.5, 100, "Hello world", true);
 }
