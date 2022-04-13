@@ -45,9 +45,9 @@ let check (globals, functions) =
       locals = [];
       body = [] } map
       in List.fold_left add_built_in_function StringMap.empty [("print", StrType);
-                                                  ("print_int", IntType);
-                                                  ("print_float", FloatType);
-                                                  ("print_bool", BoolType)]
+                                                               ("print_int", IntType);
+                                                               ("print_float", FloatType);
+                                                               ("print_bool", BoolType)]
   in
 
   (* Add function name to symbol table *)

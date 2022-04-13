@@ -28,7 +28,7 @@ let translate (globals, functions) =
 
   (* Get types from the context *)
   let i32_t      = L.i32_type    context
-  and i8_t       = L.i8_type     context
+  (* and i8_t       = L.i8_type     context *)
   and i1_t       = L.i1_type     context
   and void_t     = L.void_type    context
   and float_t    = L.double_type context 
@@ -50,10 +50,15 @@ let translate (globals, functions) =
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
-  let print_t : L.lltype =
-    L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
-  let print_func : L.llvalue =
-    L.declare_function "print" print_t the_module in
+  (* Declaring print function *)
+  let print_t = L.var_arg_function_type i32_t [| str_t |] in
+  let print_func = L.declare_function "printf" print_t the_module in
+
+  (* Format strings for printing *) 
+  let int_format_str builder = L.build_global_stringptr "%d\n" "fmt" builder 
+  and str_format_str builder = L.build_global_stringptr "%s\n" "fmt" builder
+  (* and bool_format_str builder = L.build_global_stringptr "%B\n" "fmt" builder  *)
+  and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder in
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
@@ -70,11 +75,6 @@ let translate (globals, functions) =
   let build_function_body fdecl =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
-
-    (* lets map all other print types to the print("%s") that we currently have *)
-    let int_format_str = L.build_global_stringptr "%d\n" "fmt_int" builder
-    and bool_format_str = L.build_global_stringptr "%B\n" "fmt_bool" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt_float" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -103,11 +103,6 @@ let translate (globals, functions) =
     let lookup n = try StringMap.find n local_vars
       with Not_found -> StringMap.find n global_vars
     in
-
-    (* 
-    Our Binary Operators from ast.ml
-    type bop = Add | Sub | Eq | Neq | Less | And | Or | Mult | Div | Great | Leq | Geq | Mod 
-    *)
 
     (* Construct code for an expression; return its value *)
     let rec build_expr builder ((_, e) : sexpr) = match e with
@@ -141,14 +136,18 @@ let translate (globals, functions) =
         let (_, _) = e in
         let e' = build_expr builder e in
         L.build_not e' "tmp" builder
-      | SFuncCall ("print", [e]) ->
-        L.build_call print_func [| (build_expr builder e) |] "print" builder
-      | SFuncCall ("print_int", [e])  ->
-        L.build_call print_func [|  int_format_str ; (build_expr builder e) |] "print" builder
-      | SFuncCall ("print_float", [e])  ->
-        L.build_call print_func [| float_format_str ; (build_expr builder e) |] "print" builder
-      | SFuncCall ("print_bool", [e])  ->
-        L.build_call print_func [| bool_format_str ; (build_expr builder e) |] "print" builder
+      | SFuncCall("print", [e])   -> 
+        L.build_call print_func [| str_format_str builder; (build_expr builder e)|]
+        "printf" builder
+      | SFuncCall("print_int", [e])   -> 
+          L.build_call print_func [| int_format_str builder; (build_expr builder e)|]
+          "printf" builder
+      | SFuncCall("print_float", [e]) -> 
+          L.build_call print_func [| float_format_str builder; (build_expr builder e)|]
+          "printf" builder
+      | SFuncCall("print_bool", [e])  -> 
+          L.build_call print_func [| int_format_str builder; (build_expr builder e)|]
+          "printf" builder
       | SFuncCall (f, args) ->
         let (fdef, _) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in
