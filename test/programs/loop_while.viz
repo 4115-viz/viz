@@ -1,13 +1,22 @@
-func main(): none { // this fails
-//func main(): int { // this runs
+func main(): none {
     
     // variable decls
-    @@i: int = 0;
+    //@@i: int = 0; // this doesnt work yet
+    @@i: int;
+    @i = 0;
 
+    print("==========================");
+    print("loop counting up");    
     // normal while loop construct
     while (@i < 10) {
-        print("this is true");
+        print_int(@i);
         @i = @i + 1;
     }
-//    return 0;
+
+    print("==========================");
+    print("loop counting down");
+    while (@i > 0) {
+        print_int(@i);
+        @i = @i - 1;
+    }
 }

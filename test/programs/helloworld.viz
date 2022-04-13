@@ -3,4 +3,5 @@ func main(): int {
   @x = "Hello World";
   print(@x);
   print("Hello World2");
+  return 0;
 }

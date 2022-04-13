@@ -8,11 +8,25 @@ func hello2(): string {
     return "hello my friends";
 }
 
+func hello3(): int {
+    return 1;
+}
+
+func hello4(): float {
+    return 1.0;
+}
+func hello5(): bool {
+    return true;
+}
 func main(): none {
 
-    hello();
-    print(hello2());
-
-    // we could also type
+    hello(); // returns void
+    print(hello2()); // returns string
+    print_int(hello3()); // returns int
+    print_float(hello4()); // returns float
+    print_bool(hello5()); // returns bool
+    
+    
+    // we could also type, for a void function
     //return;
 }

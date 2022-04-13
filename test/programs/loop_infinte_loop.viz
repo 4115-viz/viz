@@ -1,5 +1,4 @@
-func main(): none { // this fails
-//func main(): int { // this runs
+func main(): int {
     
     // map this infinite_loop to while (true)
     // this will be parsed as a while loop where
@@ -7,5 +6,6 @@ func main(): none { // this fails
     infinite_loop {
         print("let do this forever");
     }
-    //return 0;
+    
+    return 0;
 }

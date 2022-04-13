@@ -1,6 +1,9 @@
 func main(): none {
-    @@x: int = 5;
-    @@y: bool = true;
+    
+    @@x: int;
+    @@y: bool;
+    @x = 5; 
+    @y = true;
 
     /*
         else if
@@ -17,10 +20,10 @@ func main(): none {
     }
     print("------------------------");
     
-
     /*
-        else if
-    */
+    //
+        //else if
+    //
     @x = 4;
 
     if (@x < 5) {
@@ -34,9 +37,9 @@ func main(): none {
     }
     print("------------------------");
 
-    /*
-        else if
-    */
+    //
+        //else if
+    //
     @x = 6;
 
     if (@x < 5) {
@@ -50,9 +53,9 @@ func main(): none {
     }
     print("------------------------");
 
-    /*
-        else if
-    */
+    //
+        //else if
+    //
     @x = 10;
 
     if (@x < 5) {
@@ -65,4 +68,6 @@ func main(): none {
         print("x is larger than 6");
     }
     print("------------------------");
+
+    */
 }

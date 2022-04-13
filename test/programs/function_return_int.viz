@@ -3,6 +3,7 @@ func ret_number(): int {
 }
 
 func main(): none {
-    @@x: int = ret_number();
-    print(@x);
+    @@x: int;
+    @x = ret_number();
+    print_int(@x);
 }

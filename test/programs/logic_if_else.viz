@@ -1,0 +1,25 @@
+func main(): none {
+
+
+    /*
+        if/else
+    */
+    print("=========================");
+    print(""); // print newline, needs to be fixed
+    print("logic test 1: enter true block");
+    if (3 < 4) {
+        print("if/else --> in true block"); // want to print this
+    } else {
+        print("if/else --> in false block"); // want to print this
+    }
+
+    print("=========================");
+    print(""); // print newline, needs to be fixed
+    print("logic test 1: enter false block");
+    if (3 == 4) {
+        print("if/else --> in true block"); // want to print this
+    } else {
+        print("if/else --> in false block"); // want to print this
+    }
+}
+

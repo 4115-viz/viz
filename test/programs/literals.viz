@@ -1,17 +1,23 @@
 func main(): none {
+
+    @@x: int;
+    @@y: float;
+    @@z: bool;
+    @@a: bool;
+    @@b: string;
+
+    @x = 1;
+    @y = 1.0;
+    @z = true;
+    @a = false;
+    @b = "Hello World";  
     
     print("Assigning literals to variables");
-    @@x: int = 1;
-    @@y: float = 1.0;
-    @@z: bool = true;
-    @@a: bool = false;
-    @@b: string = "Hello World";
-
     print("Accessing the variables and printing values");
-    print(@x);
-    print(@y);
-    print(@z);
-    print(@a);
+    print_int(@x);
+    print_float(@y);
+    print_bool(@z);
+    print_bool(@a);
     print(@b);
 
 }
