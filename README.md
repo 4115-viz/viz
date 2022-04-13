@@ -40,21 +40,39 @@ cd test/programs
 ```
 
 #### How to compile and run programs!
-```
 If you do not manually build then it will hang when you run the ./vizDocker script
 run this below command first, then ./vizDocker will used cached version.
 # build viz docker image
+```
 docker build -t viz .
+```
 
 # make sure you have docker installed and running
 
+# To use the bash of the docker container:
+1. If you haven't created the container yet, (skip if you have done this):
+Make sure you are on the project's root directory.
+```
+docker run -it -v $(pwd):/home/viz -w=/home/viz viz /bin/bash
+```
+2. Start the container if it's not running.
+```
+docker start <container_name>
+```
+3. Run the bash shell of the container.
+```
+docker exec -it <container_name> /bin/bash 
+```
+
+
 # run a test program
-./vizDocker test/programs/helloworld.viz
+`./vizDocker test/programs/helloworld.viz`
 
 # run all test programs
+```
 cd test/programs
 ./script-test-programs
-```
+
 <!-- #### Compiler files
 -  `ast.ml`: abstract syntax tree (AST)--a list of strings for viz scanner (needs to be updated obviously) 
 -  `scanner.mll`: scanner
