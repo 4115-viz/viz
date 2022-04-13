@@ -57,7 +57,6 @@ let translate (globals, functions) =
   (* Format strings for printing *) 
   let int_format_str builder = L.build_global_stringptr "%d\n" "fmt" builder 
   and str_format_str builder = L.build_global_stringptr "%s\n" "fmt" builder
-  (* and bool_format_str builder = L.build_global_stringptr "%B\n" "fmt" builder  *)
   and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder in
 
   (* Define each function (arguments and return type) so we can
@@ -136,6 +135,9 @@ let translate (globals, functions) =
         let (_, _) = e in
         let e' = build_expr builder e in
         L.build_not e' "tmp" builder
+      | SFuncCall("println", [])   -> 
+        L.build_call print_func [| str_format_str builder; (build_expr builder (A.StrType, SStrLit("")))|]
+        "printf" builder
       | SFuncCall("print", [e])   -> 
         L.build_call print_func [| str_format_str builder; (build_expr builder e)|]
         "printf" builder
