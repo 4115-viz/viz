@@ -1,5 +1,5 @@
 func test_prints(@@x: float, @@y: int, @@z: string, @@h: bool): none {
-    print_float(@x);
+    print_float(@x + 11);
     print_int(@y);
     print(@z);
     print_bool(@h);
