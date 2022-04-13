@@ -54,12 +54,6 @@ let translate (globals, functions) =
     L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let print_func : L.llvalue =
     L.declare_function "print" print_t the_module in
-  let print_func_int : L.llvalue =
-    L.declare_function "print_int" print_t the_module in
-  let print_func_float : L.llvalue =
-    L.declare_function "print_float" print_t the_module in
-  let print_func_bool : L.llvalue =
-    L.declare_function "print_bool" print_t the_module in
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
@@ -78,9 +72,9 @@ let translate (globals, functions) =
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
     (* lets map all other print types to the print("%s") that we currently have *)
-    let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and bool_format_str = L.build_global_stringptr "%B\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
+    let int_format_str = L.build_global_stringptr "%d\n" "fmt_int" builder
+    and bool_format_str = L.build_global_stringptr "%B\n" "fmt_bool" builder
+    and float_format_str = L.build_global_stringptr "%g\n" "fmt_float" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -148,17 +142,13 @@ let translate (globals, functions) =
         let e' = build_expr builder e in
         L.build_not e' "tmp" builder
       | SFuncCall ("print", [e]) ->
-        L.build_call print_func [| (build_expr builder e) |]
-          "print" builder
+        L.build_call print_func [| (build_expr builder e) |] "print" builder
       | SFuncCall ("print_int", [e])  ->
-        L.build_call print_func_int [| int_format_str ; (build_expr builder e) |]
-          "print_int" builder
+        L.build_call print_func [|  int_format_str ; (build_expr builder e) |] "print" builder
       | SFuncCall ("print_float", [e])  ->
-        L.build_call print_func_float [| bool_format_str ; (build_expr builder e) |]
-          "print_float" builder
+        L.build_call print_func [| float_format_str ; (build_expr builder e) |] "print" builder
       | SFuncCall ("print_bool", [e])  ->
-        L.build_call print_func_bool [| float_format_str ; (build_expr builder e) |]
-          "print_bool" builder
+        L.build_call print_func [| bool_format_str ; (build_expr builder e) |] "print" builder
       | SFuncCall (f, args) ->
         let (fdef, _) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder) (List.rev args)) in

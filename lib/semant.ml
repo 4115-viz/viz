@@ -85,12 +85,12 @@ let check (globals, functions) =
       if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
 
-    let string_conversion et e err =
+    (*let string_conversion et e err =
     (* convert the first expression result to string *)
       if et == NoneType then raise (Failure err)
       else if et != StrType then e
       else e
-    in
+    in*)
 
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
@@ -179,8 +179,8 @@ let check (globals, functions) =
                 let err = "illegal argument found " ^ string_of_typ et ^
                           " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
                 in 
-                if fd.fname == "print" then (ft, string_conversion et e' err) (*convert to string*)
-                else (check_assign ft et err, e')
+                (*if fd.fname == "print" then (ft, string_conversion et e' err) (*convert to string*)
+                else*) (check_assign ft et err, e')
         in
         let args' = List.map2 check_call fd.formals args
         in (fd.rtyp, SFuncCall(fname, args'))

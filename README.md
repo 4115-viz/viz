@@ -41,6 +41,8 @@ cd test/programs
 
 #### How to compile and run programs!
 ```
+If you do not manually build then it will hang when you run the ./vizDocker script
+run this below command first, then ./vizDocker will used cached version.
 # build viz docker image
 docker build -t viz .
 
