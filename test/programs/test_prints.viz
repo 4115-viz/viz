@@ -4,6 +4,7 @@ func test_prints(@@x: float, @@y: int, @@z: string, @@h: bool): none {
     print(@z);
     println();
     print_bool(@h);
+    print_bool(false);
 }
 
 func main(): none {
