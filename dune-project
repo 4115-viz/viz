@@ -19,7 +19,11 @@
  (name viz)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune llvm)
+ (depends 
+  ocaml
+  dune
+  (llvm ( ="11.0.0" ))
+ )
  (tags
   (topics "to describe" your project)))
 
