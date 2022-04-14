@@ -1,0 +1,4 @@
+(library
+  (name test)
+  (preprocess (pps ppx_inline_test))
+  (libraries lib))
