@@ -46,8 +46,8 @@ run this below command first, then ./vizDocker will used cached version.
 ```
 docker build -t viz .
 ```
-# if "ERROR [7/9] COPY ./viz.opam ." upon docker build 
-# run dune build
+if "ERROR [7/9] COPY ./viz.opam ." upon docker build 
+run dune build
 ```
 dune build
 ```
