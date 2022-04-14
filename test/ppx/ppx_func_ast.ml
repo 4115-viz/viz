@@ -1,13 +1,5 @@
-open Lib
-open Ast
-
-let parse_program program_str = 
-let lexbuf = Lexing.from_string program_str in
-Parser.program Scanner.token lexbuf
-
-(* Parse a single function declaration *)
-let parse_function (func_str : string) : func_def =
-List.hd (snd (parse_program func_str))
+open Ppx_ast_utils
+open Lib.Ast
 
 let%test "func return int" = 
 parse_function "func main(): int {}"
@@ -24,3 +16,13 @@ parse_function "func main(): string {}"
 let%test "func return float" = 
 parse_function "func main(): float {}"
 = {rtyp = FloatType; fname = "main"; formals = []; locals = []; body = []}
+
+let%test "multiple functions" =
+parse_program "func main1(): none {} func main2(): none {}"
+= ([],[
+  {rtyp = NoneType; fname = "main1"; formals = []; locals = []; body = []};
+  {rtyp = NoneType; fname = "main2"; formals = []; locals = []; body = []}])
+
+let%test "func with formals" = 
+parse_function "func main(@@x: int, @@y: string): none {}"
+= {rtyp = FloatType; fname = "main"; formals = [(IntType, "x"); (StrType, "y")]; locals = []; body = []}
