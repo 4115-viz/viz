@@ -22,6 +22,8 @@
  (depends 
   ocaml
   dune
+  ppx_expect
+  ppx_inline_test
   (llvm ( ="11.0.0" ))
  )
  (tags
