@@ -99,30 +99,30 @@ let check (globals, functions) =
     in
 
     (* Return a variable from our local symbol table *)
-    let type_of_identifier s =
+    let type_of_identifier s symbols =
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec check_expr = function
+    let rec check_expr symbols = function
         IntLit x -> (IntType, SIntLit x)
       | FloatLit x -> (FloatType, SFloatLit x)
       | StrLit x -> (StrType, SStrLit x)
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
-      | Id var -> (type_of_identifier var, SId var)
+      | Id var -> (type_of_identifier var symbols, SId var)
       | Assign(var, e) as ex ->
-        let lt = type_of_identifier var
-        and (rt, e') = check_expr e in
+        let lt = type_of_identifier var symbols
+        and (rt, e') = check_expr symbols e in
         let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
 
       | Binop(l, bo, r) as ex-> 
-        let (ltype, l') = check_expr l in
-        let (rtype, r') = check_expr r in
+        let (ltype, l') = check_expr symbols l in
+        let (rtype, r') = check_expr symbols r in
         (* we can only do binop on operands of same type *)
         let compatible_types = (ltype = rtype) in
         (* throw error, or return final_type for supported binops *)
@@ -156,7 +156,7 @@ let check (globals, functions) =
             ) bo
         in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
       | Unop(uo, r) as ex ->
-        let (rtype, r') = check_expr r in
+        let (rtype, r') = check_expr symbols r in
         let final_type = 
           (* if we add other unary operands, we may need to be more clever 
           with type support. Right now, we are supporting Not, so this is ok.  
@@ -176,7 +176,7 @@ let check (globals, functions) =
           raise (Failure ("expecting " ^ string_of_int param_length ^
                           " arguments in " ^ string_of_expr call))
         else let check_call (ft, _) e =
-                let (et, e') = check_expr e in
+                let (et, e') = check_expr symbols e in
                 let err = "illegal argument found " ^ string_of_typ et ^
                           " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
                 in 
@@ -186,7 +186,7 @@ let check (globals, functions) =
         let args' = List.map2 check_call fd.formals args
         in (fd.rtyp, SFuncCall(fname, args'))
       | TypeCast(ty, expr) -> 
-        let (rtype, r') = check_expr expr in (* thing we want to cast *)
+        let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
         let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ string_of_typ ty1 ^ " to " ^ string_of_typ ty2  )) )
         in let casted_expr = 
             (match ty with
@@ -218,8 +218,8 @@ let check (globals, functions) =
         in (ty, casted_expr) 
     in
 
-    let check_bool_expr e =
-      let (t, e') = check_expr e in
+    let check_bool_expr symbols e =
+      let (t, e') = check_expr symbols e in
       match t with
       | BoolType -> (t, e')
       |  _ -> raise (Failure ("expected Boolean expression in " ^ string_of_expr e))
@@ -239,16 +239,16 @@ let check (globals, functions) =
         sbody = check_program f.body;
       } something like ensure that these fields can be filled
     in *)
-    let rec check_stmt_list =function
+    let rec check_stmt_list symbols =function
         [] -> []
-      | Block sl :: sl'  -> check_stmt_list (sl @ sl') (* Flatten blocks *)
-      | s :: sl -> check_stmt s :: check_stmt_list sl
+      | Block sl :: sl'  -> check_stmt_list symbols (sl @ sl') (* Flatten blocks *)
+      | s :: sl -> check_stmt symbols s :: check_stmt_list symbols sl
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt = function
+    and check_stmt symbols = function
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
-        Block sl -> SBlock (check_stmt_list sl)
-      | Expr e -> SExpr (check_expr e)
+        Block sl -> SBlock (check_stmt_list symbols sl)
+      | Expr e -> SExpr (check_expr symbols e)
       | If(e, st1, st2) ->
         
         (*(* note: we need to check for st2 being a No_op *)
@@ -257,13 +257,13 @@ let check (globals, functions) =
           SIf(check_bool_expr e, check_stmt st1, SBlock([]))
         (* this case is if/else *)
         else *)
-          SIf(check_bool_expr e, check_stmt st1, check_stmt st2)
+          SIf(check_bool_expr symbols e, check_stmt symbols st1, check_stmt symbols st2)
       | While(e, st) ->
-        SWhile(check_bool_expr e, check_stmt st)
+        SWhile(check_bool_expr symbols e, check_stmt symbols st)
       | For(e1, e2, e3, st) ->
-          SFor(check_expr e1, check_bool_expr e2, check_expr e3, check_stmt st)
+          SFor(check_expr symbols e1, check_bool_expr symbols e2, check_expr symbols e3, check_stmt symbols st)
       | Return e ->
-        let (t, e') = check_expr e in
+        let (t, e') = check_expr symbols e in
         if t = func.rtyp then SReturn (t, e')
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
@@ -274,7 +274,7 @@ let check (globals, functions) =
       sfname = func.fname;
       sformals = func.formals;
       slocals  = func.locals;
-      sbody = check_stmt_list func.body
+      sbody = check_stmt_list symbols func.body
     }
   in
   (globals, List.map check_func functions)
