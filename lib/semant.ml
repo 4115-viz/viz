@@ -137,7 +137,7 @@ let check (globals, functions) =
           else           
             (fun my_op -> match my_op with
             | (Add | Sub | Mult | Mod | Div) when ltype = IntType && rtype = IntType -> IntType
-            | (Add | Sub | Mult | Mod | Div) when ltype = FloatType && rtype = FloatType -> FloatType
+            | (Add | Sub | Mult | (*Mod |*) Div) when ltype = FloatType && rtype = FloatType -> FloatType
             (*| (Div) when ltype = IntType && rtype = IntType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
               let () = print_endline (string_of_expr r) in 

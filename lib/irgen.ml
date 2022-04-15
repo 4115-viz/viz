@@ -151,7 +151,7 @@ let translate (globals, functions) =
                   | A.Sub     -> L.build_fsub
                   | A.Mult    -> L.build_fmul
                   | A.Div     -> L.build_fdiv
-                  | A.Mod     -> L.build_frem
+                  (* | A.Mod     -> L.build_frem *)
                   | A.Eq      -> L.build_fcmp L.Fcmp.Oeq
                   | A.Neq     -> L.build_fcmp L.Fcmp.One
                   | A.Less    -> L.build_fcmp L.Fcmp.Olt
