@@ -19,4 +19,4 @@ echo "-------------------------------------"
 
 # build and run the test programs
 #cd ../../
-BASH script-test-programs.sh
+./script-test-programs.sh
