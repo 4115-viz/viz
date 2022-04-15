@@ -23,7 +23,6 @@ type expr =
   | Binop of expr * bop * expr
   | Unop of uop * expr
   | TypeCast of typ * expr
-  | Noassign of typ
   (* | ArrayAccess of string * expr
   | ArrayAssign of string * expr * expr
   | ArrayLength of string  *)
@@ -35,7 +34,6 @@ type stmt =
   | While of expr * stmt
   | For of expr * expr * expr * stmt
   | Return of expr
-  | Local of typ * string * expr
   
 type bind = typ * string
 
