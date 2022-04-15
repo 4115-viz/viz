@@ -1,7 +1,13 @@
-func main(): int {
+func main(): none {
   @@x: string;
-  @x = "Hello World";
   print(@x);
-  print("Hello World2");
-  return 0;
+  @@y: int;
+  print_int(@y);
+  @y = @y + 5;
+  print_int(@y);
+  @@z: int = 7;
+  print_int(@z);
+  print_int(@y + @z);
+  @@h: string = "Hello World";
+  print(@h);
 }

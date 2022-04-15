@@ -13,6 +13,7 @@ and sx =
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
   | STypeCast of typ * sexpr
+  | SNoassign of typ
   (* | SArrayLit of typ * sx list
   | SArrayAccess of string * sexpr
   | SArrayAssign of string * sexpr * sexpr
@@ -25,6 +26,7 @@ type sstmt =
   | SWhile of sexpr * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr
+  | SLocal of typ * string * sstmt
   
 type sfunc_def = {
   srtyp: typ;

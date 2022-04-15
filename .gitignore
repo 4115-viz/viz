@@ -13,3 +13,5 @@ viz.opam
 
 # static library
 **/*.a
+
+hot_test.viz
