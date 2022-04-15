@@ -23,6 +23,7 @@
   ocaml
   dune
   (llvm ( ="11.0.0" ))
+  alcotest
  )
  (tags
   (topics "to describe" your project)))
