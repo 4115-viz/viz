@@ -282,7 +282,8 @@ let check (globals, functions) =
         else
           let expr_type = fst (check_expr symbols e) in
           if expr_type = typ then 
-          SLocal (typ, id, check_stmt (StringMap.add id expr_type symbols) call)
+          let new_symbols = StringMap.add id expr_type symbols in
+          SLocal (typ, id, check_stmt new_symbols call)
           else raise (Failure ("Local var type does not match"))
           
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
