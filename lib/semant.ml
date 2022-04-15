@@ -242,13 +242,16 @@ let check (globals, functions) =
     let rec check_stmt_list symbols =function
         [] -> []
       | Block sl :: sl'  -> check_stmt_list symbols (sl @ sl') (* Flatten blocks *)
-      | s :: sl -> check_stmt symbols s :: check_stmt_list symbols sl
+      | s :: sl -> 
+          let (stmt, new_symbols) = check_stmt symbols s 
+          in
+          stmt :: check_stmt_list new_symbols sl
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt symbols = function
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
-        Block sl -> SBlock (check_stmt_list symbols sl)
-      | Expr e -> SExpr (check_expr symbols e)
+        Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
+      | Expr e -> (SExpr (check_expr symbols e), symbols)
       | If(e, st1, st2) ->
         
         (*(* note: we need to check for st2 being a No_op *)
@@ -257,17 +260,26 @@ let check (globals, functions) =
           SIf(check_bool_expr e, check_stmt st1, SBlock([]))
         (* this case is if/else *)
         else *)
-          SIf(check_bool_expr symbols e, check_stmt symbols st1, check_stmt symbols st2)
+          (SIf(check_bool_expr symbols e, fst (check_stmt symbols st1), fst (check_stmt symbols st2)), symbols)
       | While(e, st) ->
-        SWhile(check_bool_expr symbols e, check_stmt symbols st)
+        (SWhile(check_bool_expr symbols e, fst (check_stmt symbols st)), symbols)
       | For(e1, e2, e3, st) ->
-          SFor(check_expr symbols e1, check_bool_expr symbols e2, check_expr symbols e3, check_stmt symbols st)
+          (SFor(check_expr symbols e1, check_bool_expr symbols e2, check_expr symbols e3, fst (check_stmt symbols st)), symbols)
       | Return e ->
         let (t, e') = check_expr symbols e in
-        if t = func.rtyp then SReturn (t, e')
+        if t = func.rtyp then (SReturn (t, e'), symbols)
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
                      string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
+      | Local (typ, id, e) as call ->
+        if StringMap.mem id symbols then (SExpr(check_expr symbols e), symbols) (*Maybe we should return the symbols *)
+        else
+          let expr_type = fst (check_expr symbols e) in
+          if expr_type = typ then 
+          let new_symbols = StringMap.add id expr_type symbols in
+          (SLocal (typ, id, fst (check_stmt new_symbols call)), new_symbols)
+          else raise (Failure ("Local var type does not match"))
+          
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
     in (* body of check_func *)
     { srtyp = func.rtyp;
