@@ -4,4 +4,5 @@ func main(): none {
   // @x = "Hello";
   print("Hello Worl1d");
   @@z: string;
+  
 }

@@ -252,9 +252,9 @@ let check (globals, functions) =
         [] -> []
       | Block sl :: sl'  -> check_stmt_list symbols (sl @ sl') (* Flatten blocks *)
       | s :: sl -> 
-        let stmt_symbols = check_stmt symbols s 
-        in
-        (fst stmt_symbols) :: check_stmt_list (snd stmt_symbols) sl
+          let (stmt, new_symbols) = check_stmt symbols s 
+          in
+          stmt :: check_stmt_list new_symbols sl
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt symbols = function
       (* A block is correct if each statement is correct and nothing
