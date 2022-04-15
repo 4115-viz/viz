@@ -178,18 +178,18 @@ expr:
   | expr MOD    expr { Binop($1, Mod,   $3)   }
 
   /* logical binary ops */
-  | expr  EQ      expr { Binop($1, Eq, $3)   }
+  | expr  EQ      expr { Binop($1, Eq, $3)      }
   | expr  NEQ     expr { Binop($1, Neq,   $3)   }
   | expr  LT      expr { Binop($1, Less,  $3)   }
-  | expr  GT      expr { Binop($1, Great, $3) }
+  | expr  GT      expr { Binop($1, Great, $3)   }
   | expr  LTEQ    expr { Binop($1, Leq,   $3)   }
   | expr  GTEQ    expr { Binop($1, Geq,   $3)   }
 
   /* logical ops */
-  | expr  AND    expr { Binop($1, And,   $3)   }
-  | expr  OR     expr { Binop($1, Or,    $3)   }
-  | NOT   expr        { Unop(Not, $2) }
-  (*| MINUS expr        { Unop(Negate, $2)}*)
+  | expr  AND    expr       { Binop($1, And,   $3)   }
+  | expr  OR     expr       { Binop($1, Or,    $3)   }
+  | unary   {$1}  
+
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
@@ -207,6 +207,13 @@ expr:
 
   /* just need to ensure that this is right associative */
   | BAR AS typ BAR expr {TypeCast($3, $5)}  
+
+unary:
+  | neg unary              { Unop(Negate, $2) }
+  | NOT unary              { Unop(Not, $2) }
+
+neg:
+  | MINUS {Negate}
 
 /* args_opt*/
 args_opt:
