@@ -1,3 +1,7 @@
 (tests
- (names test_ast_func)
- (libraries alcotest lib))
+ (names
+  test_ast_func
+  test_ast_program
+ )
+ (libraries alcotest lib)
+ (action (run %{test} -e)))

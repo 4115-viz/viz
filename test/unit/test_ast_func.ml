@@ -36,13 +36,21 @@ let test_func_return_bool () =
   (parse_function "func main(): bool {}")
   {rtyp = BoolType; fname = "main"; formals = []; locals = []; body = []}
 
+let test_func_with_two_formals () = 
+  same_func
+  (parse_function "func main(@@x: int, @@y: string): none {}")
+  {rtyp = NoneType; fname = "main"; formals = [(IntType, "x"); (StrType, "y")]; locals = []; body = []}
+
 let () = 
   run "Should able to parse function declarations" [
-    "function-return-type", [
+    "various-return-type", [
       test_case "None Type" `Quick test_func_return_none;
       test_case "Int Type" `Quick test_func_return_int;
       test_case "String Type" `Quick test_func_return_string;
       test_case "Float Type" `Quick test_func_return_float;
       test_case "Boolean Type" `Quick test_func_return_bool;
+    ];
+    "declared-with-formals", [
+      test_case "Two formals" `Quick test_func_with_two_formals;
     ]
   ]
