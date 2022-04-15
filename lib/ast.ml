@@ -4,12 +4,13 @@ type bop = Add | Sub | Eq | Neq | Less | And | Or
 
 type uop = Not
 
-type typ = 
+type builtin_type = 
   | NoneType
   | StrType
   | IntType
   | BoolType
   | FloatType
+  | ArrayType of builtin_type
 
 type expr =
   | StrLit of string
@@ -22,11 +23,8 @@ type expr =
   | FuncCall of string * expr list
   | Binop of expr * bop * expr
   | Unop of uop * expr
-  | TypeCast of typ * expr
-  | Noassign of typ
-  (* | ArrayAccess of string * expr
-  | ArrayAssign of string * expr * expr
-  | ArrayLength of string  *)
+  | TypeCast of builtin_type * expr
+  | Noassign of builtin_type
 
 type stmt =
   | Expr of expr
@@ -35,12 +33,12 @@ type stmt =
   | While of expr * stmt
   | For of expr * expr * expr * stmt
   | Return of expr
-  | Local of typ * string * expr
+  | Local of builtin_type * string * expr
   
-type bind = typ * string
+type bind = builtin_type * string
 
 type func_def = {
-  rtyp: typ;
+  rtyp: builtin_type;
   fname: string;
   formals: bind list;
   locals: bind list;
@@ -48,4 +46,4 @@ type func_def = {
 }
 
 (* ----- Entry ----- *)
-type program = bind list * func_def list
+type program = func_def list

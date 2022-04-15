@@ -16,7 +16,7 @@ open Ast
 %token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS RANGE
 
 /* type */
-%token T_NONE T_STR T_INT T_BOOL T_FLOAT ARRAY
+%token T_NONE T_STR T_INT T_BOOL T_FLOAT T_ARRAY
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
@@ -53,30 +53,31 @@ open Ast
 
 
 program:
-  decls EOF { $1 }
+  /* nothing */ { [] }
+  | fdecls EOF { $1 }
 
-decls:
-   /* nothing */ { ([], [])               }
- | fdecl decls { (fst $2, ($1 :: snd $2)) }
+fdecls:
+   /* nothing */ { []               }
+ | fdecl fdecls { $1 :: $2 }
  
 /* @@x: string; */
 vdecl:
-  | ID_VAR_DECL COLON typ {($3, $1)}
+  | ID_VAR_DECL COLON builtin_type {($3, $1)}
 
 
-typ:
+builtin_type:
   | T_NONE { NoneType }
   | T_STR { StrType }
   | T_INT { IntType }
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
-  // | ARRAY BAR typ BAR {ArrT($2, $4)}
+  | T_ARRAY BAR builtin_type BAR { ArrayType($3) }
 
 
 /* function declaration */
 fdecl:
   /* func with args */ 
-  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON typ LBRACE stmt_list RBRACE
+  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON builtin_type LBRACE stmt_list RBRACE
   {
     { 
       rtyp = $7;
@@ -206,7 +207,7 @@ expr:
   | ID_FUNC LPAREN args_opt RPAREN { FuncCall($1, $3) }
 
   /* just need to ensure that this is right associative */
-  | BAR AS typ BAR expr {TypeCast($3, $5)}  
+  | BAR AS builtin_type BAR expr {TypeCast($3, $5)}  
 
 /* args_opt*/
 args_opt:

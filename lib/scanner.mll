@@ -36,7 +36,6 @@ rule token = parse
 | "in" {IN}
 | "step" {STEP}
 | "as" {AS}
-| "array" {ARRAY}
 | "..." {RANGE} (* used in the for loop construct *)
 
 (* -------- types -------- *)
@@ -45,6 +44,7 @@ rule token = parse
 | "string" { T_STR }
 | "bool" { T_BOOL }
 | "float" { T_FLOAT }
+| "array" { T_ARRAY }
 
 (* -------- arithmetic operators -------- *)
 | '+' { PLUS }

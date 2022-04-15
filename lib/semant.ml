@@ -9,12 +9,12 @@ module StringMap = Map.Make(String)
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
 
-   Check each global variable, then check each function *)
+   Check each function *)
 
-let check (globals, functions) =
+let check (functions) =
 
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : (typ * string) list) =
+  let check_binds (kind : string) (binds : (builtin_type * string) list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -23,9 +23,6 @@ let check (globals, functions) =
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
 
-  (* Make sure no globals duplicate *)
-  check_binds "global" globals;
-
   (* Collect function declarations for built-in functions: no bodies *)
   (* need to convert print to print_int *)
   (* should also have a print_bool, print_string, print_none, print_float*)
@@ -33,7 +30,7 @@ let check (globals, functions) =
   (* create a list of pairs. (func name, func_def) *)
  (*
  let builtin_funcs = [
-  {name = "print"; typ = NoneType; params = [(StrType, "x")]; locals = []; body = []};
+  {name = "print"; builtin_type = NoneType; params = [(StrType, "x")]; locals = []; body = []};
 ] and iterate through the list
  *)
   
@@ -95,7 +92,7 @@ let check (globals, functions) =
 
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        StringMap.empty (globals @ func.formals @ func.locals )
+        StringMap.empty (func.formals @ func.locals)
     in
 
     (* Return a variable from our local symbol table *)
@@ -120,6 +117,7 @@ let check (globals, functions) =
           | StrType -> (StrType, SStrLit "")
           | BoolType -> (BoolType, SBoolLit false)
           | NoneType -> (NoneType, SNoneLit)
+          | _ -> raise(Failure"TODO: NOT IMPLEMENT")
         )
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var symbols
@@ -222,7 +220,8 @@ let check (globals, functions) =
                           | StrType -> r' (* there is in fact a bool_of_string cast in ocaml *)
                           | _ -> err rtype ty
                           )
-                  | NoneType -> raise (Failure ("Cannot cast to NoneType" ))
+                  | NoneType -> raise (Failure "Cannot cast to NoneType")
+                  | ArrayType _ -> raise(Failure "TODO: NOT SUPPORT")
             )
         in (ty, casted_expr) 
     in
@@ -242,7 +241,7 @@ let check (globals, functions) =
     *)
     (*let check_function_decl = true
           {
-        styp = f.typ;
+        styp = f.builtin_type;
         sname = f.name;
         sparams = f.params;
         sbody = check_program f.body;
@@ -280,13 +279,13 @@ let check (globals, functions) =
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
                      string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
-      | Local (typ, id, e) as call ->
+      | Local (t, id, e) as call ->
         if StringMap.mem id symbols then (SExpr(check_expr symbols e), symbols) (*Maybe we should return the symbols *)
         else
           let expr_type = fst (check_expr symbols e) in
-          if expr_type = typ then 
+          if expr_type = t then 
           let new_symbols = StringMap.add id expr_type symbols in
-          (SLocal (typ, id, fst (check_stmt new_symbols call)), new_symbols)
+          (SLocal (t, id, fst (check_stmt new_symbols call)), new_symbols)
           else raise (Failure ("Local var type does not match"))
           
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
@@ -298,4 +297,4 @@ let check (globals, functions) =
       sbody = check_stmt_list symbols func.body
     }
   in
-  (globals, List.map check_func functions)
+  List.map check_func functions

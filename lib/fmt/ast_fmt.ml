@@ -16,12 +16,13 @@ let string_of_op = function
 | Or    -> "or"
 
 
-let string_of_typ = function
+let rec string_of_typ = function
   | NoneType  -> "Type(None)"
   | StrType   -> "Type(Str)"
   | IntType   -> "Type(Int)"
   | BoolType  -> "Type(Bool)"
   | FloatType -> "Type(Float)"
+  | ArrayType(t) -> String.concat "" ["Type(Array of"; string_of_typ t ;")"]
 
 let string_of_uop = function
 | Not -> "not"
@@ -90,7 +91,5 @@ let string_of_fdecl fdecl =
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
-let string_of_program (vars, funcs) =
-  "\n\nParsed program: \n\n" ^
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
+let string_of_program (funcs) =
   String.concat "\n" (List.map string_of_fdecl funcs)
