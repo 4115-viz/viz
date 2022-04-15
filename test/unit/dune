@@ -1,8 +1,0 @@
-(tests
- (names
-  test_ast_func
-  test_ast_program
-  test_ast_bind
- )
- (libraries alcotest lib)
- (action (run %{test} -e)))
