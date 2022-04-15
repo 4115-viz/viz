@@ -22,7 +22,7 @@ Run() {
   echo
   echo "---"
   echo "Building the docker image using Dockerfile, it will take a while..." 
-  docker build -t $DOCKER_TAG .
+  docker build -t $DOCKER_TAG . > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo "docker build failed"
     exit;
@@ -37,7 +37,7 @@ Run() {
   echo
   echo
   echo ">>> Running in the docker container \"$DOCKER_TAG\" <<<"
-  docker run --rm -v "$(pwd)":"$DOCKER_WORK_DIR" -w="$DOCKER_WORK_DIR" $DOCKER_TAG /bin/bash -c "./viz $fpath"
+  docker run -v "$(pwd)":"$DOCKER_WORK_DIR" -w="$DOCKER_WORK_DIR" $DOCKER_TAG /bin/bash -c "./viz $fpath"
   echo 
 }
 

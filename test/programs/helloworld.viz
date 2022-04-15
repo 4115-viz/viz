@@ -1,7 +1,6 @@
 func main(): int {
   @@x: string;
-  @x = "Hello World";
-  print(@x);
-  print("Hello World2");
+  @x = "Hello Worl1d";
+
   return 0;
 }

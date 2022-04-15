@@ -112,6 +112,15 @@ let check (globals, functions) =
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
       | Id var -> (type_of_identifier var symbols, SId var)
+      | Noassign ty -> 
+        (
+          match ty with
+          | IntType -> (IntType, SIntLit 0)
+          | FloatType -> (FloatType, SFloatLit 0.0)
+          | StrType -> (StrType, SStrLit "")
+          | BoolType -> (BoolType, SBoolLit false)
+          | NoneType -> (NoneType, SNoneLit)
+        )
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var symbols
         and (rt, e') = check_expr symbols e in
@@ -268,6 +277,14 @@ let check (globals, functions) =
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
                      string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
+      | Local (typ, id, e) as call ->
+        if StringMap.mem id symbols then SExpr(check_expr symbols e) (*Maybe we should return the symbols *)
+        else
+          let expr_type = fst (check_expr symbols e) in
+          if expr_type = typ then 
+          SLocal (typ, id, check_stmt (StringMap.add id expr_type symbols) call)
+          else raise (Failure ("Local var type does not match"))
+          
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
     in (* body of check_func *)
     { srtyp = func.rtyp;
