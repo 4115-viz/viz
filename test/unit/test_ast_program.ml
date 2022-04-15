@@ -15,17 +15,9 @@ let test_multi_funcs () =
     {rtyp = NoneType; fname = "main2"; formals = []; locals = []; body = []}]
   )
 
-let test_multi_binds () = 
-  (check program_testable) "same program"
-  (parse_program "@@x: int; @@y: float;")
-  ([(IntType, "x"); (FloatType, "y")],[])
-
 let () = 
   run "Should able to parse program" [
     "multiple-functions", [
       test_case "Program with two functions" `Quick test_multi_funcs;
-    ];
-    "multiple-binds", [
-      test_case "Program with binds only" `Quick test_multi_binds;
     ];
   ]
