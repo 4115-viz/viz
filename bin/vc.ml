@@ -12,19 +12,24 @@ let () =
     ("-l", Arg.Unit (set_action LLVM_IR), "Print the generated LLVM IR");
 		("-ts", Arg.Unit (set_action ScanTest), "Print the Scanned Tokens");
 	] in  
-	let usage_msg = "usage: vc [-a|-s|-ts] <file.viz>" in
+	let usage_msg = "usage: vc [-a|-s|-l|-ts] <file.viz>" in
 	let channel = ref stdin in
 	Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
 
 	let lexbuf = Lexing.from_channel !channel in
-	let ast = Parser.program Scanner.token lexbuf in
 	match !action with
+	(* 
+		in order to the ScanTest to print something we cannot pass the 
+		lexbuf to the AST. Thus I moved that code down into the _ match
+	*)
 	| ScanTest -> print_endline (Token_fmt.string_of_lexbuf lexbuf)
-	| Ast -> print_endline (Ast_fmt.string_of_program ast)
-	| _ -> let sast = Semant.check ast in
+	| _ -> 
+		let ast = Parser.program Scanner.token lexbuf in
+		let sast = Semant.check ast in
 		match !action with
-			Ast -> ()
 		| ScanTest -> ()
+		| Ast -> 
+			print_endline (Ast_fmt.string_of_program ast)
 		| Sast -> print_endline  (Sast_fmt.string_of_sprogram sast)
 		| LLVM_IR -> print_string (Llvm.string_of_llmodule (Irgen.translate sast))
 		| Compile -> let m = Irgen.translate sast in
