@@ -189,7 +189,7 @@ expr:
   | expr  AND    expr { Binop($1, And,   $3)   }
   | expr  OR     expr { Binop($1, Or,    $3)   }
   | NOT   expr        { Unop(Not, $2) }
-  (*| MINUS expr        { Unop(Negate, $2)}*)
+  /*| MINUS expr        { Unop(Negate, $2)}*/
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
