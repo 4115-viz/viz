@@ -1,4 +1,13 @@
 func main(): none {
   @@x: string;
-  @x;
+  print(@x);
+  @@y: int;
+  print_int(@y);
+  @y = @y + 5;
+  print_int(@y);
+  @@z: int = 7;
+  print_int(@z);
+  print_int(@y + @z);
+  @@h: string = "Hello World";
+  print(@h);
 }
