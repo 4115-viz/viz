@@ -21,7 +21,7 @@ func main(): none {
   @b7 = (true and true); // true
   @b8 = (false or false); // false 
   @b9 = (true and false or true);
-  @b10 = (not false and false or true);
+  //@b10 = (not false and false or true);
 
   print("printing results");
   print("=================");

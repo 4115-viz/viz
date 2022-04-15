@@ -17,7 +17,7 @@ func main(): none {
     @b /= 1.1;
     print(@b);
     
-    // This needs to be fixed... !
+    // This is an error now
     //@b %= 1.1;
     //print(@b);
 
