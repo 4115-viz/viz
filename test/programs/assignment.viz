@@ -4,19 +4,22 @@ func main(): none {
     @@a: int;
     @@b: float;
     @a = 10;
-    @b = -10.5;
+    @b = 10.5;
     
     // float 
-    //print("testing complex assingment for floats");
-    //@b += 1.0;
-    //print_float(@b);
-    //@b -= 1.1;
-    //print_float(@b);
-    //@b *= 1.1;
-    //print_float(@b);
-    //@b /= 1.1;
-    //print_float(@b);
+    print("testing complex assingment for floats");
+    @b += 1.0;
+    print_float(@b);
+    @b -= 1.1;
+    print_float(@b);
+    @b *= 1.1;
+    print_float(@b);
+    @b /= 1.1;
+    print_float(@b);
+    
+    // This needs to be fixed... !
     //@b %= 1.1;
+    //print_float(@b);
 
     // int 
     print("testing complex assingment for ints");
@@ -26,8 +29,8 @@ func main(): none {
     print_int(@a);
     @a *= 1;
     print_int(@a);
-    //@a /= 1; // does not work 
-    //print_int(@a);
+    @a /= 1; 
+    print_int(@a);
     @a %= 1;
     print_int(@a); 
 
@@ -40,16 +43,4 @@ func main(): none {
     @a *= 1%5; 
     print_int(@a); 
 
-    // Someone please look at this ... 
-
-    // as an aside, these two will fail
-    //1 / 0;
-    //1.0 / 0.0;
-    
-    // but this passes semantics, see note
-    //1.0 / (1.0 - 1.0); // this may just be a runtime error, I dont think we can check
-                          // for this at semantics time
-    
-    // but, why does this not fail?
-    // @a /= 0;
 }
