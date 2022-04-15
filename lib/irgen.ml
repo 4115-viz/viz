@@ -100,7 +100,9 @@ let translate (globals, functions) =
     (* Return the value for a variable or formal argument.
        Check local names first, then global names *)
     let lookup local_vars n = try StringMap.find n local_vars
-      with Not_found -> StringMap.find n global_vars
+      with Not_found -> 
+      try StringMap.find n global_vars
+      with Not_found -> raise (Failure ("undeclared identifier " ^ n))
     in
 
     (* Construct code for an expression; return its value *)
