@@ -2,7 +2,7 @@ type bop = Add | Sub | Eq | Neq | Less | And | Or
           | Mult | Div | Great | Leq | Geq | Mod
 
 
-type uop = Not
+type uop = Not | Negate
 
 type typ = 
   | NoneType
