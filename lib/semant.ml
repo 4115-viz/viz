@@ -112,6 +112,15 @@ let check (globals, functions) =
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
       | Id var -> (type_of_identifier var symbols, SId var)
+      | Noassign ty -> 
+        (
+          match ty with
+          | IntType -> (IntType, SIntLit 0)
+          | FloatType -> (FloatType, SFloatLit 0.0)
+          | StrType -> (StrType, SStrLit "")
+          | BoolType -> (BoolType, SBoolLit false)
+          | NoneType -> (NoneType, SNoneLit)
+        )
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var symbols
         and (rt, e') = check_expr symbols e in

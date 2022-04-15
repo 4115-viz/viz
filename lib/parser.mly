@@ -57,7 +57,6 @@ program:
 
 decls:
    /* nothing */ { ([], [])               }
- | vdecl SEMI decls { (($1 :: fst $3), snd $3) }
  | fdecl decls { (fst $2, ($1 :: snd $2)) }
  
 /* @@x: string; */
@@ -77,14 +76,14 @@ typ:
 /* function declaration */
 fdecl:
   /* func with args */ 
-  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON typ LBRACE vdecl_list stmt_list RBRACE
+  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON typ LBRACE stmt_list RBRACE
   {
     { 
       rtyp = $7;
       fname = $2;
       formals = $4;
-      locals = $9;
-      body = $10;
+      locals = [];
+      body = $9;
     }
   }
 
