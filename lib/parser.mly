@@ -116,6 +116,7 @@ stmt:
   | loop                                    { $1 }
   | return_statement SEMI                   { $1 }
   | vdecl SEMI                              {Local(fst $1, snd $1, Noassign(fst $1))}
+  | vdecl ASSIGN expr                       {Local(fst $1, snd $1, $3)}
   /*| RETURN expr SEMI                        { Return $2      }*/
 /* TODO 
   | BREAK
