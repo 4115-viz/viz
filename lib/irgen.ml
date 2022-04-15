@@ -113,6 +113,15 @@ let translate (globals, functions) =
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SNoneLit -> L.const_null void_t
       | SId s       -> L.build_load (lookup local_vars s) s builder
+      | SNoassign t -> (*auto assign value to declaration based on their type*)
+        (
+          match t with
+          | StrType -> L.build_global_stringptr "" "str" builder
+          | IntType -> L.const_int i32_t 0
+          | FloatType -> L.const_float float_t 0.0
+          | BoolType  -> L.const_int i1_t 0
+          | NoneType -> L.const_null void_t
+        )
       | SAssign (s, e) -> let e' = (build_expr local_vars) builder e in
         ignore(L.build_store e' (lookup local_vars s) builder); e'
       | SBinop (e1, op, e2) ->
@@ -235,6 +244,7 @@ let translate (globals, functions) =
           | _ -> raise (Failure ("must assign an expression"))
           )) local_var builder);
         (new_local_vars, builder)
+
     in
     (* Build the code for each statement in the function *)
     let func_builder local_vars = snd ((build_stmt local_vars) builder (SBlock fdecl.sbody)) in
