@@ -10,7 +10,8 @@ func main(): none {
     @@z1: float;
     @@a1: float;
     @@b1: float;
-    
+   1 - 1;
+   /* 
     @x = 1+1;
     //@y = 1-1; // minus is a parse error
     @z = 1*5;
@@ -57,4 +58,5 @@ func main(): none {
     //print("5.0%4.0 -> 1.0");
     //print_float(@b1);
     //print("======================");
+    */
 }

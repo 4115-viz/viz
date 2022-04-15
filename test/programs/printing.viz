@@ -23,6 +23,7 @@ func main(): none {
 
     print("=========================");
     print(""); // print newline, needs to be fixed
+    println();
     print("printing literals");
     print("hello my guys");
     print_int(1);
