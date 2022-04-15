@@ -1,8 +1,4 @@
 func main(): none {
   @@x: string;
-  @@y: string;
-  // @x = "Hello";
-  print("Hello Worl1d");
-  @@z: string;
-  
+  @x;
 }
