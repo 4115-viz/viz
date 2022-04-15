@@ -1,6 +1,7 @@
-func main(): int {
+func main(): none {
   @@x: string;
-  @x = "Hello Worl1d";
-
-  return 0;
+  @@y: string;
+  // @x = "Hello";
+  print("Hello Worl1d");
+  @@z: string;
 }
