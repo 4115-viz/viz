@@ -197,7 +197,7 @@ let check (globals, functions) =
         in (fd.rtyp, SFuncCall(func_name, args'))
 
 
-      | TypeCast(ty, expr) -> 
+      (*| TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
         let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ string_of_typ ty1 ^ " to " ^ string_of_typ ty2  )) )
         in let casted_expr = 
@@ -227,7 +227,7 @@ let check (globals, functions) =
                           )
                   | NoneType -> raise (Failure ("Cannot cast to NoneType" ))
             )
-        in (ty, casted_expr) 
+        in (ty, casted_expr) *)
     in
 
     let check_bool_expr symbols e =

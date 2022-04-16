@@ -220,9 +220,9 @@ let translate (globals, functions) =
 
         L.build_call fdef (Array.of_list llargs) result builder
 
-      | STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
+      (*| STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
         L.build_call print_func [| ((build_expr local_vars) builder e) |]
-        "print" builder 
+        "print" builder *)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"

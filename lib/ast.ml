@@ -22,7 +22,7 @@ type expr =
   | FuncCall of string * expr list
   | Binop of expr * bop * expr
   | Unop of uop * expr
-  | TypeCast of typ * expr
+  (*| TypeCast of typ * expr*)
   | Noassign of typ
   (* | ArrayAccess of string * expr
   | ArrayAssign of string * expr * expr

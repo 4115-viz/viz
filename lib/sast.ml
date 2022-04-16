@@ -12,7 +12,7 @@ and sx =
   | SAssign of string * sexpr
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
-  | STypeCast of typ * sexpr
+  (*| STypeCast of typ * sexpr*)
   | SNoassign of typ
   (* | SArrayLit of typ * sx list
   | SArrayAccess of string * sexpr

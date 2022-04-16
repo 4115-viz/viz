@@ -46,7 +46,7 @@ let rec string_of_expr = function
     string_of_expr l ^ " " ^ string_of_op bo ^ " " ^ string_of_expr r
   | Unop(uo, r) ->
     string_of_uop uo ^ " " ^ string_of_expr r
-  | TypeCast(t, e) -> "Casting " ^ string_of_expr e ^ "->" ^ string_of_typ t ^ "\n"
+  (*| TypeCast(t, e) -> "Casting " ^ string_of_expr e ^ "->" ^ string_of_typ t ^ "\n"*)
   
 and fmt_fcall name args = 
   "FuncCall(" ^

@@ -26,7 +26,7 @@ and string_s se =
         string_of_sexpr l ^ " " ^ string_of_op bo ^ " " ^ string_of_sexpr r 
       | SUnop(uo, r) ->
           string_of_uop uo ^ " " ^ string_of_sexpr r
-      | STypeCast(st, se) -> "(Casting " ^ string_of_sexpr se ^ "->" ^ string_of_typ st ^ "\n"
+      (*| STypeCast(st, se) -> "(Casting " ^ string_of_sexpr se ^ "->" ^ string_of_typ st ^ "\n"*)
     )
 
 and string_of_sstmt = function
