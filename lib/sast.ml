@@ -1,23 +1,18 @@
 open Ast
 
-type sexpr = typ * sx
+type sexpr = builtin_type * sx
 and sx =
   | SStrLit of string
   | SIntLit of int
   | SFloatLit of float
   | SBoolLit of bool
   | SNoneLit
+  | SArrayLit of sexpr list
   | SId of string
   | SBinop of sexpr * bop * sexpr
   | SAssign of string * sexpr
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
-  (*| STypeCast of typ * sexpr*)
-  | SNoassign of typ
-  (* | SArrayLit of typ * sx list
-  | SArrayAccess of string * sexpr
-  | SArrayAssign of string * sexpr * sexpr
-  | SArrayLength of string *)
 
 type sstmt =
   | SBlock of sstmt list
@@ -26,10 +21,10 @@ type sstmt =
   | SWhile of sexpr * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr
-  | SLocal of typ * string * sstmt
+  | SVarDecl of bind * sexpr option
   
 type sfunc_def = {
-  srtyp: typ;
+  srtyp: builtin_type;
   sfname: string;
   sformals: bind list;
   sbody: sstmt list;

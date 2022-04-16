@@ -6,15 +6,20 @@ open Ast_fmt
 
 module StringMap = Map.Make(String)
 
+type symbol = {
+  typ: builtin_type;
+  inited: bool;
+}
+
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
 
-   Check each global variable, then check each function *)
+   Check each function *)
 
-let check (globals, functions) =
+let check (functions) =
 
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : (typ * string) list) =
+  let check_binds (kind : string) (binds : (builtin_type * string) list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -23,9 +28,6 @@ let check (globals, functions) =
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
 
-  (* Make sure no globals duplicate *)
-  check_binds "global" globals;
-
   (* Collect function declarations for built-in functions: no bodies *)
   (* need to convert print to print_int *)
   (* should also have a print_bool, print_string, print_none, print_float*)
@@ -33,7 +35,7 @@ let check (globals, functions) =
   (* create a list of pairs. (func name, func_def) *)
  (*
  let builtin_funcs = [
-  {name = "print"; typ = NoneType; params = [(StrType, "x")]; locals = []; body = []};
+  {name = "print"; builtin_type = NoneType; params = [(StrType, "x")]; locals = []; body = []};
 ] and iterate through the list
  *)
   
@@ -87,38 +89,43 @@ let check (globals, functions) =
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        StringMap.empty (globals @ func.formals @ func.locals )
+    let symbols : symbol StringMap.t = 
+      List.fold_left (fun m (ty, name) -> StringMap.add name { typ = ty; inited = true } m)
+        StringMap.empty (func.formals @ func.locals)
     in
 
-    (* Return a variable from our local symbol table *)
-    let type_of_identifier s symbols =
-      try StringMap.find s symbols
-      with Not_found -> raise (Failure ("undeclared identifier " ^ s))
+    (* Query a variable from our local symbol table *)
+    let find_symbol (id: string) (symbols : symbol StringMap.t) : symbol =
+      try StringMap.find id symbols
+      with Not_found -> raise (Failure ("undeclared identifier " ^ id))
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec check_expr symbols = function
+    let rec check_expr (symbols: symbol StringMap.t) (e: expr) : sexpr = 
+      match e with
         IntLit x -> (IntType, SIntLit x)
       | FloatLit x -> (FloatType, SFloatLit x)
       | StrLit x -> (StrType, SStrLit x)
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
-      | Id var -> (type_of_identifier var symbols, SId var)
-      | Noassign ty -> 
-        (
-          match ty with
-          | IntType -> (IntType, SIntLit 0)
-          | FloatType -> (FloatType, SFloatLit 0.0)
-          | StrType -> (StrType, SStrLit "")
-          | BoolType -> (BoolType, SBoolLit false)
-          | NoneType -> (NoneType, SNoneLit)
-        )
+      | ArrayLit (a : expr list) -> (match a with
+        | [] -> raise (Failure "TODO: support array of length 0")
+        | x :: xs -> let (t, se) = check_expr symbols x in
+          let sa = List.map (fun i -> match (check_expr symbols i) with
+            | (i_t, _) when i_t != t -> raise (Failure ("Invalid array literal. Expect type " ^ fmt_typ t ^ ", found" ^ fmt_typ i_t))
+            | _ -> (t, se)) xs 
+          in
+          (ArrayType t, SArrayLit sa)
+        
+      )
+      | Id id -> (match find_symbol id symbols with
+        | { inited = false; _ } -> raise (Failure("uninitialized local variable '" ^ id ^ "' used."))
+        | { typ = t; _ } -> (t, SId id))
       | Assign(var, e) as ex ->
-        let lt = type_of_identifier var symbols
+        let {typ = lt; _} = find_symbol var symbols
         and (rt, e') = check_expr symbols e in
-        let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
-                  string_of_typ rt ^ " in " ^ string_of_expr ex
+        let err = "illegal assignment " ^ fmt_typ lt ^ " = " ^
+                  fmt_typ rt ^ " in " ^ fmt_expr ex
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
 
@@ -131,8 +138,8 @@ let check (globals, functions) =
         let final_type = 
           if compatible_types = false then
             raise (Failure ("incompatible types for binary operator " ^
-                  string_of_typ ltype ^ " " ^ string_of_op bo ^ " " ^
-                  string_of_typ rtype ^ " in " ^ string_of_expr ex))
+                  fmt_typ ltype ^ " " ^ fmt_op bo ^ " " ^
+                  fmt_typ rtype ^ " in " ^ fmt_expr ex))
           
           else           
             (fun my_op -> match my_op with
@@ -140,21 +147,21 @@ let check (globals, functions) =
             | (Add | Sub | Mult | (*Mod |*) Div) when ltype = FloatType && rtype = FloatType -> FloatType
             (*| (Div) when ltype = IntType && rtype = IntType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
-              let () = print_endline (string_of_expr r) in 
-              if r = IntLit(0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
-                                            ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
+              let () = print_endline (fmt_expr r) in 
+              if r = IntLit(0) then raise (Failure ("Cannot Divide by Zero in " ^ fmt_expr l 
+                                            ^ " " ^ fmt_op my_op ^ " " ^ fmt_expr r))
                     else IntType
             | (Div) when ltype = FloatType && rtype = FloatType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
-              if r = FloatLit(0.0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
-                                              ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
+              if r = FloatLit(0.0) then raise (Failure ("Cannot Divide by Zero in " ^ fmt_expr l 
+                                              ^ " " ^ fmt_op my_op ^ " " ^ fmt_expr r))
                     else FloatType *)
             | (Eq | Neq) -> BoolType
             | (Leq | Geq | Less | Great) when (ltype = IntType && rtype = IntType ||
                                                 ltype = FloatType && rtype = FloatType) -> BoolType
             | (And | Or) when (ltype = BoolType && rtype = BoolType) -> BoolType
-            | _ -> raise (Failure ("No operator (" ^ string_of_op bo ^ ") " ^ "to handle type (" ^
-                          string_of_typ ltype ^ ", " ^ string_of_typ rtype))
+            | _ -> raise (Failure ("No operator (" ^ fmt_op bo ^ ") " ^ "to handle type (" ^
+                          fmt_typ ltype ^ ", " ^ fmt_typ rtype))
             ) bo
         in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
     | Unop(op, e) as ex -> 
@@ -163,20 +170,20 @@ let check (globals, functions) =
         Neg when t = IntType || t = FloatType -> t
       | Not when t = BoolType -> BoolType
       | _ -> raise (Failure ("illegal unary operator " ^ 
-                              string_of_uop op ^ string_of_typ t ^
-                              " in " ^ string_of_expr ex))
+                              string_of_uop op ^ fmt_typ t ^
+                              " in " ^ fmt_expr ex))
       in (ty, SUnop(op, (t, e')))
       | FuncCall(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
         if List.length args != param_length then
           raise (Failure ("expecting " ^ string_of_int param_length ^
-                          " arguments in " ^ string_of_expr call))
+                          " arguments in " ^ fmt_expr call))
         else 
         let check_call (ft, _) e =
                 let (et, e') = check_expr symbols e in
-                let err = "illegal argument found " ^ string_of_typ et ^
-                          " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+                let err = "illegal argument found " ^ fmt_typ et ^
+                          " expected " ^ fmt_typ ft ^ " in " ^ fmt_expr e
                 in 
                 if fname = "print" then (et, e') (*convert to string*)
                 else (check_assign ft et err, e')
@@ -191,6 +198,7 @@ let check (globals, functions) =
                 | StrType -> "print"
                 | BoolType -> "print_bool"
                 | NoneType -> raise (Failure ("None type cannot be printed"))
+                | ArrayType _ -> raise(Failure ("TODO: print array hasn't been implemented"))
               )
             else fname
         ) 
@@ -199,7 +207,7 @@ let check (globals, functions) =
 
       (*| TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
-        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ string_of_typ ty1 ^ " to " ^ string_of_typ ty2  )) )
+        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ fmt_typ ty1 ^ " to " ^ fmt_typ ty2  )) )
         in let casted_expr = 
             (match ty with
                   | IntType -> 
@@ -225,7 +233,8 @@ let check (globals, functions) =
                           | StrType -> r' (* there is in fact a bool_of_string cast in ocaml *)
                           | _ -> err rtype ty
                           )
-                  | NoneType -> raise (Failure ("Cannot cast to NoneType" ))
+                  | NoneType -> raise (Failure "Cannot cast to NoneType")
+                  | ArrayType _ -> raise(Failure "TODO: NOT SUPPORT")
             )
         in (ty, casted_expr) *)
     in
@@ -234,7 +243,7 @@ let check (globals, functions) =
       let (t, e') = check_expr symbols e in
       match t with
       | BoolType -> (t, e')
-      |  _ -> raise (Failure ("expected Boolean expression in " ^ string_of_expr e))
+      |  _ -> raise (Failure ("expected Boolean expression in " ^ fmt_expr e))
     in
 
     (* Here we need to ensure that you are following
@@ -245,7 +254,7 @@ let check (globals, functions) =
     *)
     (*let check_function_decl = true
           {
-        styp = f.typ;
+        styp = f.builtin_type;
         sname = f.name;
         sparams = f.params;
         sbody = check_program f.body;
@@ -259,7 +268,7 @@ let check (globals, functions) =
           in
           stmt :: check_stmt_list new_symbols sl
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt symbols = function
+    and check_stmt (symbols : symbol StringMap.t) = function
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
@@ -281,18 +290,28 @@ let check (globals, functions) =
         let (t, e') = check_expr symbols e in
         if t = func.rtyp then (SReturn (t, e'), symbols)
         else raise (
-            Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-                     string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
-      | Local (typ, id, e) as call ->
-        if StringMap.mem id symbols then (SExpr(check_expr symbols e), symbols) (*Maybe we should return the symbols *)
-        else
-          if typ == NoneType then raise (Failure ("Cannot initalize a variable with none type"))
-          else
-            let expr_type = fst (check_expr symbols e) in
-            if expr_type = typ then 
-            let new_symbols = StringMap.add id expr_type symbols in
-            (SLocal (typ, id, fst (check_stmt new_symbols call)), new_symbols)
-            else raise (Failure ("Local var type does not match"))
+            Failure ("return gives " ^ fmt_typ t ^ " expected " ^
+                     fmt_typ func.rtyp ^ " in " ^ fmt_expr e))
+      | VarDecl ((t, id) as b, e) ->
+        match t with
+        | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
+        | _ ->
+        try match (StringMap.find id symbols) with
+          _ -> raise (Failure ("Invalid redeclaration of variable '" ^ id ^ "'"))
+        with Not_found ->
+          match e with
+            | None -> 
+              let new_symbols = StringMap.add id {typ = t; inited = false} symbols in
+              (SVarDecl (b, None), new_symbols)
+            | Some(e) ->
+              let (e_t, _) = check_expr symbols e in
+              if e_t <> t then
+                raise (Failure (String.concat "" [
+                  "Type mismatch for variable: '"; id; "'. ";
+                  "Expect '"; (fmt_typ t); "'"; 
+                  ", Got: '"; (fmt_typ e_t); "'"]))
+              else let new_symbols = StringMap.add id {typ = t; inited = true} symbols in
+              (SVarDecl (b, Some(check_expr symbols e)), new_symbols)
           
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
     in (* body of check_func *)
@@ -303,4 +322,4 @@ let check (globals, functions) =
       sbody = check_stmt_list symbols func.body
     }
   in
-  (globals, List.map check_func functions)
+  List.map check_func functions

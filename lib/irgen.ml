@@ -19,7 +19,7 @@ open Sast
 module StringMap = Map.Make(String)
 
 (* translate : Sast.program -> Llvm.module *)
-let translate (globals, functions) =
+let translate (functions) =
   let context    = L.global_context () in
 
   (* Create the LLVM compilation module into which
@@ -32,23 +32,17 @@ let translate (globals, functions) =
   and i1_t       = L.i1_type     context
   and void_t     = L.void_type    context
   and float_t    = L.double_type context 
-  and str_t      = L.pointer_type   (L.i8_type context) in
-
+  and str_t      = L.pointer_type   (L.i8_type context)
+  in
   (* Return the LLVM type for a Viz type *)
-  let ltype_of_typ = function
+  let rec ltype_of_typ = function
       A.IntType   -> i32_t
     | A.BoolType  -> i1_t
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
+    | A.ArrayType(t) -> L.pointer_type (ltype_of_typ t)
   in
-
-  (* Create a map of global variables after creating each *)
-  let global_vars : L.llvalue StringMap.t =
-    let global_var m (t, n) =
-      let init = L.const_int (ltype_of_typ t) 0
-      in StringMap.add n (L.define_global n init the_module) m in
-    List.fold_left global_var StringMap.empty globals in
 
   (* Declaring print function *)
   let print_t = L.var_arg_function_type i32_t [| str_t |] in
@@ -99,10 +93,8 @@ let translate (globals, functions) =
     in
 
     (* Return the value for a variable or formal argument.
-       Check local names first, then global names *)
+       Check local names *)
     let lookup local_vars n = try StringMap.find n local_vars
-      with Not_found -> 
-      try StringMap.find n global_vars
       with Not_found -> raise (Failure ("undeclared identifier " ^ n))
     in
 
@@ -113,16 +105,26 @@ let translate (globals, functions) =
       | SFloatLit f -> L.const_float float_t f
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SNoneLit -> L.const_null void_t
+      | SArrayLit sa -> 
+        (match sa with
+        | [] -> raise (Failure "TODO: empty array")
+        | sa ->
+            let all_elem = List.map (fun e ->
+              build_expr local_vars builder e) sa in
+            let llarray_t = L.type_of (List.hd all_elem) in
+            let num_elems = List.length sa in
+            let ptr = L.build_array_malloc llarray_t
+                (L.const_int i32_t num_elems) "" builder 
+            in
+            ignore (List.fold_left (fun i elem ->
+                let idx = L.const_int i32_t i in
+                let eptr = L.build_gep ptr [|idx|] "" builder in
+                let cptr = L.build_pointercast eptr 
+                    (L.pointer_type (L.type_of elem)) "" builder in
+                let _ = (L.build_store elem cptr builder) 
+                in i+1)
+                0 all_elem); ptr)
       | SId s       -> L.build_load (lookup local_vars s) s builder
-      | SNoassign t -> (*auto assign value to declaration based on their type*)
-        (
-          match t with
-          | StrType -> L.build_global_stringptr "" "str" builder
-          | IntType -> L.const_int i32_t 0
-          | FloatType -> L.const_float float_t 0.0
-          | BoolType  -> L.const_int i1_t 0
-          | NoneType -> L.const_null void_t
-        )
       | SAssign (s, e) -> let e' = (build_expr local_vars) builder e in
         ignore(L.build_store e' (lookup local_vars s) builder); e'
       | SBinop ((op_ret_type, _ ) as e1, op, e2) ->
@@ -146,7 +148,7 @@ let translate (globals, functions) =
                   | A.Great   -> L.build_icmp L.Icmp.Sgt
                   | A.Leq     -> L.build_icmp L.Icmp.Sle
                   | A.Geq     -> L.build_icmp L.Icmp.Sge
-                  | _ -> raise ((Failure "Unimplemented Binary Op for Ints"))
+                  | _ -> raise ((Failure "TODO: Unimplemented Binary Op for Ints"))
                   ) e1' e2' "tmp" builder
           | A.FloatType -> 
             (match op with
@@ -163,7 +165,7 @@ let translate (globals, functions) =
                   | A.Great   -> L.build_fcmp L.Fcmp.Ogt
                   | A.Leq     -> L.build_fcmp L.Fcmp.Ole
                   | A.Geq     -> L.build_fcmp L.Fcmp.Oge
-                  | _ -> raise ((Failure "Unimplemented Binary Op for Floats"))
+                  | _ -> raise ((Failure "TODO: Unimplemented Binary Op for Floats"))
                   ) e1' e2' "tmp" builder
           | A.BoolType ->
             (match op with
@@ -173,8 +175,9 @@ let translate (globals, functions) =
             | A.Or      -> L.build_or
             | _ -> raise ((Failure "Unimplemented Binary Op for Bools"))
             ) e1' e2' "tmp" builder
-          | A.StrType -> raise ((Failure "Unimplemented Binary Op for StrType"))
-          | A.NoneType -> raise ((Failure "Unimplemented Binary Op for NoneType"))
+          | A.StrType -> raise ((Failure "TODO: Unimplemented Binary Op for StrType"))
+          | A.NoneType -> raise ((Failure "TODO: Unimplemented Binary Op for NoneType"))
+          | A.ArrayType _ -> raise ((Failure "TODO: Unimplemented Binary Op for ArrayType"))
         )
       | SUnop (op, ((ret_ty, _ ) as e)) ->
         (
@@ -197,6 +200,7 @@ let translate (globals, functions) =
               )
             | A.StrType   -> raise ((Failure "Unimplemented Unary Op for StrType"))
             | A.NoneType  -> raise ((Failure "Unimplemented Unary Op for NoneType"))
+            | A.ArrayType _  -> raise ((Failure "Unimplemented Unary Op for NoneType"))
         )
       | SFuncCall("println", [])   -> 
         L.build_call print_func [| str_format_str builder; ((build_expr local_vars) builder (A.StrType, SStrLit("")))|]
@@ -287,13 +291,13 @@ let translate (globals, functions) =
         (local_vars, L.builder_at_end context end_bb)
       (*| SFor(var_init, predicate, update, block_code) -> builder (* TODO: SFor *)*)
       | SFor(_, _, _, _) -> (local_vars, builder) (* TODO: SFor *)
-      | SLocal (typ, id, e) ->
-        let local_var = L.build_alloca (ltype_of_typ typ) id builder in
+      | SVarDecl ((t, id), e) ->
+        let local_var = L.build_alloca (ltype_of_typ t) id builder in
         let new_local_vars = StringMap.add id local_var local_vars
         in ignore (L.build_store ((build_expr new_local_vars) builder (
           match e with
-          | SExpr se -> se
-          | _ -> raise (Failure ("must assign an expression"))
+          | Some(se) -> se
+          | None -> raise (Failure ("must assign an expression"))
           )) local_var builder);
         (new_local_vars, builder)
 

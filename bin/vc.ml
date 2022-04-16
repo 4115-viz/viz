@@ -25,14 +25,15 @@ let () =
 	| ScanTest -> print_endline (Token_fmt.string_of_lexbuf lexbuf)
 	| _ -> 
 		let ast = Parser.program Scanner.token lexbuf in
-		let sast = Semant.check ast in
 		match !action with
-		| ScanTest -> ()
-		| Ast -> 
-			print_endline (Ast_fmt.string_of_program ast)
-		| Sast -> print_endline  (Sast_fmt.string_of_sprogram sast)
-		| LLVM_IR -> print_string (Llvm.string_of_llmodule (Irgen.translate sast))
-		| Compile -> let m = Irgen.translate sast in
-			Llvm_analysis.assert_valid_module m;
-			print_string (Llvm.string_of_llmodule m)
+		| Ast -> print_endline (Ast_fmt.fmt_program ast)
+		| _ ->
+		let sast = Semant.check ast in
+			match !action with
+			| Sast -> print_endline  (Sast_fmt.fmt_sprogram sast)
+			| LLVM_IR -> print_string (Llvm.string_of_llmodule (Irgen.translate sast))
+			| Compile -> let m = Irgen.translate sast in
+				Llvm_analysis.assert_valid_module m;
+				print_string (Llvm.string_of_llmodule m)
+			| _ -> ()
 			

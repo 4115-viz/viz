@@ -17,6 +17,7 @@ let string_of_token (t : token) : string  =
     | T_STR  -> "T_STR"
     | T_INT  -> "T_INT"
     | T_FLOAT  -> "T_FLOAT"
+    | T_ARRAY -> "T_ARRAY"
     | LBRACE -> "LBRACE"
     | RBRACE -> "RBRACE"
     | LPAREN -> "LPAREN"
@@ -66,7 +67,7 @@ let string_of_token (t : token) : string  =
     | QUESTION -> "QUESTION"
     | RANGE -> "RANGE"    
     | BAR -> "BAR"  
-    | _ -> "Unimplemented"
+    | _ -> "UNABLE TO FORMAT THIS TOKEN"
 
 (* lexm.sh via CTeX group project 4115*)
 let string_of_lexbuf lexbuf =

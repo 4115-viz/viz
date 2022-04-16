@@ -16,7 +16,7 @@ open Ast
 %token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS RANGE
 
 /* type */
-%token T_NONE T_STR T_INT T_BOOL T_FLOAT ARRAY
+%token T_NONE T_STR T_INT T_BOOL T_FLOAT T_ARRAY
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
@@ -55,30 +55,31 @@ open Ast
 
 
 program:
-  decls EOF { $1 }
+  /* nothing */ { [] }
+  | fdecls EOF { $1 }
 
-decls:
-   /* nothing */ { ([], [])               }
- | fdecl decls { (fst $2, ($1 :: snd $2)) }
+fdecls:
+   /* nothing */ { []               }
+ | fdecl fdecls { $1 :: $2 }
  
 /* @@x: string; */
 vdecl:
-  | ID_VAR_DECL COLON typ {($3, $1)}
+  | ID_VAR_DECL COLON builtin_type {($3, $1)}
 
 
-typ:
+builtin_type:
   | T_NONE { NoneType }
   | T_STR { StrType }
   | T_INT { IntType }
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
-  // | ARRAY BAR typ BAR {ArrT($2, $4)}
+  | T_ARRAY BAR builtin_type BAR { ArrayType($3) }
 
 
 /* function declaration */
 fdecl:
   /* func with args */ 
-  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON typ LBRACE stmt_list RBRACE
+  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON builtin_type LBRACE stmt_list RBRACE
   {
     { 
       rtyp = $7;
@@ -104,19 +105,16 @@ stmt_list:
 
 
 stmt:
-  | expr SEMI                               { Expr $1      }
-  /*| logic_expr                              { Expr $1 } */
-  | if_stmt                                 { $1 }
-  | block                                   { $1 }
-  | loop                                    { $1 }
-  | return_statement SEMI                   { $1 }
-  | vdecl SEMI                              {Local(fst $1, snd $1, Noassign(fst $1))}
-  | vdecl ASSIGN expr SEMI                    {Local(fst $1, snd $1, $3)}
-  /*| RETURN expr SEMI                        { Return $2      }*/
-/* TODO 
-  | BREAK
-  | CONTINUE
-*/
+  | expr SEMI { Expr $1 }
+  | if_stmt { $1 }
+  | block { $1 }
+  | loop  { $1 }
+  | return_statement SEMI { $1 }
+  | vdecl var_init_opt SEMI  { VarDecl($1, $2) }
+
+var_init_opt:
+  | { None }
+  | ASSIGN expr { Some($2) }
 
 return_statement:
   /* return; i.e. for nonetype return */   
@@ -168,6 +166,7 @@ expr:
   | LIT_INT   { IntLit($1)   }
   | LIT_BOOL  { BoolLit($1)  }
   | LIT_FLOAT { FloatLit($1) }
+  | LBRACKET exprs_opt RBRACKET { ArrayLit($2) }
 
   /* variable access */
   | ID_VAR { Id($1) }
@@ -206,16 +205,18 @@ expr:
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 
   /* function call */
-  | ID_FUNC LPAREN args_opt RPAREN { FuncCall($1, $3) }
+  | ID_FUNC LPAREN exprs_opt RPAREN { FuncCall($1, $3) }
 
   /* just need to ensure that this is right associative */
   /*| BAR AS typ BAR expr {TypeCast($3, $5)}  */
 
-/* args_opt*/
-args_opt:
+// Match the followingpatterns 
+// ""
+// "expr, expr, expr"
+exprs_opt:
   /*nothing*/ { [] }
-  | args { $1 }
+  | exprs { $1 }
 
-args:
+exprs:
   expr  { [$1] }
-  | expr COMMA args { $1::$3 }
+  | expr COMMA exprs { $1::$3 }

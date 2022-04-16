@@ -36,7 +36,6 @@ rule token = parse
 | "in" {IN}
 | "step" {STEP}
 | "as" {AS}
-| "array" {ARRAY}
 | "..." {RANGE} (* used in the for loop construct *)
 
 (* -------- types -------- *)
@@ -45,6 +44,7 @@ rule token = parse
 | "string" { T_STR }
 | "bool" { T_BOOL }
 | "float" { T_FLOAT }
+| "array" { T_ARRAY }
 
 (* -------- arithmetic operators -------- *)
 | '+' { PLUS }
@@ -78,7 +78,6 @@ rule token = parse
 | "false" { LIT_BOOL(false) }
 | '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
 | ('0'+) | non_zero_digits digit*  as lxm {LIT_INT(int_of_string lxm)} (* we store everything as a positive magnitude number *)
-(*| '0'* "." '0'+ | "-" ? (non_zero_digits+ "." digit+ | "." digit+)  as lxm {LIT_FLOAT(float_of_string lxm)} *)
 | ("0." "0"+) | digit* "." digit+ as lxm { LIT_FLOAT(float_of_string lxm) } (* we store everything as a positive magnitude number *)
 
 (* -------- delimiters -------- *)
