@@ -44,8 +44,8 @@ open Ast
 %left LT GT LTEQ GTEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%right NOT
-%right NEG
+%left LBRACKET RBRACKET
+%right NOT NEG
 %right BAR /* bar is used in typecast, this precedence is like c cast right assoc */
 
 %start program
@@ -192,7 +192,6 @@ expr:
   | MINUS expr %prec NEG { Unop(Neg, $2) }
   | NOT expr { Unop(Not, $2) }
 
-
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
   | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Add, $3))}
@@ -206,6 +205,9 @@ expr:
 
   /* function call */
   | ID_FUNC LPAREN exprs_opt RPAREN { FuncCall($1, $3) }
+
+  /* Array subscript [] */
+  | expr LBRACKET expr RBRACKET { Subscript($1, $3) }
 
   /* just need to ensure that this is right associative */
   /*| BAR AS typ BAR expr {TypeCast($3, $5)}  */
