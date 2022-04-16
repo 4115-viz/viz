@@ -5,5 +5,5 @@ func ret_number(): int {
 func main(): none {
     @@x: int;
     @x = ret_number();
-    print_int(@x);
+    print(@x);
 }

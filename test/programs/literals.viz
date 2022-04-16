@@ -14,10 +14,10 @@ func main(): none {
     
     print("Assigning literals to variables");
     print("Accessing the variables and printing values");
-    print_int(@x);
-    print_float(@y);
-    print_bool(@z);
-    print_bool(@a);
+    print(@x);
+    print(@y);
+    print(@z);
+    print(@a);
     print(@b);
 
 }

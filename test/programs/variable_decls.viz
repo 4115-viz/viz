@@ -16,7 +16,7 @@ func main(): none {
   print("========================================");
   print("declare and initialize y"); 
   print("call test() using y as a param"); 
-  print_int(@y + test(@y));
+  print(@y + test(@y));
   print("========================================");
   println();
 
@@ -31,14 +31,14 @@ func main(): none {
   print("========================================");
   print("default value for int is 0");
   @@y: int;
-  print_int(@y);
+  print(@y);
   print("========================================");
   println();
   
   print("========================================");
   print("y = y + 5");
   @y = @y + 5;
-  print_int(@y);
+  print(@y);
   print("========================================");
   println();
   
@@ -46,13 +46,13 @@ func main(): none {
   print("========================================");
   print("assign and delcare int variable");
   @@z: int = 7;
-  print_int(@z);
+  print(@z);
   print("========================================");
   println();
   
   print("========================================");
   print("y+z = 12");
-  print_int(@y + @z);
+  print(@y + @z);
   print("========================================");
   println();
   

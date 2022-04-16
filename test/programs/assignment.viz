@@ -9,38 +9,38 @@ func main(): none {
     // float 
     print("testing complex assingment for floats");
     @b += 1.0;
-    print_float(@b);
+    print(@b);
     @b -= 1.1;
-    print_float(@b);
+    print(@b);
     @b *= 1.1;
-    print_float(@b);
+    print(@b);
     @b /= 1.1;
-    print_float(@b);
+    print(@b);
     
     // This needs to be fixed... !
     //@b %= 1.1;
-    //print_float(@b);
+    //print(@b);
 
     // int 
     print("testing complex assingment for ints");
     @a += 1;
-    print_int(@a);
+    print(@a);
     @a -= 1;
-    print_int(@a);
+    print(@a);
     @a *= 1;
-    print_int(@a);
+    print(@a);
     @a /= 1; 
-    print_int(@a);
+    print(@a);
     @a %= 1;
-    print_int(@a); 
+    print(@a); 
 
     // assigneq with an expr on right hand side
     print("testing complex assingment (with expr on rhs) for ints");
     @a += 1+5;
-    print_int(@a); 
+    print(@a); 
     @a -= 1*5;
-    print_int(@a); 
+    print(@a); 
     @a *= 1%5; 
-    print_int(@a); 
+    print(@a); 
 
 }

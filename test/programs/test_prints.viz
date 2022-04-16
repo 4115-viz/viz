@@ -1,15 +1,15 @@
 func test_prints(@@x: float, @@y: int, @@z: string, @@h: bool): none {
-    print_float(@x);
-    print_int(@y);
+    print(@x);
+    print(@y);
     print(@z);
     println();
-    print_bool(@h);
-    print_bool(false);
+    print(@h);
+    print(false);
 }
 
 func main(): none {
     @@b: float;
     @b = -10.00;
-    print_float(@b);
+    print(@b);
     test_prints(-10.5, 100, "Hello world", true);
 }
