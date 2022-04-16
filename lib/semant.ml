@@ -157,20 +157,15 @@ let check (globals, functions) =
                           string_of_typ ltype ^ ", " ^ string_of_typ rtype))
             ) bo
         in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
-      | Unop(uo, r) as ex ->
-        let (rtype, r') = check_expr symbols r in
-        let final_type = 
-          (* if we add other unary operands, we may need to be more clever 
-          with type support. Right now, we are supporting Not, so this is ok.  
-          *)
-          if rtype != BoolType then
-            raise (Failure ("incompatible types for unary operator " ^
-            string_of_uop uo ^ " " ^ string_of_typ rtype ^ " in " ^ string_of_expr ex))
-          else
-            (fun my_uop -> match my_uop with 
-            | Not -> BoolType
-            ) uo
-          in (final_type, SUnop(uo, (rtype, r')))
+    | Unop(op, e) as ex -> 
+      let (t, e') = check_expr symbols e in
+      let ty = match op with
+        Neg when t = IntType || t = FloatType -> t
+      | Not when t = BoolType -> BoolType
+      | _ -> raise (Failure ("illegal unary operator " ^ 
+                              string_of_uop op ^ string_of_typ t ^
+                              " in " ^ string_of_expr ex))
+      in (ty, SUnop(op, (t, e')))
       | FuncCall(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
