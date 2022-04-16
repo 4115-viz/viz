@@ -43,9 +43,10 @@ and string_of_sstmt = function
                "update: "    ^ string_of_sexpr update ^ ") {\n\t" ^
               string_of_sstmt block_code ^ "}\n"
   | SVarDecl((t, s), se) -> string_of_typ t ^ " " ^ s ^ " = " ^
-    match se with
-    | Some(se) -> string_of_sexpr se ^ ";\n"
-    | None -> ""
+    (match se with
+    | Some(se) -> string_of_sexpr se
+    | None -> "uninitialized")
+    ^ ";\n"
 
 and fmt_sfcall name args = 
   "FuncCall(" ^

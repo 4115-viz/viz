@@ -73,9 +73,10 @@ and string_of_stmt = function
                "update: "    ^ string_of_expr update ^ ") {\n\t" ^
               string_of_stmt block_code ^ "}\n"
  | VarDecl((t, s), e) -> string_of_typ t ^ " " ^ s ^ " = " ^
-    match e with
-    | None -> ""
-    | Some(e) -> string_of_expr e ^ ";\n"
+    (match e with
+    | None -> "uninitialized"
+    | Some(e) -> string_of_expr e)
+    ^ ";\n"
 
 (*let string_of_vdecl ((t, n), e) = *)
 let string_of_vdecl (t, n) =
