@@ -135,7 +135,10 @@ let translate (globals, functions) =
                     A.Add     -> L.build_add
                   | A.Sub     -> L.build_sub
                   | A.Mult    -> L.build_mul
-                  | A.Div     -> L.build_sdiv
+                  | A.Div     -> 
+                    (ignore(L.string_of_llvalue (int_format_str builder));
+                    if L.is_null e2' then raise (Failure "Divison by zero")
+                    else L.build_sdiv)
                   | A.Mod     -> L.build_srem
                   | A.Eq      -> L.build_icmp L.Icmp.Eq
                   | A.Neq     -> L.build_icmp L.Icmp.Ne
@@ -150,7 +153,10 @@ let translate (globals, functions) =
                     A.Add     -> L.build_fadd
                   | A.Sub     -> L.build_fsub
                   | A.Mult    -> L.build_fmul
-                  | A.Div     -> L.build_fdiv
+                  | A.Div     -> 
+                    (ignore(L.string_of_llvalue (float_format_str builder));
+                    if L.is_null e2' then raise (Failure "Divison by zero")
+                    else L.build_fdiv)
                   | A.Eq      -> L.build_fcmp L.Fcmp.Oeq
                   | A.Neq     -> L.build_fcmp L.Fcmp.One
                   | A.Less    -> L.build_fcmp L.Fcmp.Olt
