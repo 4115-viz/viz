@@ -275,12 +275,15 @@ let check (functions) =
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
                      string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
       | VarDecl ((t, id) as b, e) ->
+        match t with
+        | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
+        | _ ->
         try match (StringMap.find id symbols) with
           _ -> raise (Failure ("Invalid redeclaration of variable '" ^ id ^ "'"))
         with Not_found ->
           match e with
             | None -> 
-              let new_symbols = StringMap.add id NoneType symbols in
+              let new_symbols = StringMap.add id t symbols in
               (SVarDecl (b, None), new_symbols)
             | Some(e) ->
               let (e_t, _) = check_expr symbols e in
