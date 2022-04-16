@@ -126,7 +126,7 @@ return_statement:
   | expr { $1 } */
 
 loop:
-  | WHILE expr stmt           { While ($2, $3)  }
+  | WHILE LPAREN expr RPAREN stmt           { While ($3, $5)  }
   | INFINITE_LOOP stmt        { While (BoolLit(true), $2)  }
   /* for counter in starting_num ... <ending condition>ending_num step step_number */
   | FOR ID_VAR IN LIT_INT RANGE end_condition LIT_INT increment stmt
