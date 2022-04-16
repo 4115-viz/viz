@@ -12,8 +12,8 @@ and sx =
   | SAssign of string * sexpr
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
-  | STypeCast of builtin_type * sexpr
-  (* | SArrayLit of builtin_type * sx list
+  (*| STypeCast of typ * sexpr*)
+  (* | SArrayLit of typ * sx list
   | SArrayAccess of string * sexpr
   | SArrayAssign of string * sexpr * sexpr
   | SArrayLength of string *)

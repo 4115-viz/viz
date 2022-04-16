@@ -207,7 +207,7 @@ expr:
   | ID_FUNC LPAREN args_opt RPAREN { FuncCall($1, $3) }
 
   /* just need to ensure that this is right associative */
-  | BAR AS builtin_type BAR expr {TypeCast($3, $5)}  
+  /*| BAR AS typ BAR expr {TypeCast($3, $5)}  */
 
 /* args_opt*/
 args_opt:

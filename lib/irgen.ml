@@ -134,7 +134,6 @@ let translate (functions) =
                   | A.Sub     -> L.build_fsub
                   | A.Mult    -> L.build_fmul
                   | A.Div     -> L.build_fdiv
-                  (* | A.Mod     -> L.build_frem *)
                   | A.Eq      -> L.build_fcmp L.Fcmp.Oeq
                   | A.Neq     -> L.build_fcmp L.Fcmp.One
                   | A.Less    -> L.build_fcmp L.Fcmp.Olt
@@ -155,10 +154,29 @@ let translate (functions) =
           | A.NoneType -> raise ((Failure "TODO: Unimplemented Binary Op for NoneType"))
           | A.ArrayType _ -> raise ((Failure "TODO: Unimplemented Binary Op for ArrayType"))
         )
-      | SUnop(_, e) ->
-        let (_, _) = e in
-        let e' = (build_expr local_vars) builder e in
-        L.build_not e' "tmp" builder
+      | SUnop (op, ((ret_ty, _ ) as e)) ->
+        (
+          let e' = (build_expr local_vars) builder e in
+          match ret_ty with 
+            | A.BoolType  -> 
+              (match op with 
+              | A.Not -> L.build_not e' "tmp" builder
+              | _ -> raise ((Failure "Unimplemented Unary Op for BoolType"))
+              )
+            | A.IntType   ->
+              (match op with 
+              | A.Neg -> L.build_neg e' "tmp" builder
+              | _ -> raise ((Failure "Unimplemented Unary Op for IntType"))
+              )
+            | A.FloatType ->
+              (match op with 
+              | A.Neg -> L.build_fneg e' "tmp" builder
+              | _ -> raise ((Failure "Unimplemented Unary Op for FloatType"))
+              )
+            | A.StrType   -> raise ((Failure "Unimplemented Unary Op for StrType"))
+            | A.NoneType  -> raise ((Failure "Unimplemented Unary Op for NoneType"))
+            | A.ArrayType _  -> raise ((Failure "Unimplemented Unary Op for NoneType"))
+        )
       | SFuncCall("println", [])   -> 
         L.build_call print_func [| str_format_str builder; ((build_expr local_vars) builder (A.StrType, SStrLit("")))|]
         "printf" builder
@@ -187,9 +205,9 @@ let translate (functions) =
 
         L.build_call fdef (Array.of_list llargs) result builder
 
-      | STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
+      (*| STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
         L.build_call print_func [| ((build_expr local_vars) builder e) |]
-        "print" builder 
+        "print" builder *)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"
