@@ -26,6 +26,7 @@ let rec string_of_typ = function
 
 let string_of_uop = function
 | Not -> "not"
+| Neg -> "neg"
 
 let fmt_string x = String.concat "" ["\""; x; "\""]
 

@@ -51,7 +51,8 @@ let translate (functions) =
   (* Format strings for printing *) 
   let int_format_str builder = L.build_global_stringptr "%d\n" "fmt" builder 
   and str_format_str builder = L.build_global_stringptr "%s\n" "fmt" builder
-  and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder in
+  and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder 
+  in
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
@@ -143,7 +144,7 @@ let translate (functions) =
                   | A.Sub     -> L.build_fsub
                   | A.Mult    -> L.build_fmul
                   | A.Div     -> L.build_fdiv
-                  | A.Mod     -> L.build_frem
+                  (* | A.Mod     -> L.build_frem *)
                   | A.Eq      -> L.build_fcmp L.Fcmp.Oeq
                   | A.Neq     -> L.build_fcmp L.Fcmp.One
                   | A.Less    -> L.build_fcmp L.Fcmp.Olt

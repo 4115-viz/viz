@@ -34,17 +34,19 @@ open Ast
 
 /* precedence following C standard*/
 %nonassoc NOELSE
+%nonassoc ELSE
+%right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
 %left COMMA
 %left SEMI 
-%right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
 %left OR
 %left AND
 %left EQ NEQ
 %left LT GT LTEQ GTEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%right NOT BAR /* bar is used in typecast, this precedence is like c cast right assoc */
-
+%right NOT
+%right NEG
+%right BAR /* bar is used in typecast, this precedence is like c cast right assoc */
 
 %start program
 %type <Ast.program> program
@@ -125,7 +127,7 @@ return_statement:
   | expr { $1 } */
 
 loop:
-  | WHILE expr stmt           { While ($2, $3)  }
+  | WHILE LPAREN expr RPAREN stmt           { While ($3, $5)  }
   | INFINITE_LOOP stmt        { While (BoolLit(true), $2)  }
   /* for counter in starting_num ... <ending condition>ending_num step step_number */
   | FOR ID_VAR IN LIT_INT RANGE end_condition LIT_INT increment stmt
@@ -152,7 +154,7 @@ block:
   | LBRACE stmt_list RBRACE                 { Block $2 }
 
 if_stmt:
-  | expr QUESTION expr COLON expr               { If($1, Expr($3), Expr($5)) } /* (1 > 2) ? print("true") : print("false") */
+  | expr QUESTION expr COLON expr SEMI  { If($1, Expr($3), Expr($5)) } /* (1 > 2) ? print("true") : print("false") */
   | IF LPAREN expr RPAREN block %prec NOELSE    { If($3, $5, Block[]) } /* covers if */
   | IF LPAREN expr RPAREN block else_stmt       { If($3, $5, $6) } /* covers if/else */
   
@@ -179,18 +181,19 @@ expr:
   | expr MOD    expr { Binop($1, Mod,   $3)   }
 
   /* logical binary ops */
-  | expr  EQ      expr { Binop($1, Eq, $3)   }
+  | expr  EQ      expr { Binop($1, Eq, $3)      }
   | expr  NEQ     expr { Binop($1, Neq,   $3)   }
   | expr  LT      expr { Binop($1, Less,  $3)   }
-  | expr  GT      expr { Binop($1, Great, $3) }
+  | expr  GT      expr { Binop($1, Great, $3)   }
   | expr  LTEQ    expr { Binop($1, Leq,   $3)   }
   | expr  GTEQ    expr { Binop($1, Geq,   $3)   }
 
   /* logical ops */
-  | expr  AND    expr { Binop($1, And,   $3)   }
-  | expr  OR     expr { Binop($1, Or,    $3)   }
-  | NOT   expr        { Unop(Not, $2) }
-  /*| MINUS expr        { Unop(Negate, $2)}*/
+  | expr  AND    expr       { Binop($1, And,   $3)   }
+  | expr  OR     expr       { Binop($1, Or,    $3)   }
+  | MINUS expr %prec NEG { Unop(Neg, $2) }
+  | NOT expr { Unop(Not, $2) }
+
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }

@@ -8,9 +8,9 @@ func main(): none {
 
   print("printing result of `not true`");
 
-  print_bool(@b9);
+  print(@b9);
 
   @b9 = not false; // false
   print("printing result of `not false`");
-  print_bool(@b9);
+  print(@b9);
 }  

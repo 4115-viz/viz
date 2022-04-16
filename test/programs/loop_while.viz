@@ -9,14 +9,14 @@ func main(): none {
     print("loop counting up");    
     // normal while loop construct
     while (@i < 10) {
-        print_int(@i);
+        print(@i);
         @i = @i + 1;
     }
 
     print("==========================");
     print("loop counting down");
     while (@i > 0) {
-        print_int(@i);
+        print(@i);
         @i = @i - 1;
     }
 }

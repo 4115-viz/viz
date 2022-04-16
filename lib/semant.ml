@@ -83,13 +83,6 @@ let check (functions) =
       if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in
 
-    (*let string_conversion et e err =
-    (* convert the first expression result to string *)
-      if et == NoneType then raise (Failure err)
-      else if et != StrType then e
-      else e
-    in*)
-
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
         StringMap.empty (func.formals @ func.locals)
@@ -142,7 +135,7 @@ let check (functions) =
           else           
             (fun my_op -> match my_op with
             | (Add | Sub | Mult | Mod | Div) when ltype = IntType && rtype = IntType -> IntType
-            | (Add | Sub | Mult | Mod | Div) when ltype = FloatType && rtype = FloatType -> FloatType
+            | (Add | Sub | Mult | (*Mod |*) Div) when ltype = FloatType && rtype = FloatType -> FloatType
             (*| (Div) when ltype = IntType && rtype = IntType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
               let () = print_endline (string_of_expr r) in 
@@ -162,36 +155,46 @@ let check (functions) =
                           string_of_typ ltype ^ ", " ^ string_of_typ rtype))
             ) bo
         in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
-      | Unop(uo, r) as ex ->
-        let (rtype, r') = check_expr symbols r in
-        let final_type = 
-          (* if we add other unary operands, we may need to be more clever 
-          with type support. Right now, we are supporting Not, so this is ok.  
-          *)
-          if rtype != BoolType then
-            raise (Failure ("incompatible types for unary operator " ^
-            string_of_uop uo ^ " " ^ string_of_typ rtype ^ " in " ^ string_of_expr ex))
-          else
-            (fun my_uop -> match my_uop with 
-            | Not -> BoolType
-            ) uo
-          in (final_type, SUnop(uo, (rtype, r')))
+    | Unop(op, e) as ex -> 
+      let (t, e') = check_expr symbols e in
+      let ty = match op with
+        Neg when t = IntType || t = FloatType -> t
+      | Not when t = BoolType -> BoolType
+      | _ -> raise (Failure ("illegal unary operator " ^ 
+                              string_of_uop op ^ string_of_typ t ^
+                              " in " ^ string_of_expr ex))
+      in (ty, SUnop(op, (t, e')))
       | FuncCall(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
         if List.length args != param_length then
           raise (Failure ("expecting " ^ string_of_int param_length ^
                           " arguments in " ^ string_of_expr call))
-        else let check_call (ft, _) e =
+        else 
+        let check_call (ft, _) e =
                 let (et, e') = check_expr symbols e in
                 let err = "illegal argument found " ^ string_of_typ et ^
                           " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
                 in 
-                (*if fd.fname == "print" then (ft, string_conversion et e' err) (*convert to string*)
-                else*) (check_assign ft et err, e')
+                if fname = "print" then (et, e') (*convert to string*)
+                else (check_assign ft et err, e')
         in
-        let args' = List.map2 check_call fd.formals args
-        in (fd.rtyp, SFuncCall(fname, args'))
+        let args' = List.map2 check_call fd.formals args in
+        let func_name = (
+            if fname = "print" then
+              (
+                match (fst (List.hd args')) with
+                | IntType -> "print_int"
+                | FloatType -> "print_float"
+                | StrType -> "print"
+                | BoolType -> "print_bool"
+                | NoneType -> raise (Failure ("None type cannot be printed"))
+              )
+            else fname
+        ) 
+        in (fd.rtyp, SFuncCall(func_name, args'))
+
+
       | TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
         let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ string_of_typ ty1 ^ " to " ^ string_of_typ ty2  )) )
@@ -282,11 +285,13 @@ let check (functions) =
       | Local (t, id, e) as call ->
         if StringMap.mem id symbols then (SExpr(check_expr symbols e), symbols) (*Maybe we should return the symbols *)
         else
-          let expr_type = fst (check_expr symbols e) in
-          if expr_type = t then 
-          let new_symbols = StringMap.add id expr_type symbols in
-          (SLocal (t, id, fst (check_stmt new_symbols call)), new_symbols)
-          else raise (Failure ("Local var type does not match"))
+          if typ == NoneType then raise (Failure ("Cannot initalize a variable with none type"))
+          else
+            let expr_type = fst (check_expr symbols e) in
+            if expr_type = typ then 
+            let new_symbols = StringMap.add id expr_type symbols in
+            (SLocal (typ, id, fst (check_stmt new_symbols call)), new_symbols)
+            else raise (Failure ("Local var type does not match"))
           
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
     in (* body of check_func *)
