@@ -151,7 +151,6 @@ let translate (globals, functions) =
                   | A.Sub     -> L.build_fsub
                   | A.Mult    -> L.build_fmul
                   | A.Div     -> L.build_fdiv
-                  (* | A.Mod     -> L.build_frem *)
                   | A.Eq      -> L.build_fcmp L.Fcmp.Oeq
                   | A.Neq     -> L.build_fcmp L.Fcmp.One
                   | A.Less    -> L.build_fcmp L.Fcmp.Olt
@@ -171,10 +170,28 @@ let translate (globals, functions) =
           | A.StrType -> raise ((Failure "Unimplemented Binary Op for StrType"))
           | A.NoneType -> raise ((Failure "Unimplemented Binary Op for NoneType"))
         )
-      | SUnop(_, e) ->
-        let (_, _) = e in
-        let e' = (build_expr local_vars) builder e in
-        L.build_not e' "tmp" builder
+      | SUnop (op, ((ret_ty, _ ) as e)) ->
+        (
+          let e' = (build_expr local_vars) builder e in
+          match ret_ty with 
+            | A.BoolType  -> 
+              (match op with 
+              | A.Not -> L.build_not e' "tmp" builder
+              | _ -> raise ((Failure "Unimplemented Unary Op for BoolType"))
+              )
+            | A.IntType   ->
+              (match op with 
+              | A.Neg -> L.build_neg e' "tmp" builder
+              | _ -> raise ((Failure "Unimplemented Unary Op for IntType"))
+              )
+            | A.FloatType ->
+              (match op with 
+              | A.Neg -> L.build_fneg e' "tmp" builder
+              | _ -> raise ((Failure "Unimplemented Unary Op for FloatType"))
+              )
+            | A.StrType   -> raise ((Failure "Unimplemented Unary Op for StrType"))
+            | A.NoneType  -> raise ((Failure "Unimplemented Unary Op for NoneType"))
+        )
       | SFuncCall("println", [])   -> 
         L.build_call print_func [| str_format_str builder; ((build_expr local_vars) builder (A.StrType, SStrLit("")))|]
         "printf" builder
