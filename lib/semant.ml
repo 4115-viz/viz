@@ -6,6 +6,11 @@ open Ast_fmt
 
 module StringMap = Map.Make(String)
 
+type symbol = {
+  typ: builtin_type;
+  inited: bool;
+}
+
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
 
@@ -84,27 +89,30 @@ let check (functions) =
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+    let symbols : symbol StringMap.t = 
+      List.fold_left (fun m (ty, name) -> StringMap.add name { typ = ty; inited = true } m)
         StringMap.empty (func.formals @ func.locals)
     in
 
-    (* Return a variable from our local symbol table *)
-    let type_of_identifier s symbols =
-      try StringMap.find s symbols
-      with Not_found -> raise (Failure ("undeclared identifier " ^ s))
+    (* Query a variable from our local symbol table *)
+    let find_symbol (id: string) (symbols : symbol StringMap.t) : symbol =
+      try StringMap.find id symbols
+      with Not_found -> raise (Failure ("undeclared identifier " ^ id))
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec check_expr (symbols: builtin_type StringMap.t) (e: expr) : sexpr = 
+    let rec check_expr (symbols: symbol StringMap.t) (e: expr) : sexpr = 
       match e with
         IntLit x -> (IntType, SIntLit x)
       | FloatLit x -> (FloatType, SFloatLit x)
       | StrLit x -> (StrType, SStrLit x)
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
-      | Id var -> (type_of_identifier var symbols, SId var)
+      | Id id -> (match find_symbol id symbols with
+        | { inited = false; _ } -> raise (Failure("uninitialized local variable '" ^ id ^ "' used."))
+        | { typ = t; _ } -> (t, SId id))
       | Assign(var, e) as ex ->
-        let lt = type_of_identifier var symbols
+        let {typ = lt; _} = find_symbol var symbols
         and (rt, e') = check_expr symbols e in
         let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
                   string_of_typ rt ^ " in " ^ string_of_expr ex
@@ -250,7 +258,7 @@ let check (functions) =
           in
           stmt :: check_stmt_list new_symbols sl
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt symbols = function
+    and check_stmt (symbols : symbol StringMap.t) = function
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
@@ -283,7 +291,7 @@ let check (functions) =
         with Not_found ->
           match e with
             | None -> 
-              let new_symbols = StringMap.add id t symbols in
+              let new_symbols = StringMap.add id {typ = t; inited = false} symbols in
               (SVarDecl (b, None), new_symbols)
             | Some(e) ->
               let (e_t, _) = check_expr symbols e in
@@ -292,7 +300,7 @@ let check (functions) =
                   "Type mismatch for variable: '"; id; "'.";
                   "Expect "; (string_of_typ t);
                   ", Got: "; (string_of_typ e_t)]))
-              else let new_symbols = StringMap.add id t symbols in
+              else let new_symbols = StringMap.add id {typ = t; inited = true} symbols in
               (SVarDecl (b, Some(check_expr symbols e)), new_symbols)
           
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
