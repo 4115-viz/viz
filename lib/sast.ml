@@ -7,16 +7,12 @@ and sx =
   | SFloatLit of float
   | SBoolLit of bool
   | SNoneLit
+  | SArrayLit of sexpr list
   | SId of string
   | SBinop of sexpr * bop * sexpr
   | SAssign of string * sexpr
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
-  (*| STypeCast of typ * sexpr*)
-  (* | SArrayLit of typ * sx list
-  | SArrayAccess of string * sexpr
-  | SArrayAssign of string * sexpr * sexpr
-  | SArrayLength of string *)
 
 type sstmt =
   | SBlock of sstmt list

@@ -105,6 +105,25 @@ let translate (functions) =
       | SFloatLit f -> L.const_float float_t f
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SNoneLit -> L.const_null void_t
+      | SArrayLit sa -> 
+        (match sa with
+        | [] -> raise (Failure "TODO: empty array")
+        | sa ->
+            let all_elem = List.map (fun e ->
+              build_expr local_vars builder e) sa in
+            let llarray_t = L.type_of (List.hd all_elem) in
+            let num_elems = List.length sa in
+            let ptr = L.build_array_malloc llarray_t
+                (L.const_int i32_t num_elems) "" builder 
+            in
+            ignore (List.fold_left (fun i elem ->
+                let idx = L.const_int i32_t i in
+                let eptr = L.build_gep ptr [|idx|] "" builder in
+                let cptr = L.build_pointercast eptr 
+                    (L.pointer_type (L.type_of elem)) "" builder in
+                let _ = (L.build_store elem cptr builder) 
+                in i+1)
+                0 all_elem); ptr)
       | SId s       -> L.build_load (lookup local_vars s) s builder
       | SAssign (s, e) -> let e' = (build_expr local_vars) builder e in
         ignore(L.build_store e' (lookup local_vars s) builder); e'

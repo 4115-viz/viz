@@ -108,14 +108,24 @@ let check (functions) =
       | StrLit x -> (StrType, SStrLit x)
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
+      | ArrayLit (a : expr list) -> (match a with
+        | [] -> raise (Failure "TODO: support array of length 0")
+        | x :: xs -> let (t, se) = check_expr symbols x in
+          let sa = List.map (fun i -> match (check_expr symbols i) with
+            | (i_t, _) when i_t != t -> raise (Failure ("Invalid array literal. Expect type " ^ fmt_typ t ^ ", found" ^ fmt_typ i_t))
+            | _ -> (t, se)) xs 
+          in
+          (ArrayType t, SArrayLit sa)
+        
+      )
       | Id id -> (match find_symbol id symbols with
         | { inited = false; _ } -> raise (Failure("uninitialized local variable '" ^ id ^ "' used."))
         | { typ = t; _ } -> (t, SId id))
       | Assign(var, e) as ex ->
         let {typ = lt; _} = find_symbol var symbols
         and (rt, e') = check_expr symbols e in
-        let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
-                  string_of_typ rt ^ " in " ^ string_of_expr ex
+        let err = "illegal assignment " ^ fmt_typ lt ^ " = " ^
+                  fmt_typ rt ^ " in " ^ fmt_expr ex
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
 
@@ -128,8 +138,8 @@ let check (functions) =
         let final_type = 
           if compatible_types = false then
             raise (Failure ("incompatible types for binary operator " ^
-                  string_of_typ ltype ^ " " ^ string_of_op bo ^ " " ^
-                  string_of_typ rtype ^ " in " ^ string_of_expr ex))
+                  fmt_typ ltype ^ " " ^ fmt_op bo ^ " " ^
+                  fmt_typ rtype ^ " in " ^ fmt_expr ex))
           
           else           
             (fun my_op -> match my_op with
@@ -137,21 +147,21 @@ let check (functions) =
             | (Add | Sub | Mult | (*Mod |*) Div) when ltype = FloatType && rtype = FloatType -> FloatType
             (*| (Div) when ltype = IntType && rtype = IntType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
-              let () = print_endline (string_of_expr r) in 
-              if r = IntLit(0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
-                                            ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
+              let () = print_endline (fmt_expr r) in 
+              if r = IntLit(0) then raise (Failure ("Cannot Divide by Zero in " ^ fmt_expr l 
+                                            ^ " " ^ fmt_op my_op ^ " " ^ fmt_expr r))
                     else IntType
             | (Div) when ltype = FloatType && rtype = FloatType -> 
               (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
-              if r = FloatLit(0.0) then raise (Failure ("Cannot Divide by Zero in " ^ string_of_expr l 
-                                              ^ " " ^ string_of_op my_op ^ " " ^ string_of_expr r))
+              if r = FloatLit(0.0) then raise (Failure ("Cannot Divide by Zero in " ^ fmt_expr l 
+                                              ^ " " ^ fmt_op my_op ^ " " ^ fmt_expr r))
                     else FloatType *)
             | (Eq | Neq) -> BoolType
             | (Leq | Geq | Less | Great) when (ltype = IntType && rtype = IntType ||
                                                 ltype = FloatType && rtype = FloatType) -> BoolType
             | (And | Or) when (ltype = BoolType && rtype = BoolType) -> BoolType
-            | _ -> raise (Failure ("No operator (" ^ string_of_op bo ^ ") " ^ "to handle type (" ^
-                          string_of_typ ltype ^ ", " ^ string_of_typ rtype))
+            | _ -> raise (Failure ("No operator (" ^ fmt_op bo ^ ") " ^ "to handle type (" ^
+                          fmt_typ ltype ^ ", " ^ fmt_typ rtype))
             ) bo
         in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
     | Unop(op, e) as ex -> 
@@ -160,20 +170,20 @@ let check (functions) =
         Neg when t = IntType || t = FloatType -> t
       | Not when t = BoolType -> BoolType
       | _ -> raise (Failure ("illegal unary operator " ^ 
-                              string_of_uop op ^ string_of_typ t ^
-                              " in " ^ string_of_expr ex))
+                              string_of_uop op ^ fmt_typ t ^
+                              " in " ^ fmt_expr ex))
       in (ty, SUnop(op, (t, e')))
       | FuncCall(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
         if List.length args != param_length then
           raise (Failure ("expecting " ^ string_of_int param_length ^
-                          " arguments in " ^ string_of_expr call))
+                          " arguments in " ^ fmt_expr call))
         else 
         let check_call (ft, _) e =
                 let (et, e') = check_expr symbols e in
-                let err = "illegal argument found " ^ string_of_typ et ^
-                          " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+                let err = "illegal argument found " ^ fmt_typ et ^
+                          " expected " ^ fmt_typ ft ^ " in " ^ fmt_expr e
                 in 
                 if fname = "print" then (et, e') (*convert to string*)
                 else (check_assign ft et err, e')
@@ -197,7 +207,7 @@ let check (functions) =
 
       (*| TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
-        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ string_of_typ ty1 ^ " to " ^ string_of_typ ty2  )) )
+        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ fmt_typ ty1 ^ " to " ^ fmt_typ ty2  )) )
         in let casted_expr = 
             (match ty with
                   | IntType -> 
@@ -233,7 +243,7 @@ let check (functions) =
       let (t, e') = check_expr symbols e in
       match t with
       | BoolType -> (t, e')
-      |  _ -> raise (Failure ("expected Boolean expression in " ^ string_of_expr e))
+      |  _ -> raise (Failure ("expected Boolean expression in " ^ fmt_expr e))
     in
 
     (* Here we need to ensure that you are following
@@ -280,8 +290,8 @@ let check (functions) =
         let (t, e') = check_expr symbols e in
         if t = func.rtyp then (SReturn (t, e'), symbols)
         else raise (
-            Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-                     string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
+            Failure ("return gives " ^ fmt_typ t ^ " expected " ^
+                     fmt_typ func.rtyp ^ " in " ^ fmt_expr e))
       | VarDecl ((t, id) as b, e) ->
         match t with
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
@@ -295,11 +305,11 @@ let check (functions) =
               (SVarDecl (b, None), new_symbols)
             | Some(e) ->
               let (e_t, _) = check_expr symbols e in
-              if e_t != t then
+              if e_t <> t then
                 raise (Failure (String.concat "" [
-                  "Type mismatch for variable: '"; id; "'.";
-                  "Expect "; (string_of_typ t);
-                  ", Got: "; (string_of_typ e_t)]))
+                  "Type mismatch for variable: '"; id; "'. ";
+                  "Expect '"; (fmt_typ t); "'"; 
+                  ", Got: '"; (fmt_typ e_t); "'"]))
               else let new_symbols = StringMap.add id {typ = t; inited = true} symbols in
               (SVarDecl (b, Some(check_expr symbols e)), new_symbols)
           

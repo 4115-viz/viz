@@ -20,6 +20,7 @@ type expr =
   | FloatLit of float
   | BoolLit of bool
   | NoneLit
+  | ArrayLit of expr list
   | Id of string
   | Assign of string * expr
   | FuncCall of string * expr list

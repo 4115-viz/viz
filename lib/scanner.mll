@@ -78,7 +78,6 @@ rule token = parse
 | "false" { LIT_BOOL(false) }
 | '"' ([^ '"']* as lxm) '"' { LIT_STR(lxm) }
 | ('0'+) | non_zero_digits digit*  as lxm {LIT_INT(int_of_string lxm)} (* we store everything as a positive magnitude number *)
-(*| '0'* "." '0'+ | "-" ? (non_zero_digits+ "." digit+ | "." digit+)  as lxm {LIT_FLOAT(float_of_string lxm)} *)
 | ("0." "0"+) | digit* "." digit+ as lxm { LIT_FLOAT(float_of_string lxm) } (* we store everything as a positive magnitude number *)
 
 (* -------- delimiters -------- *)

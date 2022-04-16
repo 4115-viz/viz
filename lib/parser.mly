@@ -166,6 +166,7 @@ expr:
   | LIT_INT   { IntLit($1)   }
   | LIT_BOOL  { BoolLit($1)  }
   | LIT_FLOAT { FloatLit($1) }
+  | LBRACKET exprs_opt RBRACKET { ArrayLit($2) }
 
   /* variable access */
   | ID_VAR { Id($1) }
@@ -204,16 +205,18 @@ expr:
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 
   /* function call */
-  | ID_FUNC LPAREN args_opt RPAREN { FuncCall($1, $3) }
+  | ID_FUNC LPAREN exprs_opt RPAREN { FuncCall($1, $3) }
 
   /* just need to ensure that this is right associative */
   /*| BAR AS typ BAR expr {TypeCast($3, $5)}  */
 
-/* args_opt*/
-args_opt:
+// Match the followingpatterns 
+// ""
+// "expr, expr, expr"
+exprs_opt:
   /*nothing*/ { [] }
-  | args { $1 }
+  | exprs { $1 }
 
-args:
+exprs:
   expr  { [$1] }
-  | expr COMMA args { $1::$3 }
+  | expr COMMA exprs { $1::$3 }
