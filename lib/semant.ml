@@ -95,23 +95,14 @@ let check (functions) =
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec check_expr symbols = function
+    let rec check_expr (symbols: builtin_type StringMap.t) (e: expr) : sexpr = 
+      match e with
         IntLit x -> (IntType, SIntLit x)
       | FloatLit x -> (FloatType, SFloatLit x)
       | StrLit x -> (StrType, SStrLit x)
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
       | Id var -> (type_of_identifier var symbols, SId var)
-      | Noassign ty -> 
-        (
-          match ty with
-          | IntType -> (IntType, SIntLit 0)
-          | FloatType -> (FloatType, SFloatLit 0.0)
-          | StrType -> (StrType, SStrLit "")
-          | BoolType -> (BoolType, SBoolLit false)
-          | NoneType -> (NoneType, SNoneLit)
-          | _ -> raise(Failure"TODO: NOT IMPLEMENT")
-        )
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var symbols
         and (rt, e') = check_expr symbols e in
@@ -189,6 +180,7 @@ let check (functions) =
                 | StrType -> "print"
                 | BoolType -> "print_bool"
                 | NoneType -> raise (Failure ("None type cannot be printed"))
+                | ArrayType _ -> raise(Failure ("TODO: print array hasn't been implemented"))
               )
             else fname
         ) 
@@ -282,16 +274,15 @@ let check (functions) =
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
                      string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
-      | Local (t, id, e) as call ->
-        if StringMap.mem id symbols then (SExpr(check_expr symbols e), symbols) (*Maybe we should return the symbols *)
-        else
-          if typ == NoneType then raise (Failure ("Cannot initalize a variable with none type"))
-          else
-            let expr_type = fst (check_expr symbols e) in
-            if expr_type = typ then 
-            let new_symbols = StringMap.add id expr_type symbols in
-            (SLocal (typ, id, fst (check_stmt new_symbols call)), new_symbols)
-            else raise (Failure ("Local var type does not match"))
+      | VarDecl ((t, id), e) ->
+        match e with
+        | None -> raise(Failure (String.concat "" ["Variable: '"; id; "' used before being initialized"]))
+        | Some(e) -> let (t_e, _) as se = check_expr symbols e in
+          try match (StringMap.find id symbols) with
+            _ -> raise (Failure ("Invalid redeclaration of variable '" ^ id ^ "'"))
+          with Not_found ->
+            let new_symbols = StringMap.add id t_e symbols in
+            (SVarDecl ((t, id), Some(se)), new_symbols)
           
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
     in (* body of check_func *)

@@ -19,7 +19,6 @@ and string_s se =
       | SBoolLit(true) -> "BoolLit(true)"
       | SBoolLit(false) -> "BoolLit(false)"
       | SId(x) -> "Id(" ^ x ^ ")"
-      | SNoassign(t) -> "Noassign(" ^ string_of_typ t ^ ")"
       | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
       | SFuncCall(name, args) -> fmt_sfcall name args
       | SBinop(l, bo, r) -> 
@@ -43,7 +42,10 @@ and string_of_sstmt = function
                "predicate: " ^ string_of_sexpr predicate ^ ", " ^
                "update: "    ^ string_of_sexpr update ^ ") {\n\t" ^
               string_of_sstmt block_code ^ "}\n"
-  | SLocal(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_sstmt e ^ ";\n"
+  | SVarDecl((t, s), se) -> string_of_typ t ^ " " ^ s ^ " = " ^
+    match se with
+    | Some(se) -> string_of_sexpr se ^ ";\n"
+    | None -> ""
 
 and fmt_sfcall name args = 
   "FuncCall(" ^

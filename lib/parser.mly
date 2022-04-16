@@ -105,19 +105,16 @@ stmt_list:
 
 
 stmt:
-  | expr SEMI                               { Expr $1      }
-  /*| logic_expr                              { Expr $1 } */
-  | if_stmt                                 { $1 }
-  | block                                   { $1 }
-  | loop                                    { $1 }
-  | return_statement SEMI                   { $1 }
-  | vdecl SEMI                              {Local(fst $1, snd $1, Noassign(fst $1))}
-  | vdecl ASSIGN expr SEMI                    {Local(fst $1, snd $1, $3)}
-  /*| RETURN expr SEMI                        { Return $2      }*/
-/* TODO 
-  | BREAK
-  | CONTINUE
-*/
+  | expr SEMI { Expr $1 }
+  | if_stmt { $1 }
+  | block { $1 }
+  | loop  { $1 }
+  | return_statement SEMI { $1 }
+  | vdecl var_init_opt SEMI  { VarDecl($1, $2) }
+
+var_init_opt:
+  | { None }
+  | ASSIGN expr { Some($2) }
 
 return_statement:
   /* return; i.e. for nonetype return */   

@@ -37,7 +37,6 @@ let rec string_of_expr = function
   | NoneLit  -> "NoneLit(NONE)" (* used for return statement *)
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
-  | Noassign(t) -> "Noassign(" ^ string_of_typ t ^ ")"
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) ->
@@ -73,7 +72,10 @@ and string_of_stmt = function
                "predicate: " ^ string_of_expr predicate ^ ", " ^
                "update: "    ^ string_of_expr update ^ ") {\n\t" ^
               string_of_stmt block_code ^ "}\n"
- | Local(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_expr e ^ ";\n"
+ | VarDecl((t, s), e) -> string_of_typ t ^ " " ^ s ^ " = " ^
+    match e with
+    | None -> ""
+    | Some(e) -> string_of_expr e ^ ";\n"
 
 (*let string_of_vdecl ((t, n), e) = *)
 let string_of_vdecl (t, n) =

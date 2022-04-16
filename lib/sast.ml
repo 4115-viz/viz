@@ -13,7 +13,6 @@ and sx =
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
   | STypeCast of builtin_type * sexpr
-  | SNoassign of builtin_type
   (* | SArrayLit of builtin_type * sx list
   | SArrayAccess of string * sexpr
   | SArrayAssign of string * sexpr * sexpr
@@ -26,7 +25,7 @@ type sstmt =
   | SWhile of sexpr * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr
-  | SLocal of builtin_type * string * sstmt
+  | SVarDecl of bind * sexpr option
   
 type sfunc_def = {
   srtyp: builtin_type;

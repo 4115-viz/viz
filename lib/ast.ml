@@ -12,6 +12,8 @@ type builtin_type =
   | FloatType
   | ArrayType of builtin_type
 
+type bind = builtin_type * string
+
 type expr =
   | StrLit of string
   | IntLit of int
@@ -24,7 +26,6 @@ type expr =
   | Binop of expr * bop * expr
   | Unop of uop * expr
   | TypeCast of builtin_type * expr
-  | Noassign of builtin_type
 
 type stmt =
   | Expr of expr
@@ -33,9 +34,7 @@ type stmt =
   | While of expr * stmt
   | For of expr * expr * expr * stmt
   | Return of expr
-  | Local of builtin_type * string * expr
-  
-type bind = builtin_type * string
+  | VarDecl of bind * expr option
 
 type func_def = {
   rtyp: builtin_type;
