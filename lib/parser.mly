@@ -42,9 +42,10 @@ open Ast
 %left AND
 %left EQ NEQ
 %left LT GT LTEQ GTEQ
-%left PLUS MINUS 
+%left PLUS MINUS
 %left TIMES DIVIDE MOD
 %right NOT
+%right NEG
 %right BAR /* bar is used in typecast, this precedence is like c cast right assoc */
 
 %start program
@@ -189,7 +190,7 @@ expr:
   /* logical ops */
   | expr  AND    expr       { Binop($1, And,   $3)   }
   | expr  OR     expr       { Binop($1, Or,    $3)   }
-  | MINUS expr %prec NOT { Unop(Neg, $2) }
+  | MINUS expr %prec NEG { Unop(Neg, $2) }
   | NOT expr { Unop(Not, $2) }
 
 
