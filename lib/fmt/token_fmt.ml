@@ -4,7 +4,6 @@ open Parser
 let string_of_token (t : token) : string  =
   match t with
     | ID_VAR(x)  -> String.concat "" ["ID_VAR("; x ; ")"]
-    | ID_VAR_DECL(x)  -> String.concat "" ["ID_VAR_DECL("; x ; ")"]
     | ID_FUNC(x)  -> String.concat "" ["ID_FUNC("; x ; ")"]
     | LIT_BOOL(x) -> String.concat "" ["LIT_BOOL("; Bool.to_string x ; ")"]
     | LIT_STR(x) -> String.concat "" ["LIT_STR("; x ; ")"]

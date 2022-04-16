@@ -95,7 +95,6 @@ rule token = parse
 
 (* --------- IDs ------------ *)
 | letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)
-| "@@" letter (digit | letter | '_')* as lxm { ID_VAR_DECL(String.sub lxm 2 ((String.length lxm) - 2)) } (* variable decl needs @@ *)
 | "@" letter (digit | letter | '_')* as lxm { ID_VAR(String.sub lxm 1 ((String.length lxm) - 1)) } (* variable access need @ *)
 
 (* -------- Other ----------- *)

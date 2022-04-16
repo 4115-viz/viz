@@ -26,7 +26,6 @@ open Ast
 
 %token <string> ID_FUNC /* function names */
 %token <string> ID_VAR /* variable access or assign */
-%token <string> ID_VAR_DECL /* variable decl */
 %token <string> LIT_STR
 %token <int> LIT_INT
 %token <float> LIT_FLOAT
@@ -62,9 +61,9 @@ fdecls:
    /* nothing */ { []               }
  | fdecl fdecls { $1 :: $2 }
  
-/* @@x: string; */
+/* @x: string; */
 vdecl:
-  | ID_VAR_DECL COLON builtin_type {($3, $1)}
+  | ID_VAR COLON builtin_type {($3, $1)}
 
 
 builtin_type:
