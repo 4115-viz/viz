@@ -1,33 +1,22 @@
 func main(): none {
 
-    // doesn't work
-    @@my_int: int ;
-    @@my_float: float ;
-    @@my_str: string ;
-    @@my_bool1: bool ;
-    @@my_bool2: bool ;
-    
-    print("=========================");
-    print(""); // print newline, needs to be fixed
-    print("printing variable values");
-    @my_int = 42376;
-    @my_float = -10.5;
-    @my_str = "hello my guys";
-    @my_bool1 = true;
-    @my_bool2 = false;
-    print_int(@my_int);
-    print_float(@my_float);
-    print(@my_str);
-    print_bool(@my_bool1);
-    print_bool(@my_bool2);
+  print("Hello World from Viz Dev Team!");
+  println();
+  print(1);
+  print(1.1101);
+  print(true);
+  print(false);
 
-    print("=========================");
-    print(""); // print newline, needs to be fixed
-    println();
-    print("printing literals");
-    print("hello my guys");
-    print_int(1);
-    print_float(1.0);
-    print_bool(true);
-    print_bool(false);
+  @@x :float = 1.0;
+  @@y : float = @x + 1.2;
+  @@z : string = "GG";
+  print(@z);
+  print(@y);
+  print(@x + @y);
+
+  @@j : bool;
+  print(@j);
+
+  print(1 + 1 + 2 * 3);
+  print(true and not false);
 }

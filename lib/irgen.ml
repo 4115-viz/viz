@@ -57,7 +57,8 @@ let translate (globals, functions) =
   (* Format strings for printing *) 
   let int_format_str builder = L.build_global_stringptr "%d\n" "fmt" builder 
   and str_format_str builder = L.build_global_stringptr "%s\n" "fmt" builder
-  and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder in
+  and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder 
+  in
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
