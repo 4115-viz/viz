@@ -274,15 +274,23 @@ let check (functions) =
         else raise (
             Failure ("return gives " ^ string_of_typ t ^ " expected " ^
                      string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
-      | VarDecl ((t, id), e) ->
-        match e with
-        | None -> raise(Failure (String.concat "" ["Variable: '"; id; "' used before being initialized"]))
-        | Some(e) -> let (t_e, _) as se = check_expr symbols e in
-          try match (StringMap.find id symbols) with
-            _ -> raise (Failure ("Invalid redeclaration of variable '" ^ id ^ "'"))
-          with Not_found ->
-            let new_symbols = StringMap.add id t_e symbols in
-            (SVarDecl ((t, id), Some(se)), new_symbols)
+      | VarDecl ((t, id) as b, e) ->
+        try match (StringMap.find id symbols) with
+          _ -> raise (Failure ("Invalid redeclaration of variable '" ^ id ^ "'"))
+        with Not_found ->
+          match e with
+            | None -> 
+              let new_symbols = StringMap.add id NoneType symbols in
+              (SVarDecl (b, None), new_symbols)
+            | Some(e) ->
+              let (e_t, _) = check_expr symbols e in
+              if e_t != t then
+                raise (Failure (String.concat "" [
+                  "Type mismatch for variable: '"; id; "'.";
+                  "Expect "; (string_of_typ t);
+                  ", Got: "; (string_of_typ e_t)]))
+              else let new_symbols = StringMap.add id t symbols in
+              (SVarDecl (b, Some(check_expr symbols e)), new_symbols)
           
       (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
     in (* body of check_func *)
