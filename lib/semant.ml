@@ -128,7 +128,6 @@ let check (functions) =
                   fmt_typ rt ^ " in " ^ fmt_expr ex
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
-
       | Binop(l, bo, r) as ex-> 
         let (ltype, l') = check_expr symbols l in
         let (rtype, r') = check_expr symbols r in
@@ -164,15 +163,15 @@ let check (functions) =
                           fmt_typ ltype ^ ", " ^ fmt_typ rtype))
             ) bo
         in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
-    | Unop(op, e) as ex -> 
-      let (t, e') = check_expr symbols e in
-      let ty = match op with
-        Neg when t = IntType || t = FloatType -> t
-      | Not when t = BoolType -> BoolType
-      | _ -> raise (Failure ("illegal unary operator " ^ 
-                              string_of_uop op ^ fmt_typ t ^
-                              " in " ^ fmt_expr ex))
-      in (ty, SUnop(op, (t, e')))
+      | Unop(op, e) as ex -> 
+        let (t, e') = check_expr symbols e in
+        let ty = match op with
+          Neg when t = IntType || t = FloatType -> t
+        | Not when t = BoolType -> BoolType
+        | _ -> raise (Failure ("illegal unary operator " ^ 
+                                string_of_uop op ^ fmt_typ t ^
+                                " in " ^ fmt_expr ex))
+        in (ty, SUnop(op, (t, e')))
       | FuncCall(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
@@ -203,7 +202,15 @@ let check (functions) =
             else fname
         ) 
         in (fd.rtyp, SFuncCall(func_name, args'))
-
+      | Subscript(e, i) ->
+      let (t, _) as e' = match check_expr symbols e with
+      | ArrayType t, sx -> t, sx
+      | (t, _) -> failwith (String.concat "" ["Subscript operator [] expect array, got: "; fmt_typ t])
+      in  
+      let i' = match check_expr symbols i with
+      | (IntType, _) as sexpr -> sexpr
+      | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
+      in (t, SSubscript(e', i'))
 
       (*| TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)

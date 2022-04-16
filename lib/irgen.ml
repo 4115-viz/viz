@@ -223,7 +223,7 @@ let translate (functions) =
                       | _ -> f ^ "_result") in
 
         L.build_call fdef (Array.of_list llargs) result builder
-
+      | SSubscript (_, _) -> failwith("TODO: Codegen for SSubscript.")
       (*| STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
         L.build_call print_func [| ((build_expr local_vars) builder e) |]
         "print" builder *)

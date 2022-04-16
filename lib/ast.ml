@@ -26,6 +26,7 @@ type expr =
   | FuncCall of string * expr list
   | Binop of expr * bop * expr
   | Unop of uop * expr
+  | Subscript of expr * expr
   (* | TypeCast of builtin_type * expr *)
 
 type stmt =

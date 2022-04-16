@@ -13,6 +13,7 @@ and sx =
   | SAssign of string * sexpr
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
+  | SSubscript of sexpr * sexpr
 
 type sstmt =
   | SBlock of sstmt list
