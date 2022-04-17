@@ -10,12 +10,17 @@
 let digit  = ['0'-'9']
 let non_zero_digits = ['1'-'9']
 let letter = ['a'-'z' 'A'-'Z']
+let whitespace = [' ' '\t' '\r' '\n']
 
 rule token = parse
 (* -------- whitespaces -------- *)
-| [' ' '\t' '\r' '\n'] { token lexbuf}
+| whitespace { token lexbuf}
 | "/*" {multi_comment lexbuf}
 | "//" {single_comment lexbuf}
+
+(* -------- line continuation ---------*)
+(*| "\\" { line_continuation lexbuf }*)
+| "\\" { token lexbuf }
 
 (* -------- keywords -------- *)
 | "func" { FUNC }
@@ -110,3 +115,9 @@ and single_comment = parse
  | "*/" {token lexbuf} (* end of multi line comment, head back to token *)
  | "/*" {raise (Viz_scan_error ("cannot nest multi-line comments"))} (* no nested comments *)
  | _    {multi_comment lexbuf} (* want to ignore the rest of the noise *)
+
+(*
+ and line_continuation = parse
+  | whitespace { line_continuation lexbuf }
+  | _ { token lexbuf }
+ *)
