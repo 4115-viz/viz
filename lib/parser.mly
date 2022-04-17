@@ -20,7 +20,7 @@ open Ast
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
-%token EOF
+%token EOF LINECONTINUATION
 
 /* split id into two, nothing changes outside of parser file */
 
@@ -162,7 +162,8 @@ else_stmt:
 
 expr:
   /* literal */
-  | LIT_STR   { StrLit($1)   }
+  /*| LIT_STR   { StrLit($1)   } */
+  | string_literal { StrLit($1) }
   | LIT_INT   { IntLit($1)   }
   | LIT_BOOL  { BoolLit($1)  }
   | LIT_FLOAT { FloatLit($1) }
@@ -211,6 +212,11 @@ expr:
 
   /* just need to ensure that this is right associative */
   /*| BAR AS typ BAR expr {TypeCast($3, $5)}  */
+
+/* allowing for multi-line strings */
+string_literal:
+| LIT_STR   {  $1 }
+| LIT_STR string_literal { $1 ^ $2 } /* concat strs */
 
 // Match the followingpatterns 
 // ""
