@@ -229,10 +229,10 @@ let translate (functions) =
                       | _ -> f ^ "_result") in
 
         L.build_call fdef (Array.of_list llargs) result builder
-      | SSubscript (e, i) -> 
-        let e' = build_expr local_vars builder e in
-        let i' = build_expr local_vars builder i in
-        L.build_load (L.build_gep e' [| i' |] "" builder) "" builder 
+      | SSubscript (arr_e, idx_e) -> 
+        let arr_v = build_expr local_vars builder arr_e in
+        let idx_v = build_expr local_vars builder idx_e in
+        L.build_gep arr_v [| idx_v |] "subscript" builder
       (*| STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
         L.build_call print_func [| ((build_expr local_vars) builder e) |]
         "print" builder *)
