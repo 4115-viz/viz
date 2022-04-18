@@ -6,11 +6,11 @@
 func main(): none {
     
     // variable decls
-    @@ctr: int;
-    @@ctr2: int;
-    @@ctr3: int;
-    @@ctr4: int;
-    @@ctr5: int;
+    @ctr: int;
+    @ctr2: int;
+    @ctr3: int;
+    @ctr4: int;
+    @ctr5: int;
 
     // try out our for loop with all aspects
     for @ctr in 1 ... <10 step 2{

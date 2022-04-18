@@ -155,7 +155,7 @@ loop:
   | FOR ID_VAR IN LIT_INT RANGE end_condition LIT_INT increment stmt
             {
                 let var_init   = Assign($2, IntLit($4)) in (* ex: i = 0 *)
-                let predicate  = Binop(IntLit($4), $6, IntLit($7)) in (* ex: i < 5 *)
+                let predicate  = Binop(Id($2), $6, IntLit($7)) in (* ex: i < 5 *)
                 let update     = Assign( $2, Binop(Id($2), Add, $8) ) in (* ex: i = i + 1 *)
                 let block_code = $9 in
                 For(var_init, predicate, update, block_code)
