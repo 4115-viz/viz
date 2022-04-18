@@ -5,11 +5,11 @@ open Sast
 open Ast_fmt
 
 module StringMap = Map.Make(String)
-
-type symbol = {
-  typ: builtin_type;
-  inited: bool;
-}
+module StringHash = Hashtbl.Make(struct
+  type t = string
+  let equal x y = x = y
+  let hash = Hashtbl.hash
+end)
 
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
@@ -91,19 +91,21 @@ let check (functions) =
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbols : symbol StringMap.t = 
-      List.fold_left (fun m (ty, name) -> StringMap.add name { typ = ty; inited = true } m)
+    let symbols : builtin_type StringMap.t = 
+      List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
         StringMap.empty (func.formals @ func.locals)
     in
 
     (* Query a variable from our local symbol table *)
-    let find_symbol (id: string) (symbols : symbol StringMap.t) : symbol =
+    let type_of_id (id: string) (symbols : builtin_type StringMap.t) : builtin_type =
       try StringMap.find id symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ id))
     in
 
+    let uninited_symbols = StringHash.create 10 in
+
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec check_expr (symbols: symbol StringMap.t) (e: expr) : sexpr = 
+    let rec check_expr (symbols: builtin_type StringMap.t) (e: expr) : sexpr = 
       match e with
         IntLit x -> (IntType, SIntLit x)
       | FloatLit x -> (FloatType, SFloatLit x)
@@ -120,17 +122,18 @@ let check (functions) =
           (ArrayType t, SArrayLit sa)
         
       )
-      | Id id -> (match find_symbol id symbols with
-        | { inited = false; _ } -> raise (Failure("uninitialized local variable '" ^ id ^ "' used."))
-        | { typ = t; _ } -> (t, SId id))
-      | Assign(var, e) as ex ->
-        let s = find_symbol var symbols
+      | Id id -> 
+        if StringHash.mem uninited_symbols id then failwith ("uninitialized local variable '" ^ id ^ "' used.")
+        else (type_of_id id symbols, SId id)
+      | Assign(id, e) as ex ->
+        let t = type_of_id id symbols
         and (rt, e') = check_expr symbols e in
-        let err = "illegal assignment " ^ fmt_typ s.typ ^ " = " ^
+        let err = "illegal assignment " ^ fmt_typ t ^ " = " ^
                   fmt_typ rt ^ " in " ^ fmt_expr ex
         in
-        let t = check_assign s.typ rt err in
-        (t, SAssign(var, (rt, e')))
+        let t = check_assign t rt err in
+        StringHash.remove uninited_symbols id;
+        (t, SAssign(id, (rt, e')))
       | Binop(l, bo, r) as ex-> 
         let (ltype, l') = check_expr symbols l in
         let (rtype, r') = check_expr symbols r in
@@ -278,17 +281,11 @@ let check (functions) =
           in
           stmt :: check_stmt_list new_symbols sl
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt (symbols : symbol StringMap.t) = function
+    and check_stmt (symbols : builtin_type StringMap.t) = function
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
-      | Expr e -> 
-        let se = check_expr symbols e in
-        let new_symbols = match e with
-          | Assign (id, _) -> StringMap.add id {typ = fst se; inited = true} symbols
-          | _ -> symbols
-        in
-        (SExpr se, new_symbols)
+      | Expr e -> (SExpr (check_expr symbols e), symbols)
       | If(e, st1, st2) ->
         
         (*(* note: we need to check for st2 being a No_op *)
@@ -320,7 +317,8 @@ let check (functions) =
         with Not_found ->
           match e with
             | None -> 
-              let new_symbols = StringMap.add id {typ = t; inited = false} symbols in
+              let new_symbols = StringMap.add id t symbols in
+              StringHash.add uninited_symbols id true;
               (SVarDecl (b, None), new_symbols)
             | Some(e) ->
               let (e_t, _) = check_expr symbols e in
@@ -329,7 +327,7 @@ let check (functions) =
                   "Type mismatch for variable: '"; id; "'. ";
                   "Expect '"; (fmt_typ t); "'"; 
                   ", Got: '"; (fmt_typ e_t); "'"]))
-              else let new_symbols = StringMap.add id {typ = t; inited = true} symbols in
+              else let new_symbols = StringMap.add id t symbols in
               (SVarDecl (b, Some(check_expr symbols e)), new_symbols)
     
     in (* body of check_func *)
