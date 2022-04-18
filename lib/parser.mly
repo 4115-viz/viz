@@ -20,7 +20,7 @@ open Ast
 
 /* delimiters */
 %token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
-%token EOF /*LINECONTINUATION*/
+%token EOF ARROW /*LINECONTINUATION*/
 
 /* split id into two, nothing changes outside of parser file */
 
@@ -110,17 +110,32 @@ stmt:
   | loop  { $1 }
   | return_statement SEMI { $1 }
   | vdecl var_init_opt SEMI  { VarDecl($1, $2) }
-/*  | vdecl_many SEMI { $1 }  
+  | vdecl_list vdecl_list_init_opt SEMI { 
+      let var_list        = $1 in 
+      let vdecl_ty        = fst $2 in 
+      let vdecl_exp       = snd $2 in 
+      let create_var_decl = (fun var_name -> VarDecl((vdecl_ty, var_name), vdecl_exp)) in
+      let list_of_decls = List.fold_left (fun lst var_name -> (create_var_decl var_name) :: lst ) [] var_list 
+      in VarDeclList(list_of_decls)
+    }  
 
-vdecl_many:
-  | ID_VAR_DECL COMMA vdecl { VarDeclList($3, )}
-  | ID_VAR_DECL COMMA vdecl_many { } 
-*/
 /*
+  initializer lists
   want to do something like
-  @@x, @@y, @@z: int = 10;
+  @x, @y, @z -> (int, 10);
   all variables are of type int, and have value 10
+  
+  or
+  @x, @y, @z -> (int);
 */
+
+vdecl_list_init_opt:
+  | ARROW LPAREN builtin_type RPAREN            { ($3 , None   )   }
+  | ARROW LPAREN builtin_type COMMA expr RPAREN { ($3 , Some($5) ) }
+
+vdecl_list:
+  | ID_VAR { [$1] }
+  | ID_VAR COMMA vdecl_list { $1 :: $3 }
 
 var_init_opt:
   | { None }

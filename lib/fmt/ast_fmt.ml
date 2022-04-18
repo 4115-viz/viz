@@ -81,7 +81,8 @@ and fmt_stmt = function
     | None -> "uninitialized"
     | Some(e) -> fmt_expr e)
     ^ ";\n"
-
+ | VarDeclList(var_decls) -> "variable initializer list\n" ^ String.concat "" (List.map fmt_stmt var_decls) ^ "\n"
+ 
 (*let fmt_vdecl ((t, n), e) = *)
 let fmt_vdecl (t, n) =
   "VarDecl(" ^

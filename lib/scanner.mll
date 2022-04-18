@@ -86,17 +86,18 @@ rule token = parse
 | ("0." "0"+) | digit* "." digit+ as lxm { LIT_FLOAT(float_of_string lxm) } (* we store everything as a positive magnitude number *)
 
 (* -------- delimiters -------- *)
-| "("  { LPAREN }
-| ")"  { RPAREN }
+| "("  { LPAREN   }
+| ")"  { RPAREN   }
 | "["  { LBRACKET }
 | "]"  { RBRACKET }
-| "{" { LBRACE }
-| "}" { RBRACE }
-| ":" { COLON }
-| ";" { SEMI }
-| "," { COMMA }
-| "." { DOT }
-| "|" { BAR }
+| "{"  { LBRACE   }
+| "}"  { RBRACE   }
+| ":"  { COLON    }
+| ";"  { SEMI     }
+| ","  { COMMA    }
+| "."  { DOT      }
+| "|"  { BAR      }
+| "->" { ARROW    }
 
 (* --------- IDs ------------ *)
 | letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)

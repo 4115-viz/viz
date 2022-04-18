@@ -299,6 +299,9 @@ let check (functions) =
         else raise (
             Failure ("return gives " ^ fmt_typ t ^ " expected " ^
                      fmt_typ func.rtyp ^ " in " ^ fmt_expr e))
+      | VarDeclList _ -> 
+        raise ( Failure("Under Construction"))
+
       | VarDecl ((t, id) as b, e) ->
         match t with
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
@@ -319,8 +322,7 @@ let check (functions) =
                   ", Got: '"; (fmt_typ e_t); "'"]))
               else let new_symbols = StringMap.add id {typ = t; inited = true} symbols in
               (SVarDecl (b, Some(check_expr symbols e)), new_symbols)
-          
-      (*| No_op -> SNo_op (* for the case where we only want if (..) {...} with no else block *)*)
+    
     in (* body of check_func *)
     { srtyp = func.rtyp;
       sfname = func.fname;

@@ -38,7 +38,8 @@ type stmt =
   | Return of expr
   | VarDecl of bind * expr option
   (*| VarDeclList of bind * expr option * expr list*)
-
+  | VarDeclList of stmt list
+  
 type func_def = {
   rtyp: builtin_type;
   fname: string;
