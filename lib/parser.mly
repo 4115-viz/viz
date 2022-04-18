@@ -111,6 +111,17 @@ stmt:
   | loop  { $1 }
   | return_statement SEMI { $1 }
   | vdecl var_init_opt SEMI  { VarDecl($1, $2) }
+/*  | vdecl_many SEMI { $1 }  
+
+vdecl_many:
+  | ID_VAR_DECL COMMA vdecl { VarDeclList($3, )}
+  | ID_VAR_DECL COMMA vdecl_many { } 
+*/
+/*
+  want to do something like
+  @@x, @@y, @@z: int = 10;
+  all variables are of type int, and have value 10
+*/
 
 var_init_opt:
   | { None }
@@ -213,7 +224,7 @@ expr:
   /*| BAR AS typ BAR expr {TypeCast($3, $5)}  */
 
 /* allowing for multi-line strings */
- string_literal:
+string_literal:
  | LIT_STR   {  $1 }
  | LIT_STR string_literal { $1 ^ $2 } /* concat strs */
 
