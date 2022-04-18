@@ -14,7 +14,7 @@ func main(): none {
   print(@y);
   print(@x + @y);
 
-  @j : bool;
+  @j : bool = true;
   print(@j);
 
   print(1 + 1 + 2 * 3);

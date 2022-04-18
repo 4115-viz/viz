@@ -8,7 +8,7 @@ func test_prints(@x: float, @y: int, @z: string, @h: bool): none {
 }
 
 func main(): none {
-    @b: float;
+    @b: float = 0.0;
     @b = -10.00;
     print(@b);
     test_prints(-10.5, 100, "Hello world", true);

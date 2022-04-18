@@ -3,7 +3,7 @@ func test(@z: int): int {
 }
 
 func main(): none {
-  @x: string; // declare
+  @x: string = "Good"; // declare
   @y: int = 5; // declare and assign
   @x = "Hello World"; // refer to x and assign
 
@@ -17,21 +17,6 @@ func main(): none {
   print("declare and initialize y"); 
   print("call test() using y as a param"); 
   print(@y + test(@y));
-  print("========================================");
-  println();
-
-  print("========================================");
-  print("default value for string is empty string");  
-  @x: string;
-  print(@x);
-  print("========================================");
-  println();
-
-  
-  print("========================================");
-  print("default value for int is 0");
-  @y: int;
-  print(@y);
   print("========================================");
   println();
   
@@ -65,14 +50,14 @@ func main(): none {
   
   print("========================================");
   print("default value for float is 0");
-  @a: float;
+  @a: float = 0.0;
   print_float(@a);
   println();
   print("========================================");
 
   print("========================================");
   print("default value for bool is false");
-  @b: bool;
+  @b: bool = true;
   print_bool(@b);
   println();
   print("========================================");

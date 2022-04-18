@@ -2,7 +2,7 @@ func main(): none {
     
     // variable decls
     //@i: int = 0; // this doesnt work yet
-    @i: int;
+    @i: int = 0;
     @i = 0;
 
     print("==========================");
