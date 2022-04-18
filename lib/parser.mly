@@ -34,6 +34,7 @@ open Ast
 /* precedence following C standard*/
 %nonassoc NOELSE
 %nonassoc ELSE
+%nonassoc LBRACKET RBRACKET
 %right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
 %left COMMA
 %left SEMI 
@@ -43,7 +44,6 @@ open Ast
 %left LT GT LTEQ GTEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%left LBRACKET RBRACKET
 %right NOT NEG
 %right BAR /* bar is used in typecast, this precedence is like c cast right assoc */
 
