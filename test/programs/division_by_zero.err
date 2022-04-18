@@ -1,0 +1,13 @@
+func main(): none {
+    
+    @x: int = 1+1;
+    @y: int = 1-1;
+    @x1: float = 2.0;
+    @y1: float = 1.0;
+
+    @x = @x / 1;
+    @x1 = @x1 / 0.0;
+
+    print(@x);
+    print(@x1);
+}

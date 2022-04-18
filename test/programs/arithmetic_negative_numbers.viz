@@ -1,7 +1,7 @@
 func main(): none {
 
-    @@x: int = -(-5);
-    @@y: int = -7;
+    @x: int = -(-5);
+    @y: int = -7;
 
     print("x = -(-5). expecting 5");
     print(@x);
@@ -19,8 +19,8 @@ func main(): none {
     print("expecting 10");
     print(5 - (-5));
 
-    @@xf: float = -(-5.0);
-    @@yf: float = -7.0;
+    @xf: float = -(-5.0);
+    @yf: float = -7.0;
 
     print("xf = -(-5.0). expecting 5.0");
     print(@xf);

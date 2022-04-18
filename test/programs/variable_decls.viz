@@ -1,10 +1,10 @@
-func test(@@z: int): int {
+func test(@z: int): int {
     return @z;
 }
 
 func main(): none {
-  @@x: string; // declare
-  @@y: int = 5; // declare and assign
+  @x: string; // declare
+  @y: int = 5; // declare and assign
   @x = "Hello World"; // refer to x and assign
 
   print("========================================");
@@ -22,7 +22,7 @@ func main(): none {
 
   print("========================================");
   print("default value for string is empty string");  
-  @@x: string;
+  @x: string;
   print(@x);
   print("========================================");
   println();
@@ -30,7 +30,7 @@ func main(): none {
   
   print("========================================");
   print("default value for int is 0");
-  @@y: int;
+  @y: int;
   print(@y);
   print("========================================");
   println();
@@ -45,7 +45,7 @@ func main(): none {
   
   print("========================================");
   print("assign and delcare int variable");
-  @@z: int = 7;
+  @z: int = 7;
   print(@z);
   print("========================================");
   println();
@@ -58,21 +58,21 @@ func main(): none {
   
   print("========================================");
   print("assign and declare string variable");
-  @@h: string = "Hello World";
+  @h: string = "Hello World";
   print(@h);
   println();
   print("========================================");
   
   print("========================================");
   print("default value for float is 0");
-  @@a: float;
+  @a: float;
   print_float(@a);
   println();
   print("========================================");
 
   print("========================================");
   print("default value for bool is false");
-  @@b: bool;
+  @b: bool;
   print_bool(@b);
   println();
   print("========================================");

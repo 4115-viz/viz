@@ -1,4 +1,4 @@
-func multi_line(@@x: int, @@y: int, @@z: int): int {
+func multi_line(@x: int, @y: int, @z: int): int {
      return @x + @y + @z;
  }
 
@@ -6,7 +6,7 @@ func multi_line(@@x: int, @@y: int, @@z: int): int {
 
      // this of course will be formatted like this
      // on the console
-     @@my_str: string = "Hello,
+     @my_str: string = "Hello,
                         World! This is a
                         Multiline String
                         without line continuation.";
@@ -24,21 +24,21 @@ func multi_line(@@x: int, @@y: int, @@z: int): int {
      println();
 
      // implicit multi_line
-     @@test: int = multi_line(500,
+     @test: int = multi_line(500,
                               100,
                               200);
      print("implicit multi_line func call");
      print(@test);
 
      // explicit multi_line
-     @@test2: int = multi_line(800, \
+     @test2: int = multi_line(800, \
                               200, \
                               800);
 
      print("explicit multi_line func call");
      print(@test2);
 
-     @@math: int = 10000
+     @math: int = 10000
                  + 10000;
      print("multi line math expr");
      print(@math);

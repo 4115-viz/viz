@@ -3,7 +3,7 @@ func ret_string(): string {
 }
 
 func main(): int {
-    @@x: string;
+    @x: string;
     @x = ret_string();
     print(@x);
     return 0;

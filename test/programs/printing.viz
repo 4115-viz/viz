@@ -7,14 +7,14 @@ func main(): none {
   print(true);
   print(false);
 
-  @@x :float = 1.0;
-  @@y : float = @x + 1.2;
-  @@z : string = "GG";
+  @x :float = 1.0;
+  @y : float = @x + 1.2;
+  @z : string = "GG";
   print(@z);
   print(@y);
   print(@x + @y);
 
-  @@j : bool;
+  @j : bool;
   print(@j);
 
   print(1 + 1 + 2 * 3);

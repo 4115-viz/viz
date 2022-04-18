@@ -1,6 +1,6 @@
 func main(): int {
 
-    @@x: string = "PLT";
+    @x: string = "PLT";
     print("declaring and assigning variable");
     print("x before re-assignment");
     print(@x);

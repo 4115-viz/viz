@@ -1,15 +1,15 @@
 func main(): none {
 
-  @@b1: bool; // true
-  @@b2: bool; // false
-  @@b3: bool; // false
-  @@b4: bool; // true
-  @@b5: bool; // false 
-  @@b6: bool; // true
-  @@b7: bool; // true
-  @@b8: bool; // false 
-  @@b9: bool; 
-  @@b10: bool;
+  @b1: bool; // true
+  @b2: bool; // false
+  @b3: bool; // false
+  @b4: bool; // true
+  @b5: bool; // false 
+  @b6: bool; // true
+  @b7: bool; // true
+  @b8: bool; // false 
+  @b9: bool; 
+  @b10: bool;
   print("Assigning bool expressions to variables");
 
   @b1 = (1 == 1); // true

@@ -1,4 +1,4 @@
-func test_prints(@@x: float, @@y: int, @@z: string, @@h: bool): none {
+func test_prints(@x: float, @y: int, @z: string, @h: bool): none {
     print(@x);
     print(@y);
     print(@z);
@@ -8,7 +8,7 @@ func test_prints(@@x: float, @@y: int, @@z: string, @@h: bool): none {
 }
 
 func main(): none {
-    @@b: float;
+    @b: float;
     @b = -10.00;
     print(@b);
     test_prints(-10.5, 100, "Hello world", true);

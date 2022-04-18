@@ -1,8 +1,8 @@
 func main(): none {
     
     // variable decls
-    //@@i: int = 0; // this doesnt work yet
-    @@i: int;
+    //@i: int = 0; // this doesnt work yet
+    @i: int;
     @i = 0;
 
     print("==========================");
@@ -24,7 +24,7 @@ func main(): none {
     
     // testing nested while loop
     @i = 10;
-    @@j: int = 10;
+    @j: int = 10;
     while (@i > 0) {
         print(@i);
         while (@j > 0) {

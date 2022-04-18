@@ -1,8 +1,8 @@
 // testing complex assignment
 func main(): none {
     
-    @@a: int;
-    @@b: float;
+    @a: int;
+    @b: float;
     @a = 10;
     @b = 10.5;
     

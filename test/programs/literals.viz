@@ -1,10 +1,10 @@
 func main(): none {
 
-    @@x: int;
-    @@y: float;
-    @@z: bool;
-    @@a: bool;
-    @@b: string;
+    @x: int;
+    @y: float;
+    @z: bool;
+    @a: bool;
+    @b: string;
 
     @x = 1;
     @y = 1.0;

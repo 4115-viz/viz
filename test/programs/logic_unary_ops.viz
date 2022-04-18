@@ -1,6 +1,6 @@
 func main(): none {
   
-  @@b9: bool;
+  @b9: bool;
 
   print("Assigning bool expressions to variables");
 
