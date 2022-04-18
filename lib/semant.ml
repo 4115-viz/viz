@@ -84,8 +84,10 @@ let check (functions) =
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let check_assign lvaluet rvaluet err =
-      if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    let check_assign (lvaluet:builtin_type) (rvaluet:builtin_type) (err:string): builtin_type =
+      if lvaluet = rvaluet then 
+        lvaluet
+      else raise (Failure err)
     in
 
     (* Build local symbol table of variables for this function *)
@@ -122,12 +124,13 @@ let check (functions) =
         | { inited = false; _ } -> raise (Failure("uninitialized local variable '" ^ id ^ "' used."))
         | { typ = t; _ } -> (t, SId id))
       | Assign(var, e) as ex ->
-        let {typ = lt; _} = find_symbol var symbols
+        let s = find_symbol var symbols
         and (rt, e') = check_expr symbols e in
-        let err = "illegal assignment " ^ fmt_typ lt ^ " = " ^
+        let err = "illegal assignment " ^ fmt_typ s.typ ^ " = " ^
                   fmt_typ rt ^ " in " ^ fmt_expr ex
         in
-        (check_assign lt rt err, SAssign(var, (rt, e')))
+        let t = check_assign s.typ rt err in
+        (t, SAssign(var, (rt, e')))
       | Binop(l, bo, r) as ex-> 
         let (ltype, l') = check_expr symbols l in
         let (rtype, r') = check_expr symbols r in
@@ -279,7 +282,13 @@ let check (functions) =
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
-      | Expr e -> (SExpr (check_expr symbols e), symbols)
+      | Expr e -> 
+        let se = check_expr symbols e in
+        let new_symbols = match e with
+          | Assign (id, _) -> StringMap.add id {typ = fst se; inited = true} symbols
+          | _ -> symbols
+        in
+        (SExpr se, new_symbols)
       | If(e, st1, st2) ->
         
         (*(* note: we need to check for st2 being a No_op *)
