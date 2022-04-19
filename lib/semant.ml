@@ -119,7 +119,8 @@ let check (functions) =
             | (i_t, _) when i_t != t -> raise (Failure ("Invalid array literal. Expect type " ^ fmt_typ t ^ ", found" ^ fmt_typ i_t))
             | (t', se') -> (t', se')) xxs
           in
-          (ArrayType t, SArrayLit sa)
+          let len = List.length xxs in
+          (ArrayType (t, Some(len)), SArrayLit sa)
         
       )
       | Id id -> 
@@ -208,15 +209,20 @@ let check (functions) =
             else fname
         ) 
         in (fd.rtyp, SFuncCall(func_name, args'))
-      | Subscript(e, i) ->
-      let (t, _) as e' = match check_expr symbols e with
-      | ArrayType t, sx -> t, sx
-      | (t, _) -> failwith (String.concat "" ["Subscript operator [] expect array, got: "; fmt_typ t])
-      in  
-      let i' = match check_expr symbols i with
-      | (IntType, _) as sexpr -> sexpr
-      | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
-      in (t, SSubscript(e', i'))
+      | Subscript(arr_expr, idx_expr) ->
+        let (arr_typ, _) as arr_sexpr = check_expr symbols arr_expr in
+        let idx_sexpr = check_expr symbols idx_expr in
+        let (idx:int) = match (idx_sexpr) with
+          | IntType, SIntLit x -> x
+          | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
+        in
+        let (arr_ele_typ, (len:int)) = match (arr_typ) with
+          | ArrayType (t, Some(l)) -> (t, l) 
+          | ArrayType (_, None) -> failwith "Runtime error: Array length unknown."
+          | t -> failwith (String.concat "" ["Subscript operator [] expect array, got: "; fmt_typ t])
+        in
+        if idx >= len then failwith "Index out of range."
+        else (arr_ele_typ, SSubscript(arr_sexpr, idx_sexpr))
 
       (*| TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
@@ -273,13 +279,22 @@ let check (functions) =
         sbody = check_program f.body;
       } something like ensure that these fields can be filled
     in *)
-    let rec check_stmt_list symbols =function
+    let rec check_stmt_list symbols = function
         [] -> []
       | Block sl :: sl'  -> check_stmt_list symbols (sl @ sl') (* Flatten blocks *)
       | s :: sl -> 
           let (stmt, new_symbols) = check_stmt symbols s 
           in
           stmt :: check_stmt_list new_symbols sl
+    
+    and check_decl_list symbols = function
+      [] -> []
+      | VarDeclList vlist :: vlist' -> check_decl_list symbols (vlist @ vlist')
+      | vlist :: vlistl -> 
+          let (stmt, new_symbols) = check_stmt symbols vlist 
+          in
+          stmt :: check_decl_list new_symbols vlistl
+          
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt (symbols : builtin_type StringMap.t) = function
       (* A block is correct if each statement is correct and nothing
@@ -305,27 +320,36 @@ let check (functions) =
         else raise (
             Failure ("return gives " ^ fmt_typ t ^ " expected " ^
                      fmt_typ func.rtyp ^ " in " ^ fmt_expr e))
-      | VarDeclList _ -> 
-        raise ( Failure("Under Construction"))
-
+      | VarDeclList var_decls_list -> 
+        (SVarDeclList (check_decl_list symbols var_decls_list), symbols)
       | VarDecl ((t, id) as b, e) ->
         match t with
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
         | _ ->
           match e with
-            | None -> 
+            | None -> (* right side is empty *)
               let new_symbols = StringMap.add id t symbols in
               StringHash.add uninited_symbols id true;
               (SVarDecl (b, None), new_symbols)
             | Some(e) ->
-              let (e_t, _) = check_expr symbols e in
-              if e_t <> t then
-                raise (Failure (String.concat "" [
-                  "Type mismatch for variable: '"; id; "'. ";
-                  "Expect '"; (fmt_typ t); "'"; 
-                  ", Got: '"; (fmt_typ e_t); "'"]))
-              else let new_symbols = StringMap.add id t symbols in
-              (SVarDecl (b, Some(check_expr symbols e)), new_symbols)
+              match t with 
+              (* Special case: left side is array type *)
+              | ArrayType ((arr_ele_typ:builtin_type), None) ->
+                let (expr_t, _) as e_sexpr = check_expr symbols e in
+                (match expr_t with
+                | ArrayType (expr_ele_t, _) when expr_ele_t == arr_ele_typ -> 
+                  let new_symbols = StringMap.add id expr_t symbols in
+                  (SVarDecl ((expr_t, id), Some(e_sexpr)), new_symbols)
+                | _ -> failwith "TODO: VarDECL array type")
+              | _ ->
+                let (expr_t, _) as e_sexpr = check_expr symbols e in
+                if t <> expr_t then
+                  failwith (String.concat "" [
+                    "Type mismatch for variable: '"; id; "'. ";
+                    "Expect '"; (fmt_typ t); "'"; 
+                    ", Got: '"; (fmt_typ expr_t); "'"])
+                else let new_symbols = StringMap.add id t symbols in
+                (SVarDecl (b, Some(e_sexpr)), new_symbols)
     
     in (* body of check_func *)
     { srtyp = func.rtyp;

@@ -41,7 +41,7 @@ let translate (functions) =
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
-    | A.ArrayType(t) -> L.pointer_type (ltype_of_typ t)
+    | A.ArrayType(t, _) -> L.pointer_type (ltype_of_typ t)
   in
 
   (* Declaring print function *)
@@ -296,6 +296,7 @@ let translate (functions) =
       (* | SFor(_, _, _, _) -> (local_vars, builder) *)
       | SFor (e1, e2, e3, body) -> build_stmt local_vars builder
 	      ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
+      | SVarDeclList _ -> (local_vars, builder)
       | SVarDecl ((t, id), e) ->
         let local_var = L.build_alloca (ltype_of_typ t) id builder in
         let new_local_vars = StringMap.add id local_var local_vars in

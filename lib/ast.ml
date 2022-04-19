@@ -10,7 +10,7 @@ type builtin_type =
   | IntType
   | BoolType
   | FloatType
-  | ArrayType of builtin_type
+  | ArrayType of builtin_type * (int option)
 
 type bind = builtin_type * string
 

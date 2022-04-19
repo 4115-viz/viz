@@ -47,6 +47,7 @@ and fmt_sstmt = function
                "predicate: " ^ fmt_sexpr predicate ^ ", " ^
                "update: "    ^ fmt_sexpr update ^ ") {\n\t" ^
               fmt_sstmt block_code ^ "}\n"
+  | SVarDeclList(var_decls) -> "variable initializer list\n" ^ String.concat "" (List.map fmt_sstmt var_decls) ^ "\n"
   | SVarDecl((t, s), se) -> fmt_typ t ^ " " ^ s ^ " = " ^
     (match se with
     | Some(se) -> fmt_sexpr se
