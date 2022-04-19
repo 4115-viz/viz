@@ -73,7 +73,7 @@ builtin_type:
   | T_INT { IntType }
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
-  | T_ARRAY BAR builtin_type BAR { ArrayType($3, None) }
+  | T_ARRAY BAR builtin_type BAR { ArrayType(Some($3), None) }
 
 
 /* function declaration */
@@ -247,7 +247,7 @@ string_literal:
  | LIT_STR   {  $1 }
  | LIT_STR string_literal { $1 ^ $2 } /* concat strs */
 
-// Match the followingpatterns 
+// Match the following patterns 
 // ""
 // "expr, expr, expr"
 exprs_opt:
