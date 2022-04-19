@@ -299,13 +299,13 @@ let translate (functions) =
       | SVarDecl ((t, id), e) ->
         let local_var = L.build_alloca (ltype_of_typ t) id builder in
         let new_local_vars = StringMap.add id local_var local_vars in
-        (match e with
+        let _ = (match e with
           | Some se -> 
             let e' = build_expr new_local_vars builder se in
             ignore(L.build_store e' local_var builder);
-            (new_local_vars, builder)
-          | None -> (new_local_vars, builder)
-        )
+          | _ -> ()
+        ) in
+        new_local_vars, builder
     in
     (* Build the code for each statement in the function *)
     let func_builder local_vars = snd ((build_stmt local_vars) builder (SBlock fdecl.sbody)) in
