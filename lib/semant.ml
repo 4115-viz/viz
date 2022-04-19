@@ -133,7 +133,7 @@ let check (functions) =
                   fmt_typ rt ^ " in " ^ fmt_expr ex
         in
         let t = check_assign t rt err in
-        StringHash.remove uninited_symbols id;
+        if StringHash.mem uninited_symbols id then StringHash.remove uninited_symbols id;
         (t, SAssign(id, (rt, e')))
       | Binop(l, bo, r) as ex-> 
         let (ltype, l') = check_expr symbols l in
@@ -290,16 +290,53 @@ let check (functions) =
                                   | ID_Block _ -> symbols
                                   | _ -> new_symbols) sl
     
-    and check_decl_list symbols = function
-      [] -> []
-      | VarDeclList vlist :: vlist' -> check_decl_list symbols (vlist @ vlist')
-      | vlist :: vlistl -> 
-          let (stmt, new_symbols) = check_stmt symbols vlist 
-          in
-          stmt :: check_decl_list (match vlist with
-                                  | ID_Block _ -> symbols
-                                  | _ -> new_symbols
-                                  ) vlistl
+    and check_arr_var_decl symbols ((arr_ele_typ, id), arr_e):(svar_decl * builtin_type StringMap.t) = 
+      let (arr_t, arr_sx) as arr_sexpr = check_expr symbols arr_e in
+      (* match rhs expression type *)
+      let (bind, sexpr) = (match arr_t with
+        (* rhs is empty array, we need to deduce the empty array's type *)
+        | ArrayType (None, _) -> 
+          let bind = (arr_ele_typ, id) in
+          let deduced_expr_t = ArrayType(Some(arr_ele_typ), Some(0)) in
+          (bind, Some((deduced_expr_t, arr_sx)))
+        (* rhs has the same type as lhs *)
+        | ArrayType (Some(expr_ele_t), _) when expr_ele_t == arr_ele_typ -> 
+          ((arr_t, id), Some(arr_sexpr))
+        | _ -> failwith "Type mismatch, expected array.")
+      in
+      let new_symbols = StringMap.add id arr_t symbols in
+      ((bind, sexpr), new_symbols)
+
+    and check_var_decl symbols (((t, id) as b, e):var_decl):(svar_decl * builtin_type StringMap.t) =
+      match e with
+      | None -> (* rhs is empty *)
+        let new_symbols = StringMap.add id t symbols in
+        StringHash.add uninited_symbols id true;
+        ((b, None), new_symbols)
+      | Some(e) -> match t with (* match variable's type *)
+        | ArrayType (Some(arr_ele_typ), None) -> (* Special case: lhs is array type *)
+          check_arr_var_decl symbols ((arr_ele_typ, id), e)
+        | _ -> let (expr_t, _) as e_sexpr = check_expr symbols e in
+          if t <> expr_t then
+            failwith (String.concat "" [
+              "Type mismatch for variable: '"; id; "'. ";
+              "Expect '"; (fmt_typ t); "'"; 
+              ", Got: '"; (fmt_typ expr_t); "'"])
+          else let new_symbols = StringMap.add id t symbols in
+          ((b, Some(e_sexpr)), new_symbols) 
+
+    and check_var_decl_list symbols (dl: var_decl list): (svar_decl list) = match dl with
+      | [] -> []
+      | x :: xs -> 
+        let (vd:stmt) = VarDecl x in
+        let (sstmt, new_symbols) = check_stmt symbols vd in
+        match sstmt with
+        | SVarDecl x -> x :: (check_var_decl_list 
+          (match vd with
+            | ID_Block _ -> symbols
+            | _ -> new_symbols
+          ) xs)
+        | _ -> failwith "Runtime error."
           
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt (symbols : builtin_type StringMap.t) = function
@@ -327,49 +364,15 @@ let check (functions) =
         else raise (
             Failure ("return gives " ^ fmt_typ t ^ " expected " ^
                      fmt_typ func.rtyp ^ " in " ^ fmt_expr e))
-      | VarDeclList var_decls_list -> 
-        let new_symbols = List.fold_left (fun sym v -> snd (check_stmt sym v)) symbols var_decls_list
-        in
-        (SVarDeclList (check_decl_list symbols var_decls_list), new_symbols)
-      | VarDecl ((t, id) as b, e) ->
-        match t with
+      | VarDecl (((t, id), _) as vd) -> (match t with
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
-        | _ ->
-          match e with
-            | None -> (* rhs is empty *)
-              let new_symbols = StringMap.add id t symbols in
-              StringHash.add uninited_symbols id true;
-              (SVarDecl (b, None), new_symbols)
-            | Some(e) ->
-              (* match variable's type *)
-              match t with 
-              (* Special case: lhs is array type *)
-              | ArrayType (Some(arr_ele_typ), None) ->
-                let (expr_t, expr_sx) as e_sexpr = check_expr symbols e in
-                (* match rhs expression type *)
-                (match expr_t with
-                (* rhs is empty array, we need to deduce the empty array's type *)
-                | ArrayType (None, _) -> 
-                  let bind = (arr_ele_typ, id) in
-                  let deduced_expr_t = ArrayType(Some(arr_ele_typ), Some(0)) in
-                  let new_symbols = StringMap.add id deduced_expr_t symbols in
-                  (SVarDecl (bind, Some((deduced_expr_t, expr_sx))), new_symbols)
-                (* rhs has the same type as lhs *)
-                | ArrayType (Some(expr_ele_t), _) when expr_ele_t == arr_ele_typ -> 
-                  let new_symbols = StringMap.add id expr_t symbols in
-                  let bind = (expr_t, id) in
-                  (SVarDecl (bind, Some(e_sexpr)), new_symbols)
-                | _ -> failwith "Type mismatch, expected array.")
-              | _ ->
-                let (expr_t, _) as e_sexpr = check_expr symbols e in
-                if t <> expr_t then
-                  failwith (String.concat "" [
-                    "Type mismatch for variable: '"; id; "'. ";
-                    "Expect '"; (fmt_typ t); "'"; 
-                    ", Got: '"; (fmt_typ expr_t); "'"])
-                else let new_symbols = StringMap.add id t symbols in
-                (SVarDecl (b, Some(e_sexpr)), new_symbols)
-    
+        | _ -> let (svd, sym) = check_var_decl symbols vd in (SVarDecl(svd), sym))
+
+      | VarDeclList var_decls_list -> 
+        let new_symbols = List.fold_left (fun sym v -> snd (check_stmt sym (VarDecl v))) symbols var_decls_list
+        in
+        (SVarDeclList (check_var_decl_list symbols var_decls_list), new_symbols)
+
     in (* body of check_func *)
     { srtyp = func.rtyp;
       sfname = func.fname;

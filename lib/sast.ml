@@ -15,6 +15,8 @@ and sx =
   | SUnop of uop * sexpr
   | SSubscript of sexpr * sexpr
 
+type svar_decl = bind * sexpr option
+
 type sstmt =
   | SBlock of sstmt list
   | SID_Block of sstmt list
@@ -23,8 +25,8 @@ type sstmt =
   | SWhile of sexpr * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr
-  | SVarDecl of bind * sexpr option
-  | SVarDeclList of sstmt list
+  | SVarDecl of svar_decl
+  | SVarDeclList of svar_decl list
   
 type sfunc_def = {
   srtyp: builtin_type;

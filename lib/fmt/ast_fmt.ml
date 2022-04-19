@@ -50,7 +50,7 @@ let rec fmt_expr = function
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
   | ArrayLit(a) -> "ArrayLit[" ^ fmt_array a ^ "]"
-  | Assign(v, e) -> v ^ " = " ^ fmt_expr e
+  | Assign(v, e) -> "Assign: " ^ v ^ " = " ^ fmt_expr e
   | Id(x) -> "Id(" ^ x ^ ")"
   | FuncCall(name, args) ->
     (*name ^ "(" ^ String.concat ", " (List.map fmt_expr args) ^ ")"*)
@@ -73,8 +73,13 @@ and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 and fmt_array (a : expr list) : string =
  String.concat ", " (List.map fmt_expr a)
 
-and fmt_stmt = function
+and fmt_var_decl ((t, s), e) = fmt_typ t ^ " " ^ s ^ " = " ^
+(match e with
+| None -> "uninitialized"
+| Some(e) -> fmt_expr e)
+^ ";\n"
 
+and fmt_stmt = function
   | Expr e -> "  " ^ fmt_expr e
   | Block (stmts) ->
     "{\n" ^ String.concat "" (List.map fmt_stmt stmts) ^ "}\n"
@@ -90,12 +95,11 @@ and fmt_stmt = function
                "predicate: " ^ fmt_expr predicate ^ ", " ^
                "update: "    ^ fmt_expr update ^ ") {\n\t" ^
               fmt_stmt block_code ^ "}\n"
- | VarDecl((t, s), e) -> fmt_typ t ^ " " ^ s ^ " = " ^
-    (match e with
-    | None -> "uninitialized"
-    | Some(e) -> fmt_expr e)
-    ^ ";\n"
- | VarDeclList(var_decls) -> "variable initializer list\n" ^ String.concat "" (List.map fmt_stmt var_decls) ^ "\n"
+ | VarDecl vd -> fmt_var_decl vd
+ | VarDeclList(var_decls) -> 
+  "variable initializer list: \n" ^ 
+  String.concat "" (List.map fmt_var_decl var_decls) ^
+  "\n"
  
 (*let fmt_vdecl ((t, n), e) = *)
 let fmt_vdecl (t, n) =

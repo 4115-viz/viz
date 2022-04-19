@@ -116,7 +116,7 @@ stmt:
       let var_list        = $1 in 
       let vdecl_ty        = fst $2 in 
       let vdecl_exp       = snd $2 in 
-      let create_var_decl = (fun var_name -> VarDecl((vdecl_ty, var_name), vdecl_exp)) in
+      let create_var_decl = (fun var_name -> ((vdecl_ty, var_name), vdecl_exp)) in
       let list_of_decls = List.fold_left (fun lst var_name -> (create_var_decl var_name) :: lst ) [] var_list 
       in VarDeclList(list_of_decls)
     }  

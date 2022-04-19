@@ -33,6 +33,12 @@ and fmt_sx se =
 and fmt_sarray (sa : sexpr list) : string =
 String.concat ", " (List.map fmt_sexpr sa)
 
+and fmt_svar_decl ((t, s), e) = fmt_typ t ^ " " ^ s ^ " = " ^
+(match e with
+| None -> "uninitialized"
+| Some(e) -> fmt_sexpr e)
+^ ";\n"
+
 and fmt_sstmt = function
   | SExpr se -> "  " ^ fmt_sexpr se ^ ";\n"
   | SBlock (sstmts) ->
@@ -49,12 +55,11 @@ and fmt_sstmt = function
                "predicate: " ^ fmt_sexpr predicate ^ ", " ^
                "update: "    ^ fmt_sexpr update ^ ") {\n\t" ^
               fmt_sstmt block_code ^ "}\n"
-  | SVarDeclList(var_decls) -> "variable initializer list\n" ^ String.concat "" (List.map fmt_sstmt var_decls) ^ "\n"
-  | SVarDecl((t, s), se) -> fmt_typ t ^ " " ^ s ^ " = " ^
-    (match se with
-    | Some(se) -> fmt_sexpr se
-    | None -> "uninitialized")
-    ^ ";\n"
+  | SVarDecl vd -> fmt_svar_decl vd
+  | SVarDeclList(var_decls) -> 
+    "variable initializer list: \n" ^ 
+    String.concat "" (List.map fmt_svar_decl var_decls) ^
+    "\n"
 
 and fmt_sfcall name args = 
   "FuncCall(" ^

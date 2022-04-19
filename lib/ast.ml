@@ -29,6 +29,8 @@ type expr =
   | Subscript of expr * expr
   (* | TypeCast of builtin_type * expr *)
 
+type var_decl = bind * expr option
+
 type stmt =
   | Expr of expr
   | Block of stmt list
@@ -37,9 +39,8 @@ type stmt =
   | While of expr * stmt
   | For of expr * expr * expr * stmt
   | Return of expr
-  | VarDecl of bind * expr option
-  (*| VarDeclList of bind * expr option * expr list*)
-  | VarDeclList of stmt list
+  | VarDecl of var_decl
+  | VarDeclList of var_decl list
   
 type func_def = {
   rtyp: builtin_type;
