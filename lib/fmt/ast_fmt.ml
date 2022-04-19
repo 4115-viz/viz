@@ -22,12 +22,16 @@ let rec fmt_typ = function
   | IntType   -> "Type(Int)"
   | BoolType  -> "Type(Bool)"
   | FloatType -> "Type(Float)"
-  | ArrayType(t, l) -> let len = match l with
+  | ArrayType(t, l) -> 
+    let typ = match t with
+    | Some(t) -> fmt_typ t
+    | None -> "Unknown" in
+    let len = match l with
     | Some(i) -> string_of_int i
     | None -> "Unknown" in
     String.concat "" [
       "Type(Array<"; 
-      fmt_typ t ;
+      typ ;
       ">[" ;
       len ;
       "]"]

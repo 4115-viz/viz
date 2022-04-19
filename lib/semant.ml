@@ -113,14 +113,14 @@ let check (functions) =
       | BoolLit x -> (BoolType, SBoolLit x)
       | NoneLit   -> (NoneType, SNoneLit)
       | ArrayLit (a : expr list) -> (match a with
-        | [] -> raise (Failure "TODO: support array of length 0")
+        | [] -> (ArrayType (None, Some(0)), SArrayLit [])
         | (x :: _) as xxs -> let (t, _) = check_expr symbols x in
           let sa = List.map (fun i -> match (check_expr symbols i) with
             | (i_t, _) when i_t != t -> raise (Failure ("Invalid array literal. Expect type " ^ fmt_typ t ^ ", found" ^ fmt_typ i_t))
             | (t', se') -> (t', se')) xxs
           in
           let len = List.length xxs in
-          (ArrayType (t, Some(len)), SArrayLit sa)
+          (ArrayType (Some(t), Some(len)), SArrayLit sa)
         
       )
       | Id id -> 
