@@ -36,7 +36,9 @@ String.concat ", " (List.map fmt_sexpr sa)
 and fmt_sstmt = function
   | SExpr se -> "  " ^ fmt_sexpr se ^ ";\n"
   | SBlock (sstmts) ->
-    "{\n" ^ String.concat "" (List.map fmt_sstmt sstmts) ^ "}\n"
+    "{\n" ^ String.concat "" (List.map fmt_sstmt sstmts) ^ " }\n"
+  | SID_Block (sstmts) ->
+    "Independent Block {\n" ^ String.concat "" (List.map fmt_sstmt sstmts) ^ "}\n"
   | SReturn (sexpr) -> "return " ^ fmt_sexpr sexpr ^ ";\n" 
   | SIf (se, s1, s2) -> let if_block = "if (" ^ fmt_sexpr se ^ ")\n" ^
       fmt_sstmt s1 in 

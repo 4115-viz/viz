@@ -253,6 +253,7 @@ let translate (functions) =
     (*return (local_vars, builder) *)
     let rec build_stmt local_vars builder = function
         SBlock sl -> List.fold_left (fun (local, b) -> build_stmt local b) (local_vars, builder) sl
+      | SID_Block sl -> ignore(build_stmt local_vars builder  (SBlock(sl)) ); (local_vars, builder)
       | SExpr e -> ignore((build_expr local_vars) builder e); (local_vars, builder)
       (*| SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder*)
       (* borrowed from Edward's MicroC so that we can return void types *)

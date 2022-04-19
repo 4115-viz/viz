@@ -32,6 +32,7 @@ type expr =
 type stmt =
   | Expr of expr
   | Block of stmt list
+  | ID_Block of stmt list
   | If of expr * stmt * stmt
   | While of expr * stmt
   | For of expr * expr * expr * stmt

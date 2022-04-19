@@ -110,6 +110,7 @@ stmt:
   | block { $1 }
   | loop  { $1 }
   | return_statement SEMI { $1 }
+  | id_block              { $1 }
   | vdecl var_init_opt SEMI  { VarDecl($1, $2) }
   | vdecl_list vdecl_list_init_opt SEMI { 
       let var_list        = $1 in 
@@ -175,6 +176,9 @@ increment:
 
 block: 
   | LBRACE stmt_list RBRACE                 { Block $2 }
+
+id_block:
+  | LBRACE stmt_list RBRACE  SEMI            { ID_Block $2}
 
 if_stmt:
   | expr QUESTION expr COLON expr SEMI  { If($1, Expr($3), Expr($5)) } /* (1 > 2) ? print("true") : print("false") */

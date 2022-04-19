@@ -17,6 +17,7 @@ and sx =
 
 type sstmt =
   | SBlock of sstmt list
+  | SID_Block of sstmt list
   | SExpr of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SWhile of sexpr * sstmt

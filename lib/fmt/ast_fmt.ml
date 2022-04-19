@@ -74,6 +74,8 @@ and fmt_stmt = function
   | Expr e -> "  " ^ fmt_expr e
   | Block (stmts) ->
     "{\n" ^ String.concat "" (List.map fmt_stmt stmts) ^ "}\n"
+  | ID_Block (stmts) ->
+    "Independent Block {\n" ^ String.concat "" (List.map fmt_stmt stmts) ^ "}\n"
   | Return (expr) -> "return " ^ fmt_expr expr ^ ";\n" 
   | If (e, s1, s2) -> let if_block = "if (" ^ fmt_expr e ^ ")\n" ^ fmt_stmt s1
                       in if s2 = Block([]) then if_block else if_block ^ "else\n" ^ fmt_stmt s2

@@ -285,7 +285,9 @@ let check (functions) =
       | s :: sl -> 
           let (stmt, new_symbols) = check_stmt symbols s 
           in
-          stmt :: check_stmt_list new_symbols sl
+          stmt :: check_stmt_list (match s with
+                                  | ID_Block _ -> symbols
+                                  | _ -> new_symbols) sl
     
     and check_decl_list symbols = function
       [] -> []
@@ -300,6 +302,7 @@ let check (functions) =
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
+      | ID_Block sl -> (SID_Block (check_stmt_list symbols sl), symbols)
       | Expr e -> (SExpr (check_expr symbols e), symbols)
       | If(e, st1, st2) ->
         
