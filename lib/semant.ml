@@ -312,9 +312,6 @@ let check (functions) =
         match t with
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
         | _ ->
-        try match (StringMap.find id symbols) with
-          _ -> raise (Failure ("Invalid redeclaration of variable '" ^ id ^ "'"))
-        with Not_found ->
           match e with
             | None -> 
               let new_symbols = StringMap.add id t symbols in
