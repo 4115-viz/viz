@@ -1,21 +1,29 @@
 func main(): none {
+    
+    // this works
     @x, @y, @z -> (int, 10);
-    @a, @b, @c -> (float);
 
+    print("declaring a list of variables at once using initializer list syntax");
+    print("@x, @y, @z -> (int, 10)");
 
-    print(@x + 5);
+    print("===================");
+    print("expecting 10");
+    print(@x);
+    print("===================");
+    print("expecting 20");
     print(@y + @x);
+    print("===================");
+    print("expecting 47");
     print(@z + 15 + 2 + @x + @y);
-
+    print("===================");
+    
 /*
+    // this fails with unitialized local variable
+    @a, @b, @c -> (float);
     @a = 10.0;
     @b = 11.0;
     @c = 12.0;
     
-
-    print(@x);
-    print(@y);
-    print(@z);
     print(@a);
     print(@b);
     print(@c);
