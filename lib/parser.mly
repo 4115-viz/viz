@@ -34,18 +34,19 @@ open Ast
 /* precedence following C standard*/
 %nonassoc NOELSE
 %nonassoc ELSE
-%nonassoc LBRACKET RBRACKET
 %right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ MODEQ
 %left COMMA
 %left SEMI 
 %left OR
 %left AND
 %left EQ NEQ
+%nonassoc LBRACKET RBRACKET
 %left LT GT LTEQ GTEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
 %right NOT NEG
 %right BAR /* bar is used in typecast, this precedence is like c cast right assoc */
+
 
 %start program
 %type <Ast.program> program
@@ -72,7 +73,7 @@ builtin_type:
   | T_INT { IntType }
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
-  | T_ARRAY BAR builtin_type BAR { ArrayType($3) }
+  | T_ARRAY BAR builtin_type BAR { ArrayType($3, None) }
 
 
 /* function declaration */

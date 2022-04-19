@@ -41,7 +41,7 @@ let translate (functions) =
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
-    | A.ArrayType(t) -> L.pointer_type (ltype_of_typ t)
+    | A.ArrayType(t, _) -> L.pointer_type (ltype_of_typ t)
   in
 
   (* Declaring print function *)
