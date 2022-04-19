@@ -296,7 +296,10 @@ let check (functions) =
       | vlist :: vlistl -> 
           let (stmt, new_symbols) = check_stmt symbols vlist 
           in
-          stmt :: check_decl_list new_symbols vlistl
+          stmt :: check_decl_list (match vlist with
+                                  | ID_Block _ -> symbols
+                                  | _ -> new_symbols
+                                  ) vlistl
           
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt (symbols : builtin_type StringMap.t) = function
