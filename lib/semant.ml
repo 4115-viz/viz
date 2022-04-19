@@ -325,18 +325,12 @@ let check (functions) =
           else let new_symbols = StringMap.add id t symbols in
           ((b, Some(e_sexpr)), new_symbols) 
 
-    and check_var_decl_list symbols (dl: var_decl list): (svar_decl list) = match dl with
-      | [] -> []
+    and check_var_decl_list symbols (dl: var_decl list): (svar_decl list * builtin_type StringMap.t) = match dl with
+      | [] -> ([], symbols)
       | x :: xs -> 
-        let (vd:stmt) = VarDecl x in
-        let (sstmt, new_symbols) = check_stmt symbols vd in
-        match sstmt with
-        | SVarDecl x -> x :: (check_var_decl_list 
-          (match vd with
-            | ID_Block _ -> symbols
-            | _ -> new_symbols
-          ) xs)
-        | _ -> failwith "Runtime error."
+        let (svar_decl, new_symbols) = check_var_decl symbols x in
+        let (svar_decl_list, new_symbols) = check_var_decl_list new_symbols xs in
+        (svar_decl :: svar_decl_list, new_symbols)
           
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt (symbols : builtin_type StringMap.t) = function
@@ -369,9 +363,9 @@ let check (functions) =
         | _ -> let (svd, sym) = check_var_decl symbols vd in (SVarDecl(svd), sym))
 
       | VarDeclList var_decls_list -> 
-        let new_symbols = List.fold_left (fun sym v -> snd (check_stmt sym (VarDecl v))) symbols var_decls_list
+        let (s_var_decl_list, new_symbols) = check_var_decl_list symbols var_decls_list
         in
-        (SVarDeclList (check_var_decl_list symbols var_decls_list), new_symbols)
+        (SVarDeclList s_var_decl_list, new_symbols)
 
     in (* body of check_func *)
     { srtyp = func.rtyp;
