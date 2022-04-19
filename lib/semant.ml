@@ -328,7 +328,9 @@ let check (functions) =
             Failure ("return gives " ^ fmt_typ t ^ " expected " ^
                      fmt_typ func.rtyp ^ " in " ^ fmt_expr e))
       | VarDeclList var_decls_list -> 
-        (SVarDeclList (check_decl_list symbols var_decls_list), symbols)
+        let new_symbols = List.fold_left (fun sym v -> snd (check_stmt sym v)) symbols var_decls_list
+        in
+        (SVarDeclList (check_decl_list symbols var_decls_list), new_symbols)
       | VarDecl ((t, id) as b, e) ->
         match t with
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))

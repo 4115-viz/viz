@@ -2,6 +2,11 @@ func main(): none {
     @x, @y, @z -> (int, 10);
     @a, @b, @c -> (float);
 
+
+    print(@x + 5);
+    print(@y + @x);
+    print(@z + 15 + 2 + @x + @y);
+
 /*
     @a = 10.0;
     @b = 11.0;
