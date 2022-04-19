@@ -217,7 +217,8 @@ let check (functions) =
           | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
         in
         let (arr_ele_typ, (len:int)) = match (arr_typ) with
-          | ArrayType (t, Some(l)) -> (t, l) 
+          | ArrayType (Some(t), Some(l)) -> (t, l) 
+          | ArrayType (None, _) -> failwith "Runtime error: Array type unknown."
           | ArrayType (_, None) -> failwith "Runtime error: Array length unknown."
           | t -> failwith (String.concat "" ["Subscript operator [] expect array, got: "; fmt_typ t])
         in
@@ -327,20 +328,30 @@ let check (functions) =
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
         | _ ->
           match e with
-            | None -> (* right side is empty *)
+            | None -> (* rhs is empty *)
               let new_symbols = StringMap.add id t symbols in
               StringHash.add uninited_symbols id true;
               (SVarDecl (b, None), new_symbols)
             | Some(e) ->
+              (* match variable's type *)
               match t with 
-              (* Special case: left side is array type *)
-              | ArrayType ((arr_ele_typ:builtin_type), None) ->
-                let (expr_t, _) as e_sexpr = check_expr symbols e in
+              (* Special case: lhs is array type *)
+              | ArrayType (Some(arr_ele_typ), None) ->
+                let (expr_t, expr_sx) as e_sexpr = check_expr symbols e in
+                (* match rhs expression type *)
                 (match expr_t with
-                | ArrayType (expr_ele_t, _) when expr_ele_t == arr_ele_typ -> 
+                (* rhs is empty array, we need to deduce the empty array's type *)
+                | ArrayType (None, _) -> 
+                  let bind = (arr_ele_typ, id) in
+                  let deduced_expr_t = ArrayType(Some(arr_ele_typ), Some(0)) in
+                  let new_symbols = StringMap.add id deduced_expr_t symbols in
+                  (SVarDecl (bind, Some((deduced_expr_t, expr_sx))), new_symbols)
+                (* rhs has the same type as lhs *)
+                | ArrayType (Some(expr_ele_t), _) when expr_ele_t == arr_ele_typ -> 
                   let new_symbols = StringMap.add id expr_t symbols in
-                  (SVarDecl ((expr_t, id), Some(e_sexpr)), new_symbols)
-                | _ -> failwith "TODO: VarDECL array type")
+                  let bind = (expr_t, id) in
+                  (SVarDecl (bind, Some(e_sexpr)), new_symbols)
+                | _ -> failwith "Type mismatch, expected array.")
               | _ ->
                 let (expr_t, _) as e_sexpr = check_expr symbols e in
                 if t <> expr_t then

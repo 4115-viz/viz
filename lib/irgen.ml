@@ -41,7 +41,9 @@ let translate (functions) =
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
-    | A.ArrayType(t, _) -> L.pointer_type (ltype_of_typ t)
+    | A.ArrayType(t, _) -> match t with
+      | Some(t) -> L.pointer_type (ltype_of_typ t)
+      | None -> failwith "Runtime error: unable to deduce the array's type"
   in
 
   (* Declaring print function *)
