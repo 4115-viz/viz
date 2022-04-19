@@ -232,7 +232,7 @@ let translate (functions) =
       | SSubscript (arr_e, idx_e) -> 
         let arr_v = build_expr local_vars builder arr_e in
         let idx_v = build_expr local_vars builder idx_e in
-        L.build_gep arr_v [| idx_v |] "subscript" builder
+        L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
       (*| STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
         L.build_call print_func [| ((build_expr local_vars) builder e) |]
         "print" builder *)
