@@ -23,6 +23,7 @@ type sstmt =
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SReturn of sexpr
   | SVarDecl of bind * sexpr option
+  | SVarDeclList of sstmt list
   
 type sfunc_def = {
   srtyp: builtin_type;

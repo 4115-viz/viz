@@ -273,13 +273,22 @@ let check (functions) =
         sbody = check_program f.body;
       } something like ensure that these fields can be filled
     in *)
-    let rec check_stmt_list symbols =function
+    let rec check_stmt_list symbols = function
         [] -> []
       | Block sl :: sl'  -> check_stmt_list symbols (sl @ sl') (* Flatten blocks *)
       | s :: sl -> 
           let (stmt, new_symbols) = check_stmt symbols s 
           in
           stmt :: check_stmt_list new_symbols sl
+    
+    and check_decl_list symbols = function
+      [] -> []
+      | VarDeclList vlist :: vlist' -> check_decl_list symbols (vlist @ vlist')
+      | vlist :: vlistl -> 
+          let (stmt, new_symbols) = check_stmt symbols vlist 
+          in
+          stmt :: check_decl_list new_symbols vlistl
+          
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt (symbols : builtin_type StringMap.t) = function
       (* A block is correct if each statement is correct and nothing
@@ -305,9 +314,8 @@ let check (functions) =
         else raise (
             Failure ("return gives " ^ fmt_typ t ^ " expected " ^
                      fmt_typ func.rtyp ^ " in " ^ fmt_expr e))
-      | VarDeclList _ -> 
-        raise ( Failure("Under Construction"))
-
+      | VarDeclList var_decls_list -> 
+        (SVarDeclList (check_decl_list symbols var_decls_list), symbols)
       | VarDecl ((t, id) as b, e) ->
         match t with
         | NoneType -> raise (Failure ("Variable type cannot be none: '" ^ id ^ "'"))
