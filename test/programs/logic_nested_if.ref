@@ -1,0 +1,6 @@
+
+=========================
+
+logic test 1: enter true block
+if -> true block
+nested if -> true block

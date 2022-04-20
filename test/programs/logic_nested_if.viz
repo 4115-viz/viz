@@ -5,12 +5,12 @@ func main(): none {
         simple if
     */
     print("=========================");
-    print(""); // print newline, needs to be fixed
+    print(""); 
     print("logic test 1: enter true block");
     if (3 < 4) {
-        print("if -> true block"); // want to print this
+        print("if -> true block");
         if (true) {
-            print("nested if -> true block"); // want to print this
+            print("nested if -> true block"); 
         }
     } 
 }
