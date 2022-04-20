@@ -282,24 +282,7 @@ let translate (functions) =
 
 	      ignore(L.build_cond_br bool_val then_bb else_bb builder);
 	      (local_vars, L.builder_at_end context merge_bb)
-      
-         (*
-        let bool_val = (build_expr local_vars) builder predicate in
-
-        let then_bb = L.append_block context "then" the_function in
-        ignore ((build_stmt local_vars) (L.builder_at_end context then_bb) then_stmt);
-        let else_bb = L.append_block context "else" the_function in
-        ignore ((build_stmt local_vars) (L.builder_at_end context else_bb) else_stmt);
-
-        let end_bb = L.append_block context "if_end" the_function in
-        let build_br_end = L.build_br end_bb in (* partial function *)
-        add_terminal (L.builder_at_end context then_bb) build_br_end;
-        add_terminal (L.builder_at_end context else_bb) build_br_end;
-
-        ignore(L.build_cond_br bool_val then_bb else_bb builder);
-        (local_vars, L.builder_at_end context end_bb)
-        *)
-
+  
       | SWhile (predicate, body) ->
         let while_bb = L.append_block context "while" the_function in
         let build_br_while = L.build_br while_bb in (* partial function *)
