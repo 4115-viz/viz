@@ -3,7 +3,8 @@ func main(): none {
     // this works
     @x, @y, @z -> (int, 10);
 
-    print("declaring a list of variables at once using initializer list syntax");
+    print("===================");
+    print("declaring and initializing a list of variables at once using initializer list syntax");
     print("@x, @y, @z -> (int, 10)");
 
     print("===================");
@@ -17,15 +18,24 @@ func main(): none {
     print(@z + 15 + 2 + @x + @y);
     print("===================");
     
-/*
+
     // this fails with unitialized local variable
+    print("===================");
+    print("declaring a list of variables at once using initializer list syntax");
+    print("@x, @y, @z -> (int)");
     @a, @b, @c -> (float);
     @a = 10.0;
     @b = 11.0;
     @c = 12.0;
     
+    print("===================");    
+    print("expecting 10.0");
     print(@a);
+    print("===================");
+    print("expecting 11.0");
     print(@b);
+    print("===================");
+    print("expecting 12.0");
     print(@c);
-*/
+
 }

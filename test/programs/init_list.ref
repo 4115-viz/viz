@@ -1,4 +1,5 @@
-declaring a list of variables at once using initializer list syntax
+===================
+declaring and initializing a list of variables at once using initializer list syntax
 @x, @y, @z -> (int, 10)
 ===================
 expecting 10
@@ -10,3 +11,15 @@ expecting 20
 expecting 47
 47
 ===================
+===================
+declaring a list of variables at once using initializer list syntax
+@x, @y, @z -> (int)
+===================
+expecting 10.0
+10.000000
+===================
+expecting 11.0
+11.000000
+===================
+expecting 12.0
+12.000000
