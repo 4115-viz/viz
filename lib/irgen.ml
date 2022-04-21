@@ -237,10 +237,21 @@ let translate (functions) =
         L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
       | STypeCast(typ, e) -> 
         (
+          let e' = ((build_expr local_vars) builder e) in
           match typ with
-          | IntType -> L.build_intcast ((build_expr local_vars) builder e) i32_t "tmp" builder
-          | FloatType -> L.build_fpcast ((build_expr local_vars) builder e) float_t "tmp" builder
-          | _ -> raise (Failure("Cast only support int type and float type"))
+          | IntType -> 
+            L.build_intcast e' i32_t "tmp" builder
+          | FloatType -> 
+            L.build_fpcast e' float_t "tmp" builder
+          | StrType ->
+            (
+              match fst(e) with
+              | IntType -> L.build_global_string "%d" "fmt" builder 
+              | BoolType -> L.build_global_string "%d" "fmt" builder 
+              | FloatType -> L.build_global_string "%f" "fmt" builder 
+              | _ -> raise (Failure("Cast type not support"))
+            )
+          | _ -> raise (Failure("Cast type not support"))
         )
         (*L.build_call print_func [| ((build_expr local_vars) builder e) |]
         "print" builder*)

@@ -236,6 +236,10 @@ let check (functions) =
              if ty_exp = IntType then (ty ,STypeCast(ty, (ty_exp, var)))
              else raise (Failure ("Cannot cast non-int type to float type "))
            )
+           | StrType ->
+            if ty_exp = IntType || ty_exp = FloatType || ty_exp = BoolType 
+            then (ty ,STypeCast(ty, (ty_exp, var)))
+            else raise (Failure ("Can only cast int, float and bool type to string type "))
            | _ -> raise (Failure("Cast only support int type and float type"))
          )
       (*| TypeCast(ty, expr) -> 

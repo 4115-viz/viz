@@ -5,8 +5,13 @@ func main(): none {
     // this doesn't work
     // @a : float = | as float | 100;
 
-    // this give cannot cast i32 to float
+    // this gives cannot cast i32 to double
     // print(| as float | 100);
 
-    print (| as int| 1.0);
+    | as float| 1;
+
+    print(| as string| @ok);
+
+    // this gives cannot cast double to i32
+    //print (| as int| 1.0);
 }
