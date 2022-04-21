@@ -60,7 +60,7 @@ let rec fmt_expr = function
   | Unop(uo, r) ->
     string_of_uop uo ^ " " ^ fmt_expr r
   | Subscript(e, i) -> (fmt_expr e) ^ "[" ^ (fmt_expr i) ^ "]"
-  (*| TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ "->" ^ fmt_typ t ^ "\n"*)
+  | TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ "->" ^ fmt_typ t ^ "\n"
   
 and fmt_fcall name args = 
   "FuncCall(" ^

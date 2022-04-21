@@ -1,0 +1,12 @@
+func main(): none {
+    
+    @ok: float = 0.0;
+
+    // this doesn't work
+    // @a : float = | as float | 100;
+
+    // this give cannot cast i32 to float
+    // print(| as float | 100);
+
+    print (| as int| 1.0);
+}

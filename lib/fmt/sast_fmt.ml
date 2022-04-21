@@ -27,7 +27,7 @@ and fmt_sx se =
       | SUnop(uo, r) ->
           string_of_uop uo ^ " " ^ fmt_sexpr r
       | SSubscript(e, i) -> (fmt_sexpr e) ^ "[" ^ (fmt_sexpr i) ^ "]"
-      (*| STypeCast(st, se) -> "(Casting " ^ fmt_sexpr se ^ "->" ^ fmt_typ st ^ "\n"*)
+      | STypeCast(st, se) -> "(Casting " ^ fmt_sexpr se ^ "->" ^ fmt_typ st ^ "\n"
     )
 
 and fmt_sarray (sa : sexpr list) : string =

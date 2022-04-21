@@ -27,7 +27,7 @@ type expr =
   | Binop of expr * bop * expr
   | Unop of uop * expr
   | Subscript of expr * expr
-  (* | TypeCast of builtin_type * expr *)
+  | TypeCast of builtin_type * expr
 
 type var_decl = bind * expr option
 

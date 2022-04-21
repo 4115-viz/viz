@@ -235,9 +235,15 @@ let translate (functions) =
         let arr_v = build_expr local_vars builder arr_e in
         let idx_v = build_expr local_vars builder idx_e in
         L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
-      (*| STypeCast(_, e) -> (* TODO: Below is just a placeholder. *)
-        L.build_call print_func [| ((build_expr local_vars) builder e) |]
-        "print" builder *)
+      | STypeCast(typ, e) -> 
+        (
+          match typ with
+          | IntType -> L.build_intcast ((build_expr local_vars) builder e) i32_t "tmp" builder
+          | FloatType -> L.build_fpcast ((build_expr local_vars) builder e) float_t "tmp" builder
+          | _ -> raise (Failure("Cast only support int type and float type"))
+        )
+        (*L.build_call print_func [| ((build_expr local_vars) builder e) |]
+        "print" builder*)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"

@@ -224,7 +224,20 @@ let check (functions) =
         in
         if idx >= len then failwith "Index out of range."
         else (arr_ele_typ, SSubscript(arr_sexpr, idx_sexpr))
-
+      | TypeCast(ty, expr) ->
+        let (ty_exp, var) = check_expr symbols expr in
+         (
+           match ty with
+           | IntType -> (
+             if ty_exp = FloatType then (ty ,STypeCast(ty, (ty_exp, var)))
+             else raise (Failure ("Cannot cast non-float type to int type"))
+           )
+           | FloatType -> (
+             if ty_exp = IntType then (ty ,STypeCast(ty, (ty_exp, var)))
+             else raise (Failure ("Cannot cast non-int type to float type "))
+           )
+           | _ -> raise (Failure("Cast only support int type and float type"))
+         )
       (*| TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
         let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ fmt_typ ty1 ^ " to " ^ fmt_typ ty2  )) )
