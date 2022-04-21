@@ -7,9 +7,17 @@ func main(): none {
     if (3 < 4) {
         print("simple if statement"); 
         if (true) {
-            print("nested if -> true block");
+            print("first nested if/else -> true block");
+
+            if (false) {
+                print("second nested if/else -> true block");
+            } else {
+                print("second nested if/else -> false block");
+            }
+
+
         } else {
-            print("nested if -> false block");
+            print("first nested if/else -> false block");
         }
     } 
 }
