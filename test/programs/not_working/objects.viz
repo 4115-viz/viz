@@ -1,0 +1,8 @@
+object: Shape {
+    //@height: int;
+    //@width: int;
+}
+
+func main(): none {
+    print("working on objects");
+}

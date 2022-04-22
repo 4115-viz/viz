@@ -118,5 +118,13 @@ let fmt_fdecl fdecl =
   String.concat "" (List.map fmt_stmt fdecl.body) ^
   "}\n"
 
-let fmt_program (funcs) =
+let fmt_objects obj_decl = 
+  
+  "OBJECT DECLARATION( " ^ obj_decl.oname ^ " )\n{\n" ^
+  String.concat "" (List.map fmt_vdecl obj_decl.locals) ^
+  String.concat "" (List.map fmt_stmt obj_decl.body) ^
+  "}\n"
+
+let fmt_program (objects, funcs) =
+  String.concat "" (List.map fmt_objects objects) ^ "\n" ^
   String.concat "\n" (List.map fmt_fdecl funcs)

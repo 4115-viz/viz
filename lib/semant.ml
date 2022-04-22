@@ -16,7 +16,7 @@ end)
 
    Check each function *)
 
-let check (functions) =
+let check (objects, functions) =
 
   (* Verify a list of bindings has no duplicate names *)
   let check_binds (kind : string) (binds : (builtin_type * string) list) =
@@ -27,17 +27,6 @@ let check (functions) =
       | _ :: t -> dups t
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
-
-  (* Collect function declarations for built-in functions: no bodies *)
-  (* need to convert print to print_int *)
-  (* should also have a print_bool, print_string, print_none, print_float*)
-  
-  (* create a list of pairs. (func name, func_def) *)
- (*
- let builtin_funcs = [
-  {name = "print"; builtin_type = NoneType; params = [(StrType, "x")]; locals = []; body = []};
-] and iterate through the list
- *)
   
   let built_in_decls =
     let add_built_in_function map (name, f) = StringMap.add name {
@@ -64,9 +53,29 @@ let check (functions) =
     | _ when StringMap.mem n map -> make_err dup_err
     | _ ->  StringMap.add n fd map
   in
+  
+  (* Add Object to the symbol table *)
+  let add_object map obj =
+    let dup_err = "duplicate object " ^ obj.oname
+    and make_err er = raise (Failure er)
+    and n = obj.oname (* Name of the object *)
+    in match obj with (* No duplicate objects or redefinitions of built-ins *)
+    | _ when StringMap.mem n map -> make_err dup_err
+    | _ ->  StringMap.add n obj map
+  in
 
   (* Collect all function names into one symbol table *)
   let function_decls = List.fold_left add_func built_in_decls functions
+  in
+
+  (* Collect all object names into one symbol table *)
+  let object_decls = List.fold_left add_object StringMap.empty objects
+  in
+
+    (* Return a function from our symbol table *)
+  let find_obj s =
+    try StringMap.find s object_decls
+    with Not_found -> raise (Failure ("unrecognized object " ^ s))
   in
 
   (* Return a function from our symbol table *)
@@ -76,6 +85,12 @@ let check (functions) =
   in
 
   let _ = find_func "main" in (* Ensure "main" is defined *)
+
+  let check_object obj =
+    (* TODO *)
+    check_binds "object" obj.locals; (* these will be the instance variables *)
+    let _ = find_obj obj.oname
+  in 
 
   let check_func func =
     (* Make sure no formals or locals are void or duplicates *)
@@ -374,5 +389,7 @@ let check (functions) =
       slocals  = func.locals;
       sbody = check_stmt_list symbols func.body
     }
+  in
+  List.map check_object objects
   in
   List.map check_func functions
