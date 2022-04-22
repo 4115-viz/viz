@@ -74,7 +74,6 @@ let fmt_sfdecl (fdecl:sfunc_def) =
   fmt_typ fdecl.srtyp ^ " " ^
   fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
   ")\n{\n" ^
-  String.concat "" (List.map fmt_vdecl fdecl.slocals) ^
   String.concat "" (List.map fmt_sstmt fdecl.sbody) ^
   "}\n"
 

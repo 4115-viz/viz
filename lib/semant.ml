@@ -33,7 +33,6 @@ let check ((structs: struct_def list), (functions: func_def list)) =
       rtyp = NoneType;
       fname = name;
       formals = f;
-      locals = [];
       body = [] } map
       in List.fold_left add_built_in_function StringMap.empty [("print", [StrType, "x"]);
                                                                ("print_int", [IntType, "x"]);
@@ -97,9 +96,8 @@ let check ((structs: struct_def list), (functions: func_def list)) =
   in 
 
   let check_func func =
-    (* Make sure no formals or locals are void or duplicates *)
+    (* Make sure no formals are void or duplicates *)
     check_binds "formal" func.formals;
-    check_binds "local" func.locals;
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
@@ -112,7 +110,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
     (* Build local symbol table of variables for this function *)
     let symbols : builtin_type StringMap.t = 
       List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        StringMap.empty (func.formals @ func.locals)
+        StringMap.empty (func.formals)
     in
 
     (* Query a variable from our local symbol table *)
@@ -357,7 +355,6 @@ let check ((structs: struct_def list), (functions: func_def list)) =
     { srtyp = func.rtyp;
       sfname = func.fname;
       sformals = func.formals;
-      slocals  = func.locals;
       sbody = check_stmt_list symbols func.body
     }
   in

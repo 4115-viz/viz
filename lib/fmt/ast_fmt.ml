@@ -114,7 +114,6 @@ let fmt_fdecl fdecl =
   fmt_typ fdecl.rtyp ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
-  String.concat "" (List.map fmt_vdecl fdecl.locals) ^
   String.concat "" (List.map fmt_stmt fdecl.body) ^
   "}\n"
 
