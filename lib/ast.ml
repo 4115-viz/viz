@@ -52,9 +52,8 @@ type func_def = {
 }
 
 type struct_def = {
-  name: string;
+  sname: string;
   locals: bind list; 
-  body: stmt list;
 }
 
 (* ----- Entry ----- *)

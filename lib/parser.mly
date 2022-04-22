@@ -56,17 +56,17 @@ open Ast
 
 
 program:
-  /* nothing */ { [] }
-  | sdecls fdecls EOF { $1 }
+  /* nothing */ { ([], []) }
+  | sdecls fdecls EOF { ($1, $2) }
 
 fdecls:
-   /* nothing */ { []               }
+   /* nothing */ { [] }
  | fdecl fdecls { $1 :: $2 }
 
 // structs declarations
 sdecls:
-   /* nothing */ { []               }
- | object_def sdecls  { $1 :: $2 }
+   /* nothing */ { [] }
+ | sdecl sdecls  { $1 :: $2 }
 
 /* @x: string; */
 vdecl:
@@ -96,18 +96,21 @@ fdecl:
     }
   }
 
-/* function declaration */
-struct_def:
+/* struct declaration */
+sdecl:
   /* struct definition, more like a C struct currently */ 
   /* I guess we need locals if we want class functions */
-  | STRUCT ID_STRUCT LBRACE stmt_list RBRACE
+  | STRUCT ID_STRUCT LBRACE members_list RBRACE
   { 
     { 
-      name = $3;
-      locals = []; 
-      body = $5;
+      sname = $2;
+      locals = $4; 
     }
   }
+
+members_list:
+  vdecl SEMI { [$1] }
+  | vdecl SEMI members_list { $1::$3 }
 
 /* formals_opt */
 formals_opt:

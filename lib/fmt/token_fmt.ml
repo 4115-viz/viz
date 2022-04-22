@@ -5,7 +5,7 @@ let string_of_token (t : token) : string  =
   match t with
     | ID_VAR(x)  -> String.concat "" ["ID_VAR("; x ; ")"]
     | ID_FUNC(x)  -> String.concat "" ["ID_FUNC("; x ; ")"]
-    | ID_OBJ(x)  -> String.concat "" ["ID_OBJ("; x ; ")"]
+    | ID_STRUCT(x)  -> String.concat "" ["ID_STRUCT("; x ; ")"]
     | LIT_BOOL(x) -> String.concat "" ["LIT_BOOL("; Bool.to_string x ; ")"]
     | LIT_STR(x) -> String.concat "" ["LIT_STR("; x ; ")"]
     | LIT_INT(x) -> String.concat "" ["LIT_INT("; Int.to_string x ; ")"]

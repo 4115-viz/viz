@@ -16,7 +16,7 @@ end)
 
    Check each function *)
 
-let check (objects, functions) =
+let check ((structs: struct_def list), (functions: func_def list)) =
 
   (* Verify a list of bindings has no duplicate names *)
   let check_binds (kind : string) (binds : (builtin_type * string) list) =
@@ -55,28 +55,28 @@ let check (objects, functions) =
   in
   
   (* Add Struct to the symbol table *)
-  let add_struct map s =
-    let dup_err = "duplicate struct " ^ s.name
+  (* let add_struct map (s:struct_def) =
+    let dup_err = "duplicate struct " ^ s.sname
     and make_err er = raise (Failure er)
-    and n = s.name (* Name of the struct *)
-    in match s with (* No duplicate objects or redefinitions of built-ins *)
+    and n = s.sname (* Name of the struct *)
+    in match s with (* No duplicate structs or redefinitions of built-ins *)
     | _ when StringMap.mem n map -> make_err dup_err
     | _ ->  StringMap.add n s map
-  in
+  in *)
 
   (* Collect all function names into one symbol table *)
   let function_decls = List.fold_left add_func built_in_decls functions
   in
 
   (* Collect all struct names into one symbol table *)
-  let struct_decls = List.fold_left add_struct StringMap.empty structs
-  in
+  (* let struct_decls = List.fold_left add_struct StringMap.empty structs
+  in *)
 
     (* Return a function from our symbol table *)
-  let find_obj s =
+  (* let find_struct s =
     try StringMap.find s struct_decls
     with Not_found -> raise (Failure ("unrecognized struct " ^ s))
-  in
+  in *)
 
   (* Return a function from our symbol table *)
   let find_func s =
@@ -86,10 +86,14 @@ let check (objects, functions) =
 
   let _ = find_func "main" in (* Ensure "main" is defined *)
 
-  let check_struct s =
-    (* TODO *)
+  let check_struct (s:struct_def) =
+    (* TODO: *)
     check_binds "structs" s.locals; (* these will be the instance variables *)
-    let _ = find_obj s.name
+    (* body of check_struct *)
+    { 
+      ssname = s.sname;
+      slocals  = s.locals;
+    }
   in 
 
   let check_func func =
@@ -239,39 +243,6 @@ let check (objects, functions) =
         in
         if idx >= len then failwith "Index out of range."
         else (arr_ele_typ, SSubscript(arr_sexpr, idx_sexpr))
-
-      (*| TypeCast(ty, expr) -> 
-        let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
-        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ fmt_typ ty1 ^ " to " ^ fmt_typ ty2  )) )
-        in let casted_expr = 
-            (match ty with
-                  | IntType -> 
-                          (* i think the actual casting may be done here, or in LLVM not entirely sure
-                              I originlally had each of the subcases cast but I couldnt get the return type correctly
-                          *)
-                          ( match rtype with 
-                          | IntType | FloatType | StrType -> r'
-                          | _ -> err rtype ty
-                          )
-                  | FloatType ->
-                          ( match rtype with 
-                          | IntType | FloatType | StrType -> r'
-                          | _ -> err rtype ty
-                          )
-                  | StrType ->
-                          ( match rtype with 
-                          | IntType | FloatType | StrType | BoolType -> r' (* there is in fact of string_of_bool cast in ocaml *)
-                          | _ -> err rtype ty
-                          )
-                  | BoolType ->
-                          ( match rtype with 
-                          | StrType -> r' (* there is in fact a bool_of_string cast in ocaml *)
-                          | _ -> err rtype ty
-                          )
-                  | NoneType -> raise (Failure "Cannot cast to NoneType")
-                  | ArrayType _ -> raise(Failure "TODO: NOT SUPPORT")
-            )
-        in (ty, casted_expr) *)
     in
 
     let check_bool_expr symbols e =
@@ -390,6 +361,4 @@ let check (objects, functions) =
       sbody = check_stmt_list symbols func.body
     }
   in
-  List.map check_object objects
-  in
-  List.map check_func functions
+  (List.map check_struct structs, List.map check_func functions)

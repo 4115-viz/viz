@@ -12,7 +12,7 @@ becasue, if we cant print, then there is no way to fully debug.
     three issues went hand in hand.
     * also borrowed the final return check for the add_terminal builder. That goes
     hand in hand with what I wrote above. I just want to be able to compile and get
-    these small things out of the way so we can end up building lists/arrays/objects
+    these small things out of the way so we can end up building lists/arrays/structs
     * also referenced newbie for various built in print functions
 4) https://docs.python.org/3/reference/grammar.html 
 python grammar. used it as inspiration for some of our conditional logic stuff

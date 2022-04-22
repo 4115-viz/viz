@@ -36,4 +36,9 @@ type sfunc_def = {
   slocals: bind list;
 }
 
-type sprogram = bind list * sfunc_def list
+type sstruct_def = {
+  ssname: string;
+  slocals: bind list; 
+}
+
+type sprogram = sstruct_def list * sfunc_def list

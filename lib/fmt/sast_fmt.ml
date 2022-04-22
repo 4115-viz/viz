@@ -78,5 +78,11 @@ let fmt_sfdecl (fdecl:sfunc_def) =
   String.concat "" (List.map fmt_sstmt fdecl.sbody) ^
   "}\n"
 
-let fmt_sprogram (funcs) =
+let fmt_ssdecl struct_decl = 
+  "STRUCT DECLARATION( " ^ struct_decl.ssname ^ " )\n{\n" ^
+  String.concat "" (List.map fmt_vdecl struct_decl.slocals) ^
+  "}\n"
+
+let fmt_sprogram (structs, funcs) =
+  String.concat "\n" (List.map fmt_ssdecl structs) ^ "\n" ^
   String.concat "\n" (List.map fmt_sfdecl funcs)
