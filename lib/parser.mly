@@ -252,7 +252,7 @@ expr:
   | expr LBRACKET expr RBRACKET { Subscript($1, $3) }
 
   /* just need to ensure that this is right associative */
-  /*| BAR AS typ BAR expr {TypeCast($3, $5)}  */
+  | BAR AS builtin_type BAR expr {TypeCast($3, $5)}
 
 /* allowing for multi-line strings */
 string_literal:

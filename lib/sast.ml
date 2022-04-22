@@ -14,6 +14,7 @@ and sx =
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
   | SSubscript of sexpr * sexpr
+  | STypeCast of builtin_type * sexpr
 
 type svar_decl = bind * sexpr option
 

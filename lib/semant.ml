@@ -34,11 +34,13 @@ let check ((structs: struct_def list), (functions: func_def list)) =
       fname = name;
       formals = f;
       body = [] } map
-      in List.fold_left add_built_in_function StringMap.empty [("print", [StrType, "x"]);
+      in List.fold_left add_built_in_function StringMap.empty [
+                                                               ("print", [StrType, "x"]);
                                                                ("print_int", [IntType, "x"]);
                                                                ("print_float", [FloatType, "x"]);
                                                                ("print_bool", [BoolType, "x"]);
-                                                               ("println", [])]
+                                                               ("println", []);
+                                                               ]
   in
 
   (* Add function name to symbol table *)
@@ -241,6 +243,32 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         in
         if idx >= len then failwith "Index out of range."
         else (arr_ele_typ, SSubscript(arr_sexpr, idx_sexpr))
+      | TypeCast(ty, expr) ->
+        let (ty_exp, var) = check_expr symbols expr in
+         (
+          let type_cast_err e1 e2 = 
+            raise (Failure("Cast type not supported from " ^ 
+                          fmt_typ e1 ^ " to " ^ 
+                          fmt_typ e2)) in
+
+           match ty with
+              | IntType -> (
+                if ty_exp = FloatType || ty_exp = IntType || ty_exp = BoolType || ty_exp = StrType
+                    then (ty , STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              )
+              | FloatType -> (
+                if ty_exp = IntType || ty_exp = FloatType || ty_exp = StrType 
+                    then (ty ,STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              )
+              | StrType ->
+                if ty_exp = IntType || ty_exp = FloatType || ty_exp = BoolType || ty_exp = StrType 
+                then (ty ,STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              | _ -> type_cast_err ty_exp ty
+         )
+
     in
 
     let check_bool_expr symbols e =
