@@ -45,11 +45,13 @@ let check (functions) =
       fname = name;
       formals = f;
       body = [] } map
-      in List.fold_left add_built_in_function StringMap.empty [("print", [StrType, "x"]);
+      in List.fold_left add_built_in_function StringMap.empty [
+                                                               ("print", [StrType, "x"]);
                                                                ("print_int", [IntType, "x"]);
                                                                ("print_float", [FloatType, "x"]);
                                                                ("print_bool", [BoolType, "x"]);
-                                                               ("println", [])]
+                                                               ("println", []);
+                                                               ]
   in
 
   (* Add function name to symbol table *)
@@ -222,39 +224,32 @@ let check (functions) =
         in
         if idx >= len then failwith "Index out of range."
         else (arr_ele_typ, SSubscript(arr_sexpr, idx_sexpr))
+      | TypeCast(ty, expr) ->
+        let (ty_exp, var) = check_expr symbols expr in
+         (
+          let type_cast_err e1 e2 = 
+            raise (Failure("Cast type not supported from " ^ 
+                          fmt_typ e1 ^ " to " ^ 
+                          fmt_typ e2)) in
 
-      (*| TypeCast(ty, expr) -> 
-        let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
-        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ fmt_typ ty1 ^ " to " ^ fmt_typ ty2  )) )
-        in let casted_expr = 
-            (match ty with
-                  | IntType -> 
-                          (* i think the actual casting may be done here, or in LLVM not entirely sure
-                              I originlally had each of the subcases cast but I couldnt get the return type correctly
-                          *)
-                          ( match rtype with 
-                          | IntType | FloatType | StrType -> r'
-                          | _ -> err rtype ty
-                          )
-                  | FloatType ->
-                          ( match rtype with 
-                          | IntType | FloatType | StrType -> r'
-                          | _ -> err rtype ty
-                          )
-                  | StrType ->
-                          ( match rtype with 
-                          | IntType | FloatType | StrType | BoolType -> r' (* there is in fact of string_of_bool cast in ocaml *)
-                          | _ -> err rtype ty
-                          )
-                  | BoolType ->
-                          ( match rtype with 
-                          | StrType -> r' (* there is in fact a bool_of_string cast in ocaml *)
-                          | _ -> err rtype ty
-                          )
-                  | NoneType -> raise (Failure "Cannot cast to NoneType")
-                  | ArrayType _ -> raise(Failure "TODO: NOT SUPPORT")
-            )
-        in (ty, casted_expr) *)
+           match ty with
+              | IntType -> (
+                if ty_exp = FloatType || ty_exp = IntType || ty_exp = BoolType || ty_exp = StrType
+                    then (ty , STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              )
+              | FloatType -> (
+                if ty_exp = IntType || ty_exp = FloatType || ty_exp = StrType 
+                    then (ty ,STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              )
+              | StrType ->
+                if ty_exp = IntType || ty_exp = FloatType || ty_exp = BoolType || ty_exp = StrType 
+                then (ty ,STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              | _ -> type_cast_err ty_exp ty
+         )
+
     in
 
     let check_bool_expr symbols e =
