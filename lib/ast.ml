@@ -46,7 +46,6 @@ type func_def = {
   rtyp: builtin_type;
   fname: string;
   formals: bind list;
-  locals: bind list;
   body: stmt list;
 }
 

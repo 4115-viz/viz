@@ -85,7 +85,6 @@ fdecl:
       rtyp = $7;
       fname = $2;
       formals = $4;
-      locals = [];
       body = $9;
     }
   }

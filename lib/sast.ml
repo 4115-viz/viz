@@ -33,7 +33,6 @@ type sfunc_def = {
   sfname: string;
   sformals: bind list;
   sbody: sstmt list;
-  slocals: bind list;
 }
 
 type sprogram = bind list * sfunc_def list
