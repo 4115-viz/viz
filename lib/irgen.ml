@@ -41,9 +41,10 @@ let translate (_, functions) =
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
-    | A.ArrayType(t, _) -> match t with
+    | A.ArrayType(t, _) -> (match t with
       | Some(t) -> L.pointer_type (ltype_of_typ t)
-      | None -> failwith "Runtime error: unable to deduce the array's type"
+      | None -> failwith "Runtime error: unable to deduce the array's type")
+    | A.StructType(_) -> failwith "TODO:"
   in
 
   (* for casting error messages *)
@@ -54,7 +55,7 @@ let translate (_, functions) =
     | A.StrType -> "StrType"
     | A.FloatType -> "FloatType"
     | A.ArrayType(_,_) -> "ArrayType"
-
+    | A.StructType(_) -> "StructType"
   in
 
   (* viz Builtins *)
@@ -204,7 +205,7 @@ let translate (_, functions) =
                   | A.Great   -> L.build_fcmp L.Fcmp.Ogt
                   | A.Leq     -> L.build_fcmp L.Fcmp.Ole
                   | A.Geq     -> L.build_fcmp L.Fcmp.Oge
-                  | _ -> raise ((Failure "TODO: Unimplemented Binary Op for Floats"))
+                  | _ -> failwith "TODO: Unimplemented Binary Op for Floats"
                   ) e1' e2' "tmp" builder
           | A.BoolType ->
             (match op with
@@ -212,11 +213,12 @@ let translate (_, functions) =
             | A.Neq     -> L.build_icmp L.Icmp.Ne
             | A.And     -> L.build_and
             | A.Or      -> L.build_or
-            | _ -> raise ((Failure "Unimplemented Binary Op for Bools"))
+            | _ -> failwith "Unimplemented Binary Op for Bools"
             ) e1' e2' "tmp" builder
-          | A.StrType -> raise ((Failure "TODO: Unimplemented Binary Op for StrType"))
-          | A.NoneType -> raise ((Failure "TODO: Unimplemented Binary Op for NoneType"))
-          | A.ArrayType _ -> raise ((Failure "TODO: Unimplemented Binary Op for ArrayType"))
+          | A.StrType -> failwith "TODO: Unimplemented Binary Op for StrType"
+          | A.NoneType -> failwith "TODO: Unimplemented Binary Op for NoneType"
+          | A.ArrayType _ -> failwith "TODO: Unimplemented Binary Op for ArrayType"
+          | A.StructType _ -> failwith "does not support binary operation for struct"
         )
       | SUnop (op, ((ret_ty, _ ) as e)) ->
         (
@@ -225,21 +227,22 @@ let translate (_, functions) =
             | A.BoolType  -> 
               (match op with 
               | A.Not -> L.build_not e' "tmp" builder
-              | _ -> raise ((Failure "Unimplemented Unary Op for BoolType"))
+              | _ -> failwith "Unimplemented Unary Op for BoolType"
               )
             | A.IntType   ->
               (match op with 
               | A.Neg -> L.build_neg e' "tmp" builder
-              | _ -> raise ((Failure "Unimplemented Unary Op for IntType"))
+              | _ -> failwith "Unimplemented Unary Op for IntType"
               )
             | A.FloatType ->
               (match op with 
               | A.Neg -> L.build_fneg e' "tmp" builder
-              | _ -> raise ((Failure "Unimplemented Unary Op for FloatType"))
+              | _ -> failwith "Unimplemented Unary Op for FloatType"
               )
-            | A.StrType   -> raise ((Failure "Unimplemented Unary Op for StrType"))
-            | A.NoneType  -> raise ((Failure "Unimplemented Unary Op for NoneType"))
-            | A.ArrayType _  -> raise ((Failure "Unimplemented Unary Op for NoneType"))
+            | A.StrType   -> failwith "Unimplemented Unary Op for StrType"
+            | A.NoneType  -> failwith "Unimplemented Unary Op for NoneType"
+            | A.ArrayType _  -> failwith "Unimplemented Unary Op for NoneType"
+            | A.StructType _ -> failwith "Does not import unary operation for StructType"
         )
       | SFuncCall("println", [])   -> 
         L.build_call print_func [| str_format_str builder; ((build_expr local_vars) builder (A.StrType, SStrLit("")))|]

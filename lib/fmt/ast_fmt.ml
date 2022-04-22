@@ -35,6 +35,7 @@ let rec fmt_typ = function
       ">[" ;
       len ;
       "]"]
+  | StructType(id:string) -> "Type(Struct(\"" ^ id ^ "\"))"
 
 let string_of_uop = function
 | Not -> "not"

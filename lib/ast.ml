@@ -11,7 +11,7 @@ type typ =
   | BoolType
   | FloatType
   | ArrayType of (typ option) * (int option)
-  (* | StructType of string *)
+  | StructType of string
 
 type bind = typ * string
 

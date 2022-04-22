@@ -71,8 +71,6 @@ sdecls:
 /* @x: string; */
 vdecl:
   | ID_VAR COLON typ {($3, $1)}
-  // | ID_VAR COLON ID_STRUCT { (StructType($3), $1) }
-
 
 typ:
   | T_NONE { NoneType }
@@ -81,6 +79,7 @@ typ:
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
   | T_ARRAY BAR typ BAR { ArrayType(Some($3), None) }
+  | ID_STRUCT { StructType($1) }
 
 /* function declaration */
 fdecl:
