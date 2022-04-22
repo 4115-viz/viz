@@ -1,11 +1,11 @@
 // want an if with elif statement too
 
-//func main(): none {
-func main(): int {
+func main(): none {
 
     /*
         if/else
     */
+    print("Test Number 1");
     if (3 < 4) {
         print("this is true"); // want to print this
         
@@ -29,6 +29,7 @@ func main(): int {
         }
     }
     print("------------------------");
+    print("Test Number 2");
 
     /*
         if/else
@@ -41,6 +42,8 @@ func main(): int {
         */
         if (true == false) {
             print("nested if");
+        } else if (true == true) {
+            print("nested elif");
         } else {
             print("nested else"); // want to print this
         }
@@ -56,7 +59,7 @@ func main(): int {
         }
     }
     print("------------------------");
-
+    print("Test Number 3");
     /*
         if/else
     */
@@ -64,7 +67,7 @@ func main(): int {
         print("this is true"); 
         
         /*
-            nested if/else
+            nested if/else/elif
         */
         if (true == false) {
             print("nested if");
@@ -83,6 +86,6 @@ func main(): int {
         }
     }
     print("------------------------");
-    return 0;
+
 }
 
