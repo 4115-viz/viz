@@ -70,22 +70,22 @@ sdecls:
 
 /* @x: string; */
 vdecl:
-  | ID_VAR COLON builtin_type {($3, $1)}
-  | ID_VAR COLON ID_STRUCT { (StructType($3), $1) }
+  | ID_VAR COLON typ {($3, $1)}
+  // | ID_VAR COLON ID_STRUCT { (StructType($3), $1) }
 
 
-builtin_type:
+typ:
   | T_NONE { NoneType }
   | T_STR { StrType }
   | T_INT { IntType }
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
-  | T_ARRAY BAR builtin_type BAR { ArrayType(Some($3), None) }
+  | T_ARRAY BAR typ BAR { ArrayType(Some($3), None) }
 
 /* function declaration */
 fdecl:
   /* func with args */ 
-  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON builtin_type LBRACE stmt_list RBRACE
+  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON typ LBRACE stmt_list RBRACE
   {
     { 
       rtyp = $7;
@@ -143,8 +143,8 @@ stmt:
     }  
 
 vdecl_list_init_opt:
-  | ARROW LPAREN builtin_type RPAREN            { ($3 , None   )   }
-  | ARROW LPAREN builtin_type COMMA expr RPAREN { ($3 , Some($5) ) }
+  | ARROW LPAREN typ RPAREN            { ($3 , None   )   }
+  | ARROW LPAREN typ COMMA expr RPAREN { ($3 , Some($5) ) }
 
 vdecl_list:
   | ID_VAR { [$1] }
@@ -252,7 +252,7 @@ expr:
   | expr LBRACKET expr RBRACKET { Subscript($1, $3) }
 
   /* just need to ensure that this is right associative */
-  | BAR AS builtin_type BAR expr {TypeCast($3, $5)}
+  | BAR AS typ BAR expr {TypeCast($3, $5)}
 
 /* allowing for multi-line strings */
 string_literal:

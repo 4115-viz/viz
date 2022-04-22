@@ -1,6 +1,6 @@
 open Ast
 
-type sexpr = builtin_type * sx
+type sexpr = typ * sx
 and sx =
   | SStrLit of string
   | SIntLit of int
@@ -14,7 +14,7 @@ and sx =
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
   | SSubscript of sexpr * sexpr
-  | STypeCast of builtin_type * sexpr
+  | STypeCast of typ * sexpr
 
 type svar_decl = bind * sexpr option
 
@@ -30,7 +30,7 @@ type sstmt =
   | SVarDeclList of svar_decl list
   
 type sfunc_def = {
-  srtyp: builtin_type;
+  srtyp: typ;
   sfname: string;
   sformals: bind list;
   sbody: sstmt list;

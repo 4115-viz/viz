@@ -4,16 +4,16 @@ type bop = Add | Sub | Eq | Neq | Less | And | Or
 
 type uop = Not | Neg
 
-type builtin_type = 
+type typ = 
   | NoneType
   | StrType
   | IntType
   | BoolType
   | FloatType
-  | ArrayType of (builtin_type option) * (int option)
-  | StructType of string
+  | ArrayType of (typ option) * (int option)
+  (* | StructType of string *)
 
-type bind = builtin_type * string
+type bind = typ * string
 
 type expr =
   | StrLit of string
@@ -28,7 +28,7 @@ type expr =
   | Binop of expr * bop * expr
   | Unop of uop * expr
   | Subscript of expr * expr
-  | TypeCast of builtin_type * expr
+  | TypeCast of typ * expr
 
 type var_decl = bind * expr option
 
@@ -44,7 +44,7 @@ type stmt =
   | VarDeclList of var_decl list
   
 type func_def = {
-  rtyp: builtin_type;
+  rtyp: typ;
   fname: string;
   formals: bind list;
   body: stmt list;

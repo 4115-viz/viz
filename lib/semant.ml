@@ -19,7 +19,7 @@ end)
 let check ((structs: struct_def list), (functions: func_def list)) =
 
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : (builtin_type * string) list) =
+  let check_binds (kind : string) (binds : (typ * string) list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -103,20 +103,20 @@ let check ((structs: struct_def list), (functions: func_def list)) =
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let check_assign (lvaluet:builtin_type) (rvaluet:builtin_type) (err:string): builtin_type =
+    let check_assign (lvaluet:typ) (rvaluet:typ) (err:string): typ =
       if lvaluet = rvaluet then 
         lvaluet
       else raise (Failure err)
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbols : builtin_type StringMap.t = 
+    let symbols : typ StringMap.t = 
       List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
         StringMap.empty (func.formals)
     in
 
     (* Query a variable from our local symbol table *)
-    let type_of_id (id: string) (symbols : builtin_type StringMap.t) : builtin_type =
+    let type_of_id (id: string) (symbols : typ StringMap.t) : typ =
       try StringMap.find id symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ id))
     in
@@ -124,7 +124,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
     let uninited_symbols = StringHash.create 10 in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec check_expr (symbols: builtin_type StringMap.t) (e: expr) : sexpr = 
+    let rec check_expr (symbols: typ StringMap.t) (e: expr) : sexpr = 
       match e with
         IntLit x -> (IntType, SIntLit x)
       | FloatLit x -> (FloatType, SFloatLit x)
@@ -286,7 +286,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
     *)
     (*let check_function_decl = true
           {
-        styp = f.builtin_type;
+        styp = f.typ;
         sname = f.name;
         sparams = f.params;
         sbody = check_program f.body;
@@ -302,7 +302,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                   | ID_Block _ -> symbols
                                   | _ -> new_symbols) sl
     
-    and check_arr_var_decl symbols ((arr_ele_typ, id), arr_e):(svar_decl * builtin_type StringMap.t) = 
+    and check_arr_var_decl symbols ((arr_ele_typ, id), arr_e):(svar_decl * typ StringMap.t) = 
       let (arr_t, arr_sx) as arr_sexpr = check_expr symbols arr_e in
       (* match rhs expression type *)
       let (bind, sexpr) = (match arr_t with
@@ -319,7 +319,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
       let new_symbols = StringMap.add id arr_t symbols in
       ((bind, sexpr), new_symbols)
 
-    and check_var_decl symbols (((t, id) as b, e):var_decl):(svar_decl * builtin_type StringMap.t) =
+    and check_var_decl symbols (((t, id) as b, e):var_decl):(svar_decl * typ StringMap.t) =
       match e with
       | None -> (* rhs is empty *)
         let new_symbols = StringMap.add id t symbols in
@@ -337,7 +337,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           else let new_symbols = StringMap.add id t symbols in
           ((b, Some(e_sexpr)), new_symbols) 
 
-    and check_var_decl_list symbols (dl: var_decl list): (svar_decl list * builtin_type StringMap.t) = match dl with
+    and check_var_decl_list symbols (dl: var_decl list): (svar_decl list * typ StringMap.t) = match dl with
       | [] -> ([], symbols)
       | x :: xs -> 
         let (svar_decl, new_symbols) = check_var_decl symbols x in
@@ -345,7 +345,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         (svar_decl :: svar_decl_list, new_symbols)
           
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt (symbols : builtin_type StringMap.t) = function
+    and check_stmt (symbols : typ StringMap.t) = function
       (* A block is correct if each statement is correct and nothing
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
