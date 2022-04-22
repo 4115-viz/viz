@@ -42,7 +42,7 @@ let string_of_token (t : token) : string  =
     | RETURN -> "RETURN"
     | BREAK -> "BREAK"
     | CONTINUE -> "CONTINUE"
-    | OBJECT -> "OBJECT"
+    | STRUCT -> "STRUCT"
     | TRY -> "TRY"
     | CATCH -> "CATCH"
     | RAISE -> "RAISE" (* i guess we will also need exception right? *)

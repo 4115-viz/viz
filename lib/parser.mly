@@ -13,7 +13,7 @@ open Ast
 
 /* keywords */
 %token FUNC IF ELSE ELIF FOR WHILE INFINITE_LOOP RETURN BREAK
-%token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS RANGE OBJECT 
+%token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS RANGE STRUCT 
 
 /* type */
 %token T_NONE T_STR T_INT T_BOOL T_FLOAT T_ARRAY
@@ -26,7 +26,7 @@ open Ast
 
 %token <string> ID_FUNC /* function names */
 %token <string> ID_VAR /* variable access or assign */
-%token <string> ID_OBJ /* class names */
+%token <string> ID_STRUCT /* class names */
 %token <string> LIT_STR
 %token <int> LIT_INT
 %token <float> LIT_FLOAT
@@ -57,15 +57,16 @@ open Ast
 
 program:
   /* nothing */ { [] }
-  | objects fdecls EOF { $1 }
+  | sdecls fdecls EOF { $1 }
 
 fdecls:
    /* nothing */ { []               }
  | fdecl fdecls { $1 :: $2 }
 
-objects:
+// structs declarations
+sdecls:
    /* nothing */ { []               }
- | object_def objects  { $1 :: $2 }
+ | object_def sdecls  { $1 :: $2 }
 
 /* @x: string; */
 vdecl:
@@ -79,7 +80,7 @@ builtin_type:
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
   | T_ARRAY BAR builtin_type BAR { ArrayType(Some($3), None) }
-  /*| ID_OBJ { Object($1) } */ /* not yet, this is for assigning a variable to this type */
+  /*| ID_STRUCT { Struct($1) } */ /* not yet, this is for assigning a variable to this type */
 
 /* function declaration */
 fdecl:
@@ -96,13 +97,13 @@ fdecl:
   }
 
 /* function declaration */
-object_def:
-  /* object definition, more like a C struct currently */ 
+struct_def:
+  /* struct definition, more like a C struct currently */ 
   /* I guess we need locals if we want class functions */
-  | OBJECT COLON ID_OBJ LBRACE stmt_list RBRACE
+  | STRUCT ID_STRUCT LBRACE stmt_list RBRACE
   { 
     { 
-      oname = $3;
+      name = $3;
       locals = []; 
       body = $5;
     }

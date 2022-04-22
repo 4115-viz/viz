@@ -1,21 +1,21 @@
-class: Shape {
+struct Shape {
     //@height: int;
     //@width: int;
 }
 
-class: Person {
+struct Person {
     @name: string;
     @age: int;
     @height: string;
     @weight: float;
 }
 
-func init_shape(@my_shape: Shape, @height: int, @width: int) : none {
+func init_shape(@my_shape: Shape, @height: int, @width: int): none {
     @my_shape.height = @height;
     @my_shape.width = @width;
 }
 
-func init_person(@my_person: Person, @name: string, @age: int, @height: string, @weight: float) : none {
+func init_person(@my_person: Person, @name: string, @age: int, @height: string, @weight: float): none {
     @my_person.name = @name;
     @my_person.age = @age;
     @my_person.height = @height;
@@ -23,9 +23,9 @@ func init_person(@my_person: Person, @name: string, @age: int, @height: string, 
 }
 
 func main(): none {
-    print("working on objects");
+    print("working on struct");
     
-    // initializer list for variable decl of type object
+    // initializer list for variable decl of type struct
     // @square, @rectangle -> (Shape);
     // @matt: Person;
     

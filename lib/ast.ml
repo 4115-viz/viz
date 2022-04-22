@@ -11,7 +11,7 @@ type builtin_type =
   | BoolType
   | FloatType
   | ArrayType of (builtin_type option) * (int option)
-  (*| Object of string *)(* need this for assignment and accessing *)
+  (*| Struct of string *)(* need this for assignment and accessing *)
 
 type bind = builtin_type * string
 
@@ -51,11 +51,11 @@ type func_def = {
   body: stmt list;
 }
 
-type obj_def = {
-  oname: string;
+type struct_def = {
+  name: string;
   locals: bind list; 
   body: stmt list;
 }
 
 (* ----- Entry ----- *)
-type program = obj_def list * func_def list
+type program = struct_def list * func_def list

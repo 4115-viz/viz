@@ -44,7 +44,7 @@ rule token = parse
 | "step" {STEP}
 | "as" {AS}
 | "..." {RANGE} (* used in the for loop construct *)
-| "object" {OBJECT}
+| "struct" {STRUCT}
 
 (* -------- types -------- *)
 | "none" { T_NONE }
@@ -103,7 +103,7 @@ rule token = parse
 | "->" { ARROW    }
 
 (* --------- IDs ------------ *)
-| uppercase lowercase* as lxm { ID_OBJ(lxm) } (* example: Shape, Person, Edge *)
+| uppercase lowercase* as lxm { ID_STRUCT(lxm) } (* example: Shape, Person, Edge *)
 | letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)
 | "@" letter (digit | letter | '_')* as lxm { ID_VAR(String.sub lxm 1 ((String.length lxm) - 1)) } (* variable access and decl need @ *)
 

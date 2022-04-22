@@ -54,28 +54,28 @@ let check (objects, functions) =
     | _ ->  StringMap.add n fd map
   in
   
-  (* Add Object to the symbol table *)
-  let add_object map obj =
-    let dup_err = "duplicate object " ^ obj.oname
+  (* Add Struct to the symbol table *)
+  let add_struct map s =
+    let dup_err = "duplicate struct " ^ s.name
     and make_err er = raise (Failure er)
-    and n = obj.oname (* Name of the object *)
-    in match obj with (* No duplicate objects or redefinitions of built-ins *)
+    and n = s.name (* Name of the struct *)
+    in match s with (* No duplicate objects or redefinitions of built-ins *)
     | _ when StringMap.mem n map -> make_err dup_err
-    | _ ->  StringMap.add n obj map
+    | _ ->  StringMap.add n s map
   in
 
   (* Collect all function names into one symbol table *)
   let function_decls = List.fold_left add_func built_in_decls functions
   in
 
-  (* Collect all object names into one symbol table *)
-  let object_decls = List.fold_left add_object StringMap.empty objects
+  (* Collect all struct names into one symbol table *)
+  let struct_decls = List.fold_left add_struct StringMap.empty structs
   in
 
     (* Return a function from our symbol table *)
   let find_obj s =
-    try StringMap.find s object_decls
-    with Not_found -> raise (Failure ("unrecognized object " ^ s))
+    try StringMap.find s struct_decls
+    with Not_found -> raise (Failure ("unrecognized struct " ^ s))
   in
 
   (* Return a function from our symbol table *)
@@ -86,10 +86,10 @@ let check (objects, functions) =
 
   let _ = find_func "main" in (* Ensure "main" is defined *)
 
-  let check_object obj =
+  let check_struct s =
     (* TODO *)
-    check_binds "object" obj.locals; (* these will be the instance variables *)
-    let _ = find_obj obj.oname
+    check_binds "structs" s.locals; (* these will be the instance variables *)
+    let _ = find_obj s.name
   in 
 
   let check_func func =
