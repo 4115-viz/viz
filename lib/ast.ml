@@ -11,7 +11,7 @@ type builtin_type =
   | BoolType
   | FloatType
   | ArrayType of (builtin_type option) * (int option)
-  (*| Struct of string *)(* need this for assignment and accessing *)
+  | StructType of string
 
 type bind = builtin_type * string
 

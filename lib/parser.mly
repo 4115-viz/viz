@@ -71,7 +71,7 @@ sdecls:
 /* @x: string; */
 vdecl:
   | ID_VAR COLON builtin_type {($3, $1)}
-  | ID_VAR COLON ID_STRUCT { Struct($2) }
+  | ID_VAR COLON ID_STRUCT { (StructType($3), $1) }
 
 
 builtin_type:
