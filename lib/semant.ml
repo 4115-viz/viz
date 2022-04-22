@@ -46,11 +46,15 @@ let check (functions) =
       formals = f;
       locals = [];
       body = [] } map
-      in List.fold_left add_built_in_function StringMap.empty [("print", [StrType, "x"]);
+      in List.fold_left add_built_in_function StringMap.empty [
+                                                               ("print", [StrType, "x"]);
                                                                ("print_int", [IntType, "x"]);
                                                                ("print_float", [FloatType, "x"]);
                                                                ("print_bool", [BoolType, "x"]);
-                                                               ("println", [])]
+                                                               ("println", []);
+                                                               ("double_to_int", [FloatType, "x"]);
+                                                               ("int_to_double", [IntType, "x"]);
+                                                               ]
   in
 
   (* Add function name to symbol table *)
@@ -227,20 +231,26 @@ let check (functions) =
       | TypeCast(ty, expr) ->
         let (ty_exp, var) = check_expr symbols expr in
          (
+          let type_cast_err e1 e2 = 
+            raise (Failure("Cast type not supported from " ^ 
+                          fmt_typ e1 ^ " to " ^ 
+                          fmt_typ e2)) in
+
            match ty with
            | IntType -> (
-             if ty_exp = FloatType then (ty ,STypeCast(ty, (ty_exp, var)))
-             else raise (Failure ("Cannot cast non-float type to int type"))
+             if ty_exp = FloatType || ty_exp = IntType || ty_exp = BoolType || ty_exp = StrType
+                then (ty , STypeCast(ty, (ty_exp, var)))
+             else type_cast_err ty_exp ty
            )
            | FloatType -> (
              if ty_exp = IntType then (ty ,STypeCast(ty, (ty_exp, var)))
-             else raise (Failure ("Cannot cast non-int type to float type "))
+             else type_cast_err ty_exp ty
            )
            | StrType ->
             if ty_exp = IntType || ty_exp = FloatType || ty_exp = BoolType 
             then (ty ,STypeCast(ty, (ty_exp, var)))
-            else raise (Failure ("Can only cast int, float and bool type to string type "))
-           | _ -> raise (Failure("Cast only support int type and float type"))
+            else type_cast_err ty_exp ty
+           | _ -> type_cast_err ty_exp ty
          )
       (*| TypeCast(ty, expr) -> 
         let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)

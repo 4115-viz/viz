@@ -1,35 +1,78 @@
 func main(): none {
 
-    @@my_int: int;
-    @@my_bool: bool;
-    @@my_str: string;
-    @@my_float: float;
+    @my_int: int;
+    @my_bool: bool;
+    @my_str: string;
+    @my_float: float;
 
+    // try a compound cast
+    //@my_int = |as int| "5.0"; // from float string 
+    
     //
-    // currently don't implement a cast to NoneType
+    // INT CASTINGS
     //
 
+    print("==============");
+    print("casting 5.0 to int");
+    @my_int = |as int| 5.0;
+    print(@my_int);
+
+    print("==============");
+    print("casting (5.0 * 2.0) to int");
+    @my_int = |as int| (5.0 * 2.0);
+    print(@my_int);
+
+    print("==============");
+    print("casting 500 to int (this is trivial)");
+    @my_int = |as int| (500); 
+    print(@my_int);
+
+    print("==============");
+    print("casting false to int");
+    @my_int = |as int| false;
+    print(@my_int);
+
+    print("==============");
+    print("casting true to int");
+    @my_int = |as int| true;
+    print(@my_int);
+
+    print("==============");
+    print("casting string to int");
     @my_int = |as int| "5"; // from int string 
-    @my_int = |as int| "5.0"; // from float string 
-    @my_int = |as int| 5.0; // from float
-    @my_int = |as int| 5; // from int
-    //@my_int = |as int| false; // from none, this is an error
-    //@my_int = |as int| true; // from bool, this is an error
+    print(@my_int);
 
+    print("==============");
+    print("casting string to int");
+    @my_int = |as int| "99Hello"; // from int string 
+    print(@my_int);
 
-    @my_str = |as string| 5; // string from int 
-    @my_str = |as string| (5.0 + 5.0); // string from float
+    print("==============");
+    print("casting string to int");
+    @my_int = |as int| "ABC"; // C like, this is legal. Programmer needs to be careful 
+    print(@my_int);
+
+    //
+    // BOOL CASTINGS
+    //
+
+    //@my_str = |as string| 5; // string from int 
+    //@my_str = |as string| (5.0 + 5.0); // string from float
     //@my_str = |as string| 5.0 + 5.0; // string from float, this fails tho
-    @my_str = |as string| true; // string from bool 
-    @my_str = |as string| false; // string from bool
-    @my_str = |as string| "hello world"; // string from string
+    //@my_str = |as string| true; // string from bool 
+    //@my_str = |as string| false; // string from bool
+    //@my_str = |as string| "hello world"; // string from string
  
+    // TODO
     @my_float = |as float| 5; // float from int
-    @my_float = |as float| "5"; // float from string 
-    @my_float = |as float| "5.0"; // float from string 
-    @my_float = |as float| 5.0; // float from float 
+    print(@my_float);
+    //@my_float = |as float| 5.0; // float from float 
+    
+    //@my_float = |as float| "5"; // float from string 
+    //@my_float = |as float| "5.0"; // float from string 
+    
 
-    @my_bool = |as bool| "true"; // bool from string
+    //@my_bool = |as bool| "true"; // bool from string
 
     //@my_bool = |as none| true; //failure cannot cast to NoneType
 }

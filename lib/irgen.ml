@@ -46,9 +46,38 @@ let translate (functions) =
       | None -> failwith "Runtime error: unable to deduce the array's type"
   in
 
+  (* for casting error messages *)
+  let string_of_type = function
+    A.IntType   -> "IntType"
+    | A.BoolType  -> "BoolType"
+    | A.NoneType -> "NoneType"
+    | A.StrType -> "StrType"
+    | A.FloatType -> "FloatType"
+    | A.ArrayType(_,_) -> "ArrayType"
+
+  in
+
+  (* viz Builtins *)
+
   (* Declaring print function *)
   let print_t = L.var_arg_function_type i32_t [| str_t |] in
   let print_func = L.declare_function "printf" print_t the_module in
+
+  (* cast int to double C lib function *)
+  let int_to_double_t = L.var_arg_function_type float_t [| i32_t |] in
+  let int_to_double_func = L.declare_function "int_to_double" int_to_double_t the_module in
+
+  (* cast double to int using C lib function *)
+  let double_to_int_t = L.var_arg_function_type i32_t [| float_t |] in
+  let double_to_int_func = L.declare_function "double_to_int" double_to_int_t the_module in
+
+  (* cast bool to int using C lib function *)
+  let bool_to_int_t = L.var_arg_function_type i32_t [| i1_t |] in
+  let bool_to_int_func = L.declare_function "bool_to_int" bool_to_int_t the_module in
+
+  (* cast str to int using C lib function *)
+  let str_to_int_t = L.var_arg_function_type i32_t [| str_t |] in
+  let str_to_int_func = L.declare_function "str_to_int" str_to_int_t the_module in
 
   (* Format strings for printing *) 
   let int_format_str builder = L.build_global_stringptr "%d\n" "fmt" builder 
@@ -235,26 +264,56 @@ let translate (functions) =
         let arr_v = build_expr local_vars builder arr_e in
         let idx_v = build_expr local_vars builder idx_e in
         L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
-      | STypeCast(typ, e) -> 
-        (
-          let e' = ((build_expr local_vars) builder e) in
-          match typ with
-          | IntType -> 
-            L.build_intcast e' i32_t "tmp" builder
-          | FloatType -> 
-            L.build_fpcast e' float_t "tmp" builder
-          | StrType ->
-            (
-              match fst(e) with
-              | IntType -> L.build_global_string "%d" "fmt" builder 
-              | BoolType -> L.build_global_string "%d" "fmt" builder 
-              | FloatType -> L.build_global_string "%f" "fmt" builder 
-              | _ -> raise (Failure("Cast type not support"))
-            )
-          | _ -> raise (Failure("Cast type not support"))
+      | STypeCast(typ, ((ty_exp, _) as e)) -> 
+          (
+            let type_cast_err e1 e2 = 
+                raise (Failure("Cast type not supported from " ^ 
+                              string_of_type e1 ^ " to " ^ 
+                              string_of_type e2)) 
+            in
+            (* typ is what we would like to cast the expr to *)
+            match typ with
+            | IntType -> 
+                  (match ty_exp with 
+                    | IntType   -> ((build_expr local_vars) builder e)
+                    | BoolType  ->
+                          (                    
+                            L.build_call bool_to_int_func [| ((build_expr local_vars) builder e)|]
+                            "bool_to_int" builder
+                          )
+                    | FloatType ->
+                          (                    
+                            L.build_call double_to_int_func [| ((build_expr local_vars) builder e)|]
+                            "double_to_int" builder
+                          )
+                    | StrType ->
+                          (                    
+                            L.build_call str_to_int_func [| ((build_expr local_vars) builder e)|]
+                            "str_to_int" builder
+                          )                          
+                    | _ -> type_cast_err ty_exp typ
+                  )
+            | FloatType -> 
+              (match ty_exp with 
+                | IntType   -> 
+                    (
+                    L.build_call int_to_double_func [| ((build_expr local_vars) builder e)|]
+                    "int_to_double" builder
+                    )
+                | FloatType -> ((build_expr local_vars) builder e)
+                | _ -> type_cast_err ty_exp typ
+              )
+
+            | StrType ->
+              (
+                match fst(e) with
+                | IntType -> L.build_global_string "%d" "fmt" builder 
+                | BoolType -> L.build_global_string "%d" "fmt" builder 
+                | FloatType -> L.build_global_string "%f" "fmt" builder 
+                | _ -> type_cast_err ty_exp typ
+              )
+            | _ -> type_cast_err ty_exp typ
         )
-        (*L.build_call print_func [| ((build_expr local_vars) builder e) |]
-        "print" builder*)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"
