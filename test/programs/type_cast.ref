@@ -1,0 +1,61 @@
+==============
+casting 5.0 to int
+5
+==============
+casting (5.0 * 2.0) to int
+10
+==============
+casting 500 to int (this is trivial)
+500
+==============
+casting false to int
+0
+==============
+casting true to int
+1
+==============
+casting string to int
+5
+==============
+casting string to int
+99
+==============
+casting string to int
+0
+==============
+casting int to float
+165.000000
+==============
+casting float to float
+5.000000
+==============
+casting string to float
+5.897000
+==============
+casting string to float
+190.450000
+==============
+casting string to float
+0.000000
+==============
+casting bool to string
+true
+==============
+casting bool to string
+false
+==============
+casting int to string
+5898
+==============
+casting float to string
+10.000000
+==============
+casting string to string
+hello world
+==============
+casting float to int to string
+5.89 --> 5 --> 5
+5
+==============
+casting variable @x: int = 567 to float
+567.000000

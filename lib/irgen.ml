@@ -67,6 +67,10 @@ let translate (functions) =
   let int_to_double_t = L.var_arg_function_type float_t [| i32_t |] in
   let int_to_double_func = L.declare_function "int_to_double" int_to_double_t the_module in
 
+  (* cast string to double C lib function *)
+  let str_to_double_t = L.var_arg_function_type float_t [| str_t |] in
+  let str_to_double_func = L.declare_function "str_to_double" str_to_double_t the_module in
+
   (* cast double to int using C lib function *)
   let double_to_int_t = L.var_arg_function_type i32_t [| float_t |] in
   let double_to_int_func = L.declare_function "double_to_int" double_to_int_t the_module in
@@ -79,6 +83,18 @@ let translate (functions) =
   let str_to_int_t = L.var_arg_function_type i32_t [| str_t |] in
   let str_to_int_func = L.declare_function "str_to_int" str_to_int_t the_module in
 
+  (* cast bool to string C lib function *)
+  let bool_to_str_t = L.var_arg_function_type str_t [| i1_t |] in
+  let bool_to_str_func = L.declare_function "bool_to_str" bool_to_str_t the_module in
+
+  (* cast int to string C lib function *)
+  let int_to_str_t = L.var_arg_function_type str_t [| i32_t |] in
+  let int_to_str_func = L.declare_function "int_to_str" int_to_str_t the_module in
+
+  (* cast bool to string C lib function *)
+  let double_to_str_t = L.var_arg_function_type str_t [| float_t |] in
+  let double_to_str_func = L.declare_function "double_to_str" double_to_str_t the_module in
+  
   (* Format strings for printing *) 
   let int_format_str builder = L.build_global_stringptr "%d\n" "fmt" builder 
   and str_format_str builder = L.build_global_stringptr "%s\n" "fmt" builder
@@ -301,15 +317,33 @@ let translate (functions) =
                     "int_to_double" builder
                     )
                 | FloatType -> ((build_expr local_vars) builder e)
+                | StrType ->
+                  (                    
+                    L.build_call str_to_double_func [| ((build_expr local_vars) builder e)|]
+                    "str_to_double" builder
+                  )   
                 | _ -> type_cast_err ty_exp typ
               )
 
             | StrType ->
               (
                 match fst(e) with
-                | IntType -> L.build_global_string "%d" "fmt" builder 
-                | BoolType -> L.build_global_string "%d" "fmt" builder 
-                | FloatType -> L.build_global_string "%f" "fmt" builder 
+                | IntType ->
+                  (                    
+                    L.build_call int_to_str_func [| ((build_expr local_vars) builder e)|]
+                    "int_to_str" builder
+                  )   
+                | BoolType -> 
+                  (                    
+                    L.build_call bool_to_str_func [| ((build_expr local_vars) builder e)|]
+                    "bool_to_str" builder
+                  )   
+                | FloatType ->
+                  (                    
+                    L.build_call double_to_str_func [| ((build_expr local_vars) builder e)|]
+                    "double_to_str" builder
+                  )   
+                | StrType -> ((build_expr local_vars) builder e)
                 | _ -> type_cast_err ty_exp typ
               )
             | _ -> type_cast_err ty_exp typ

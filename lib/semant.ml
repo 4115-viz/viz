@@ -52,8 +52,6 @@ let check (functions) =
                                                                ("print_float", [FloatType, "x"]);
                                                                ("print_bool", [BoolType, "x"]);
                                                                ("println", []);
-                                                               ("double_to_int", [FloatType, "x"]);
-                                                               ("int_to_double", [IntType, "x"]);
                                                                ]
   in
 
@@ -237,53 +235,23 @@ let check (functions) =
                           fmt_typ e2)) in
 
            match ty with
-           | IntType -> (
-             if ty_exp = FloatType || ty_exp = IntType || ty_exp = BoolType || ty_exp = StrType
-                then (ty , STypeCast(ty, (ty_exp, var)))
-             else type_cast_err ty_exp ty
-           )
-           | FloatType -> (
-             if ty_exp = IntType then (ty ,STypeCast(ty, (ty_exp, var)))
-             else type_cast_err ty_exp ty
-           )
-           | StrType ->
-            if ty_exp = IntType || ty_exp = FloatType || ty_exp = BoolType 
-            then (ty ,STypeCast(ty, (ty_exp, var)))
-            else type_cast_err ty_exp ty
-           | _ -> type_cast_err ty_exp ty
+              | IntType -> (
+                if ty_exp = FloatType || ty_exp = IntType || ty_exp = BoolType || ty_exp = StrType
+                    then (ty , STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              )
+              | FloatType -> (
+                if ty_exp = IntType || ty_exp = FloatType || ty_exp = StrType 
+                    then (ty ,STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              )
+              | StrType ->
+                if ty_exp = IntType || ty_exp = FloatType || ty_exp = BoolType || ty_exp = StrType 
+                then (ty ,STypeCast(ty, (ty_exp, var)))
+                else type_cast_err ty_exp ty
+              | _ -> type_cast_err ty_exp ty
          )
-      (*| TypeCast(ty, expr) -> 
-        let (rtype, r') = check_expr symbols expr in (* thing we want to cast *)
-        let err = (fun ty1 ty2 -> raise (Failure ("Cannot cast " ^ fmt_typ ty1 ^ " to " ^ fmt_typ ty2  )) )
-        in let casted_expr = 
-            (match ty with
-                  | IntType -> 
-                          (* i think the actual casting may be done here, or in LLVM not entirely sure
-                              I originlally had each of the subcases cast but I couldnt get the return type correctly
-                          *)
-                          ( match rtype with 
-                          | IntType | FloatType | StrType -> r'
-                          | _ -> err rtype ty
-                          )
-                  | FloatType ->
-                          ( match rtype with 
-                          | IntType | FloatType | StrType -> r'
-                          | _ -> err rtype ty
-                          )
-                  | StrType ->
-                          ( match rtype with 
-                          | IntType | FloatType | StrType | BoolType -> r' (* there is in fact of string_of_bool cast in ocaml *)
-                          | _ -> err rtype ty
-                          )
-                  | BoolType ->
-                          ( match rtype with 
-                          | StrType -> r' (* there is in fact a bool_of_string cast in ocaml *)
-                          | _ -> err rtype ty
-                          )
-                  | NoneType -> raise (Failure "Cannot cast to NoneType")
-                  | ArrayType _ -> raise(Failure "TODO: NOT SUPPORT")
-            )
-        in (ty, casted_expr) *)
+
     in
 
     let check_bool_expr symbols e =
