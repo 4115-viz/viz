@@ -1,7 +1,7 @@
 func main(): none {
     
-    @@x: int;
-    @@y: bool;
+    @x: int = 5;
+    @y: bool = true;
     @x = 5; 
     @y = true;
 
@@ -20,7 +20,7 @@ func main(): none {
     }
     print("------------------------");
     
-    /*
+    
     //
         //else if
     //
@@ -69,5 +69,5 @@ func main(): none {
     }
     print("------------------------");
 
-    */
+    
 }
