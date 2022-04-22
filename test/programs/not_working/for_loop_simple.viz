@@ -1,6 +1,0 @@
-func main(): none {
-    @x: int = 1;
-    for @x in 1 ... <= 5 {
-        print("for loop default step 1");
-    }
-}

@@ -1,0 +1,114 @@
+testing <= condition with default step 1
+========================
+for loop <=, default step 1
+iteration
+1
+========================
+========================
+for loop <=, default step 1
+iteration
+2
+========================
+========================
+for loop <=, default step 1
+iteration
+3
+========================
+========================
+for loop <=, default step 1
+iteration
+4
+========================
+========================
+for loop <=, default step 1
+iteration
+5
+========================
+
+testing <= condition with step 2
+========================
+for loop <=, step 2
+iteration
+1
+========================
+========================
+for loop <=, step 2
+iteration
+3
+========================
+========================
+for loop <=, step 2
+iteration
+5
+========================
+
+testing < condition with step 1
+========================
+for loop <, step 1
+iteration
+1
+========================
+========================
+for loop <, step 1
+iteration
+2
+========================
+========================
+for loop <, step 1
+iteration
+3
+========================
+========================
+for loop <, step 1
+iteration
+4
+========================
+
+testing > condition with step -1
+========================
+for loop >, step -1
+iteration
+10
+========================
+========================
+for loop >, step -1
+iteration
+9
+========================
+========================
+for loop >, step -1
+iteration
+8
+========================
+========================
+for loop >, step -1
+iteration
+7
+========================
+========================
+for loop >, step -1
+iteration
+6
+========================
+
+testing >= condition with step -5
+========================
+for loop >=, step -5
+iteration
+110
+========================
+========================
+for loop >=, step -5
+iteration
+105
+========================
+========================
+for loop >=, step -5
+iteration
+100
+========================
+========================
+for loop >=, step -5
+iteration
+95
+========================

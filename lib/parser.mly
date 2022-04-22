@@ -158,7 +158,7 @@ loop:
             {
                 let var_init   = Assign($2, IntLit($4)) in (* ex: i = 0 *)
                 let predicate  = Binop(Id($2), $6, IntLit($7)) in (* ex: i < 5 *)
-                let update     = Assign( $2, Binop(Id($2), Add, $8) ) in (* ex: i = i + 1 *)
+                let update     = Assign( $2, Binop(Id($2), Add, $8) ) in (* ex1: i=i+1, ex2: i=i+(-1) *)
                 let block_code = $9 in
                 For(var_init, predicate, update, block_code)
             }
@@ -168,11 +168,12 @@ end_condition:
   | GT   { Great  }
   | GTEQ { Geq    }
   | LTEQ { Leq    }
-  | EQ   { Eq     }
+  /*| EQ   { Eq     }*/ /* this makes no sense, we should get rid of */
 
 increment:
   /* dont define increment, default to 1 */ { IntLit(1) } 
-  | STEP LIT_INT { IntLit($2)}
+  | STEP LIT_INT { IntLit($2)} /* supports a positive step */
+  | STEP MINUS LIT_INT { IntLit($3 * -1) } /* supports a negative step */
 
 block: 
   | LBRACE stmt_list RBRACE                 { Block $2 }
