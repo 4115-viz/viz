@@ -71,6 +71,7 @@ sdecls:
 /* @x: string; */
 vdecl:
   | ID_VAR COLON builtin_type {($3, $1)}
+  | ID_VAR COLON ID_STRUCT { Struct($2) }
 
 
 builtin_type:
@@ -80,7 +81,6 @@ builtin_type:
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
   | T_ARRAY BAR builtin_type BAR { ArrayType(Some($3), None) }
-  /*| ID_STRUCT { Struct($1) } */ /* not yet, this is for assigning a variable to this type */
 
 /* function declaration */
 fdecl:
