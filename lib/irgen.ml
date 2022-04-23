@@ -94,6 +94,47 @@ let translate (functions) =
   (* cast bool to string C lib function *)
   let double_to_str_t = L.var_arg_function_type str_t [| float_t |] in
   let double_to_str_func = L.declare_function "double_to_str" double_to_str_t the_module in
+
+  (* string concat library function *)
+  let string_concat_t = L.var_arg_function_type str_t [| str_t ; str_t |] in
+  let string_concat_func = L.declare_function "string_concat" string_concat_t the_module in
+
+  (* string concat library function *)
+  let str_len_func_t = L.var_arg_function_type i32_t [| str_t |] in
+  let str_len_func = L.declare_function "str_len" str_len_func_t the_module in
+
+  (* to_upper string library function *)
+  let to_upper_func_t = L.var_arg_function_type str_t [| str_t |] in
+  let to_upper_func = L.declare_function "to_upper" to_upper_func_t the_module in
+
+  (* to_upper string library function *)
+  let to_lower_func_t = L.var_arg_function_type str_t [| str_t |] in
+  let to_lower_func = L.declare_function "to_lower" to_lower_func_t the_module in
+
+  (* string comparison functions *)
+  (* string_equals *)
+  let string_equals_func_t = L.var_arg_function_type i32_t [| str_t ; str_t |] in
+  let string_equals_func = L.declare_function "string_equals" string_equals_func_t the_module in
+  
+  (* strin not equal *)
+  let string_not_equals_func_t = L.var_arg_function_type i32_t [| str_t ; str_t|] in
+  let string_not_equals_func = L.declare_function "string_not_equals" string_not_equals_func_t the_module in
+
+  (* string lt *)
+  let string_lt_func_t = L.var_arg_function_type i32_t [| str_t ; str_t |] in
+  let string_lt_func = L.declare_function "string_lt" string_lt_func_t the_module in
+
+  (* string gt *)
+  let string_gt_func_t = L.var_arg_function_type i32_t [| str_t ; str_t |] in
+  let string_gt_func = L.declare_function "string_gt" string_gt_func_t the_module in
+
+  (* string lte *)
+  let string_lte_func_t = L.var_arg_function_type i32_t [| str_t ; str_t |] in
+  let string_lte_func = L.declare_function "string_lte" string_lte_func_t the_module in
+
+  (* string gte *)
+  let string_gte_func_t = L.var_arg_function_type i32_t [| str_t ; str_t |] in
+  let string_gte_func = L.declare_function "string_gte" string_gte_func_t the_module in
   
   (* Format strings for printing *) 
   let int_format_str builder = L.build_global_stringptr "%d\n" "fmt" builder 
@@ -214,7 +255,32 @@ let translate (functions) =
             | A.Or      -> L.build_or
             | _ -> raise ((Failure "Unimplemented Binary Op for Bools"))
             ) e1' e2' "tmp" builder
-          | A.StrType -> raise ((Failure "TODO: Unimplemented Binary Op for StrType"))
+          | A.StrType -> 
+            ( match op with
+            | A.Add -> 
+              L.build_call string_concat_func [| e1' ; e2'|]
+              "string_concat" builder
+            | A.Eq -> 
+              L.build_call string_equals_func [| e1' ; e2'|]
+              "string_equals" builder
+            | A.Neq -> 
+              L.build_call string_not_equals_func [| e1' ; e2'|]
+              "string_not_equals" builder
+            | A.Leq -> 
+              L.build_call string_lte_func [| e1' ; e2'|]
+              "string_lte" builder
+            | A.Geq ->
+              L.build_call string_gte_func [| e1' ; e2'|]
+              "string_gte" builder
+            | A.Less -> 
+              L.build_call string_lt_func [| e1' ; e2'|]
+              "string_lt" builder
+            | A.Great ->
+              L.build_call string_gt_func [| e1' ; e2'|]
+              "string_gt" builder
+            | _ -> raise ((Failure "Unimplemented Binary Op for StrType"))
+            )
+            
           | A.NoneType -> raise ((Failure "TODO: Unimplemented Binary Op for NoneType"))
           | A.ArrayType _ -> raise ((Failure "TODO: Unimplemented Binary Op for ArrayType"))
         )
@@ -256,6 +322,15 @@ let translate (functions) =
       | SFuncCall("print_bool", [e])  -> 
           L.build_call print_func [| int_format_str builder; ((build_expr local_vars) builder e)|]
           "printf" builder
+      | SFuncCall("str_len", [e])  -> 
+            L.build_call str_len_func [| ((build_expr local_vars) builder e)|]
+            "str_len" builder
+      | SFuncCall("to_upper", [e])  -> 
+            L.build_call to_upper_func [| ((build_expr local_vars) builder e)|]
+            "to_upper" builder
+      | SFuncCall("to_lower", [e])  -> 
+            L.build_call to_lower_func [| ((build_expr local_vars) builder e)|]
+            "to_lower" builder
       | SFuncCall (f, args) ->
         let (fdef, _) = StringMap.find f function_decls in
         let llargs = List.rev (List.map ((build_expr local_vars) builder) (List.rev args)) in
