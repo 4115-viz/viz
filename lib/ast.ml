@@ -16,19 +16,23 @@ type typ =
 type bind = typ * string
 
 type expr =
+  | PostfixExpr of postfix_expr
   | StrLit of string
   | IntLit of int
   | FloatLit of float
   | BoolLit of bool
   | NoneLit
   | ArrayLit of expr list
-  | Id of string
-  | Assign of string * expr
+  | Assign of postfix_expr * expr
   | FuncCall of string * expr list
   | Binop of expr * bop * expr
   | Unop of uop * expr
-  | Subscript of expr * expr
   | TypeCast of typ * expr
+
+and postfix_expr =
+  | Id of string
+  | MemberAccess of postfix_expr * string
+  | Subscript of postfix_expr * expr
 
 type var_decl = bind * expr option
 

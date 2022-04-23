@@ -123,7 +123,6 @@ stmt_list:
   /* nothing */ { [] }
   | stmt stmt_list  { $1::$2 }
 
-
 stmt:
   | expr SEMI { Expr $1 }
   | if_stmt { $1 }
@@ -139,7 +138,7 @@ stmt:
       let create_var_decl = (fun var_name -> ((vdecl_ty, var_name), vdecl_exp)) in
       let list_of_decls = List.fold_left (fun lst var_name -> (create_var_decl var_name) :: lst ) [] var_list 
       in VarDeclList(list_of_decls)
-    }  
+    }
 
 vdecl_list_init_opt:
   | ARROW LPAREN typ RPAREN            { ($3 , None   )   }
@@ -235,20 +234,21 @@ expr:
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
+  | postfix_expr ASSIGN expr { Assign($1, $5) } /* struct member */
   | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Add, $3))}
   | ID_VAR MINUSEQ expr { Assign($1, Binop(Id($1), Sub, $3))} 
   | ID_VAR TIMESEQ expr { Assign($1, Binop(Id($1), Mult, $3))}
   | ID_VAR DIVEQ expr { Assign($1, Binop(Id($1), Div, $3))}
   | ID_VAR MODEQ expr { Assign($1, Binop(Id($1), Mod, $3))}
+
+  /* Array subscript [] */
+  | expr LBRACKET expr RBRACKET { Subscript($1, $3) }
   
   /* remove clarifying parens */
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 
   /* function call */
   | ID_FUNC LPAREN exprs_opt RPAREN { FuncCall($1, $3) }
-
-  /* Array subscript [] */
-  | expr LBRACKET expr RBRACKET { Subscript($1, $3) }
 
   /* just need to ensure that this is right associative */
   | BAR AS typ BAR expr {TypeCast($3, $5)}
@@ -268,3 +268,7 @@ exprs_opt:
 exprs:
   expr  { [$1] }
   | expr COMMA exprs { $1::$3 }
+
+postfix_expr:
+  | ID_VAR
+  | postfix_expr DOT string { MemberAccess() }
