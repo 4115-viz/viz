@@ -1,0 +1,56 @@
+func main(): none {
+
+    print("==================");
+    print("concatenating two string literals");
+    print("Hello " + "World!");
+    print("==================");
+
+    @str1, @str2, @str3 -> (string);
+    @str1 = "Hello ";
+    @str2 = "World! ";
+    @str3 = |as string| (4115);
+    
+    print("==================");
+    print("concatenating three string variables");   
+    print(@str1 + @str2 + @str3);
+    print("==================");
+
+    print("==================");
+    print("testing str_len(). expecting 17");
+    @len: int = str_len(@str1 + @str2 + @str3);
+    print(@len);
+    print("==================");   
+
+    print("==================");
+    print("testing to_upper().");
+    @my_str: string = "i'm yelling";
+    print(@my_str);
+    print(to_upper(@my_str));
+    print("testing strlen again. expecting 11");
+    print(str_len(to_upper(@my_str)));
+    print("==================");   
+
+    print("==================");
+    print("testing to_lower().");
+    @my_str: string = "I'M YelLinG";
+    print(@my_str);
+    print(to_lower(@my_str));
+    print("==================");   
+
+    print("hello" == "hello");
+    print("hello" == "Hello");
+    print("hello" != "APPLE");
+    print("hello" != "hello");
+
+    print("hello" > "apple");
+    print("hello" < "apple");
+    print("hello" < "zebra");
+    print("hello" > "zebra");
+    print("hello" > "hello");
+
+    print("hello" >= "hello");
+    print("apple" <= "hello");
+
+    print("zeta" <= "columbia");
+    
+}
