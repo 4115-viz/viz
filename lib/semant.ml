@@ -28,29 +28,22 @@ let check (functions) =
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
 
-  (* Collect function declarations for built-in functions: no bodies *)
-  (* need to convert print to print_int *)
-  (* should also have a print_bool, print_string, print_none, print_float*)
-  
-  (* create a list of pairs. (func name, func_def) *)
- (*
- let builtin_funcs = [
-  {name = "print"; builtin_type = NoneType; params = [(StrType, "x")]; body = []};
-] and iterate through the list
- *)
-  
+  (* built-in declarations *)
   let built_in_decls =
-    let add_built_in_function map (name, f) = StringMap.add name {
-      rtyp = NoneType;
+    let add_built_in_function map (ret_type, name, f) = StringMap.add name {
+      rtyp = ret_type;
       fname = name;
       formals = f;
       body = [] } map
       in List.fold_left add_built_in_function StringMap.empty [
-                                                               ("print", [StrType, "x"]);
-                                                               ("print_int", [IntType, "x"]);
-                                                               ("print_float", [FloatType, "x"]);
-                                                               ("print_bool", [BoolType, "x"]);
-                                                               ("println", []);
+                                                               (NoneType, "print", [StrType, "x"]);
+                                                               (NoneType, "print_int", [IntType, "x"]);
+                                                               (NoneType, "print_float", [FloatType, "x"]);
+                                                               (NoneType, "print_bool", [BoolType, "x"]);
+                                                               (NoneType, "println", []);
+                                                               (IntType, "str_len", [StrType, "x"]);
+                                                               (StrType, "to_upper", [StrType, "x"]);
+                                                               (StrType, "to_lower", [StrType, "x"]);
                                                                ]
   in
 
@@ -151,20 +144,11 @@ let check (functions) =
             (fun my_op -> match my_op with
             | (Add | Sub | Mult | Mod | Div) when ltype = IntType && rtype = IntType -> IntType
             | (Add | Sub | Mult | (*Mod |*) Div) when ltype = FloatType && rtype = FloatType -> FloatType
-            (*| (Div) when ltype = IntType && rtype = IntType -> 
-              (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
-              let () = print_endline (fmt_expr r) in 
-              if r = IntLit(0) then raise (Failure ("Cannot Divide by Zero in " ^ fmt_expr l 
-                                            ^ " " ^ fmt_op my_op ^ " " ^ fmt_expr r))
-                    else IntType
-            | (Div) when ltype = FloatType && rtype = FloatType -> 
-              (* is this the correct way to check for div by zero? is there a way to evaluat the expr on RHS? *)
-              if r = FloatLit(0.0) then raise (Failure ("Cannot Divide by Zero in " ^ fmt_expr l 
-                                              ^ " " ^ fmt_op my_op ^ " " ^ fmt_expr r))
-                    else FloatType *)
             | (Eq | Neq) -> BoolType
+            | Add when ltype = StrType && rtype = StrType  -> StrType
             | (Leq | Geq | Less | Great) when (ltype = IntType && rtype = IntType ||
-                                                ltype = FloatType && rtype = FloatType) -> BoolType
+                                               ltype = FloatType && rtype = FloatType ||
+                                               ltype = StrType && rtype = StrType) -> BoolType
             | (And | Or) when (ltype = BoolType && rtype = BoolType) -> BoolType
             | _ -> raise (Failure ("No operator (" ^ fmt_op bo ^ ") " ^ "to handle type (" ^
                           fmt_typ ltype ^ ", " ^ fmt_typ rtype))
@@ -206,6 +190,21 @@ let check (functions) =
                 | NoneType -> raise (Failure ("None type cannot be printed"))
                 | ArrayType _ -> raise(Failure ("TODO: print array hasn't been implemented"))
               )
+          (* we could change this to length, and pattern match types
+            for instance, arrays could have a length function which is sent to array_len
+          *)
+          else if fname = "str_len" then (* could change this to length later !*)
+            (
+              match (fst (List.hd args')) with
+              | StrType -> "str_len"
+              | _ -> raise (Failure ("cannot get string length of non string"))
+            )
+          else if fname = "to_upper" || fname = "to_lower" then (* could change this to length later !*)
+            (
+              match (fst (List.hd args')) with
+              | StrType -> fname
+              | _ -> raise (Failure ("invalid type for to_upper/to_lower"))
+            )
             else fname
         ) 
         in (fd.rtyp, SFuncCall(func_name, args'))
