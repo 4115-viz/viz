@@ -26,7 +26,8 @@ open Ast
 
 %token <string> ID_FUNC /* function names */
 %token <string> ID_VAR /* variable access or assign */
-%token <string> ID_STRUCT /* class names */
+%token <string> ID_STRUCT /* struct names */
+%token <string> ID_MEMBER /* struct member */
 %token <string> LIT_STR
 %token <int> LIT_INT
 %token <float> LIT_FLOAT
@@ -201,15 +202,13 @@ else_stmt:
   | ELSE stmt { $2 }
 
 expr:
+  | postfix_expr { PostfixExpr($1) }
   /* literal */
   | string_literal { StrLit($1) }
   | LIT_INT   { IntLit($1)   }
   | LIT_BOOL  { BoolLit($1)  }
   | LIT_FLOAT { FloatLit($1) }
   | LBRACKET exprs_opt RBRACKET { ArrayLit($2) }
-
-  /* variable access */
-  | ID_VAR { Id($1) }
 
   /* arithmetic */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
@@ -234,15 +233,12 @@ expr:
 
   /* assignment */
   | ID_VAR ASSIGN expr { Assign($1, $3) }
-  | postfix_expr ASSIGN expr { Assign($1, $5) } /* struct member */
+  | postfix_expr ASSIGN expr { Assign($1, $3) } /* struct member */
   | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Add, $3))}
   | ID_VAR MINUSEQ expr { Assign($1, Binop(Id($1), Sub, $3))} 
   | ID_VAR TIMESEQ expr { Assign($1, Binop(Id($1), Mult, $3))}
   | ID_VAR DIVEQ expr { Assign($1, Binop(Id($1), Div, $3))}
   | ID_VAR MODEQ expr { Assign($1, Binop(Id($1), Mod, $3))}
-
-  /* Array subscript [] */
-  | expr LBRACKET expr RBRACKET { Subscript($1, $3) }
   
   /* remove clarifying parens */
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
@@ -270,5 +266,8 @@ exprs:
   | expr COMMA exprs { $1::$3 }
 
 postfix_expr:
-  | ID_VAR
-  | postfix_expr DOT string { MemberAccess() }
+  /* variable access */
+  | ID_VAR { Id($1) }
+  | postfix_expr DOT ID_MEMBER { MemberAccess($1, $3) }
+    /* Array subscript [] */
+  | postfix_expr LBRACKET expr RBRACKET { Subscript($1, $3) }
