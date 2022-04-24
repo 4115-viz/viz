@@ -33,9 +33,9 @@ and fmt_sx se =
           string_of_uop uo ^ " " ^ fmt_sexpr r
       | STypeCast(st, se) -> "(Casting " ^ fmt_sexpr se ^ "->" ^ fmt_typ st ^ "\n"
       | SPostfixExpr x -> (match x with
-        | SId x -> "Id(" ^ x ^ ")"
-        | SSubscript(e, i) -> (fmt_sexpr (PostfixExpr e)) ^ "[" ^ (fmt_sexpr i) ^ "]"
-        | SMemberAccess (e,member) -> (fmt_expr (PostfixExpr e)) ^ "." ^ member
+        | SId id -> "Id(" ^ id ^ ")"
+        | SSubscript((t_spe, spe), i) -> (fmt_sexpr (t_spe, SPostfixExpr spe)) ^ "[" ^ (fmt_sexpr i) ^ "]"
+        | SMemberAccess ((t_spe, spe),member) -> (fmt_sexpr (t_spe, SPostfixExpr spe)) ^ "." ^ member
       )
     )
 

@@ -67,7 +67,7 @@ let rec fmt_expr = function
     string_of_uop uo ^ " " ^ fmt_expr r
   | TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ "->" ^ fmt_typ t ^ "\n"
   | PostfixExpr x -> (match x with
-    | Id x -> "Id(" ^ x ^ ")"
+    | Id id -> "Id(" ^ id ^ ")"
     | Subscript(e, i) -> (fmt_expr (PostfixExpr e)) ^ "[" ^ (fmt_expr i) ^ "]"
     | MemberAccess (e,member) -> (fmt_expr (PostfixExpr e)) ^ "." ^ member
   )

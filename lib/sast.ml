@@ -2,6 +2,7 @@ open Ast
 
 type sexpr = typ * sx
 and sx =
+  | SPostfixExpr of spostfix_expr
   | SStrLit of string
   | SIntLit of int
   | SFloatLit of float
@@ -16,8 +17,8 @@ and sx =
 
 and spostfix_expr =
   | SId of string
-  | SMemberAccess of postfix_expr * string
-  | SSubscript of postfix_expr * expr
+  | SMemberAccess of (typ * spostfix_expr) * string
+  | SSubscript of (typ * spostfix_expr) * sexpr
 
 type svar_decl = bind * sexpr option
 
