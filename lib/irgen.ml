@@ -164,9 +164,13 @@ let translate (_, functions) =
                 let _ = (L.build_store elem cptr builder) 
                 in i+1)
                 0 all_elem); ptr)
-      | SId s       -> L.build_load (lookup local_vars s) s builder
-      | SAssign (s, e) -> let e' = (build_expr local_vars) builder e in
-        ignore(L.build_store e' (lookup local_vars s) builder); e'
+      | SAssign (spe, e) -> 
+        let e' = (build_expr local_vars) builder e in
+        (match spe with
+        | (_, SId id) -> 
+          ignore(L.build_store e' (lookup local_vars id) builder); e'
+        | _ -> failwith "TODO: irgen SAssign"
+        )
       | SBinop ((op_ret_type, _ ) as e1, op, e2) ->
         (
         let e1' = (build_expr local_vars) builder e1
@@ -271,10 +275,6 @@ let translate (_, functions) =
                       | _ -> f ^ "_result") in
 
         L.build_call fdef (Array.of_list llargs) result builder
-      | SSubscript (arr_e, idx_e) -> 
-        let arr_v = build_expr local_vars builder arr_e in
-        let idx_v = build_expr local_vars builder idx_e in
-        L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
       | STypeCast(typ, ((ty_exp, _) as e)) -> 
           (
             let type_cast_err e1 e2 = 
@@ -343,7 +343,14 @@ let translate (_, functions) =
               )
             | _ -> type_cast_err ty_exp typ
         )
-    in
+      | SPostfixExpr (typ, spx) -> ( match spx with
+        | SId id -> L.build_load (lookup local_vars id) id builder
+        | SSubscript (spe, idx_sexpr) -> 
+          let arr_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
+          let idx_v = build_expr local_vars builder idx_sexpr in
+          L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
+        | _ -> failwith "TODO:")
+      in
 
     (* LLVM insists each basic block end with exactly one "terminator"
        instruction that transfers control.  This function runs "instr builder"
