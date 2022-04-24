@@ -11,6 +11,11 @@ module StringHash = Hashtbl.Make(struct
   let hash = Hashtbl.hash
 end)
 
+type struct_body {
+  members: typ StringMap.t
+  fields: typ StringMap.t
+}
+
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
 
@@ -255,7 +260,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
          )
       | PostfixExpr pe -> 
         let _ = check_postfix_expr symbols pe in
-        failwith "TODO:"
+        failwith "TODO: Semant PostfixExpr"
 
     and check_postfix_expr (symbols: typ StringMap.t) (pe: postfix_expr) : spostfix_expr =
       match pe with
@@ -277,8 +282,14 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         in
         if idx >= len then failwith "Index out of range."
         else (arr_ele_typ, SSubscript(arr_spe, idx_sexpr))
-      | MemberAccess (_, _) ->
-        failwith "TODO:"
+      | MemberAccess (pe, memebr_id) ->
+        (* Check the given postfix expression is a struct *)
+        match check_postfix_expr symbols pe with
+        | (StructType _, _) -> failwith "TODO: semant member access"
+        | _ -> failwith "The type of the given postfix expression must be Struct."
+        
+        (* Check the memebr_id exists in the given struct *)
+
     in
     
     let check_bool_expr symbols e =
