@@ -86,10 +86,17 @@ let check ((structs: struct_def list), (functions: func_def list)) =
   in
 
   (* Return a struct from our symbol table *)
-  let find_struct s =
-    try StringMap.find s struct_decls
-    with Not_found -> raise (Failure ("unrecognized struct " ^ s))
+  let find_struct name: struct_symbol =
+    try StringMap.find name struct_decls
+    with Not_found -> raise (Failure ("unrecognized struct: " ^ name))
   in
+
+  (* Given a struct symbol, and the member name, return the type of that member*)
+  let find_struct_member (symbol: struct_symbol) (member_id:string): typ =
+    try StringMap.find member_id symbol.members
+    with Not_found -> raise (Failure ("unrecognized member: " ^ member_id))
+  in
+
 
   (* Return a function from our symbol table *)
   let find_func s =
@@ -289,14 +296,18 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         in
         if idx >= len then failwith "Index out of range."
         else (arr_ele_typ, SSubscript(arr_spe, idx_sexpr))
-      | MemberAccess (pe, memebr_id) ->
-        (* Check the given postfix expression is a struct *)
-        match check_postfix_expr symbols pe with
-        | (StructType _, _) -> failwith ("TODO: semant member access" ^ memebr_id)
-        | _ -> failwith "The type of the given postfix expression must be Struct."
-        
+      | MemberAccess (pe, member_id) ->
+        (* Check the type of the given postfix expression is a struct *)
+        let spe = check_postfix_expr symbols pe in
+        let struct_name:string = match spe with
+          | (StructType name, _) -> name
+          | _ -> failwith "The type of the given postfix expression must be Struct."
+        in
+        (* Check the given struct existed *)
+        let s_symbol = find_struct struct_name in
         (* Check the memebr_id exists in the given struct *)
-
+        let member_type = find_struct_member s_symbol member_id in
+        (member_type, SMemberAccess(spe, member_id))
     in
     
     let check_bool_expr symbols e =
