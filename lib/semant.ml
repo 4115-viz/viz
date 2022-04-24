@@ -12,7 +12,7 @@ module StringHash = Hashtbl.Make(struct
 end)
 
 (* Used to query a struct using it's name from a StringMap *)
-type struct_body = {
+type struct_symbol = {
   members: typ StringMap.t
 }
 
@@ -24,7 +24,7 @@ type struct_body = {
 let check ((structs: struct_def list), (functions: func_def list)) =
 
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : (typ * string) list) =
+  let check_binds (kind : string) (binds : bind list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -48,41 +48,48 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                ]
   in
 
+  (* Add Struct to the symbol table *)
+  let add_struct map (s:struct_def) =
+    let name = s.name in
+    let add_member map (member:bind) =
+      match member with
+      | (_, m_id) when StringMap.mem m_id map -> 
+        failwith ("Duplicate struct member: " ^ m_id)
+      | (m_typ, m_id) -> StringMap.add m_id m_typ map 
+    in
+    let (symbol:struct_symbol) = {
+      members = List.fold_left add_member StringMap.empty s.members;
+    } 
+  in
+    match s with (* No duplicate structs or redefinitions of built-ins *)
+    | _ when StringMap.mem name map -> failwith ("duplicate struct " ^ name)
+    | _ ->  StringMap.add name symbol map
+  in
+
   (* Add function name to symbol table *)
   let add_func map fd =
-    let built_in_err = "function " ^ fd.fname ^ " may not be defined"
-    and dup_err = "duplicate function " ^ fd.fname
-    and make_err er = raise (Failure er)
-    and n = fd.fname (* Name of the function *)
-    in match fd with (* No duplicate functions or redefinitions of built-ins *)
-      _ when StringMap.mem n built_in_decls -> make_err built_in_err
-    | _ when StringMap.mem n map -> make_err dup_err
-    | _ ->  StringMap.add n fd map
+    let name = fd.fname in
+    match fd with (* No duplicate functions or redefinitions of built-ins *)
+    | _ when StringMap.mem name built_in_decls -> 
+      failwith ("function " ^ name ^ " may not be defined, it is reserved")
+    | _ when StringMap.mem name map -> 
+      failwith ("duplicate function " ^ name)
+    | _ -> StringMap.add name fd map
   in
-  
-  (* Add Struct to the symbol table *)
-  (* let add_struct map (s:struct_def) =
-    let dup_err = "duplicate struct " ^ s.sname
-    and make_err er = raise (Failure er)
-    and n = s.sname (* Name of the struct *)
-    in match s with (* No duplicate structs or redefinitions of built-ins *)
-    | _ when StringMap.mem n map -> make_err dup_err
-    | _ ->  StringMap.add n s map
-  in *)
+
+  (* Collect all struct names into one symbol table *)
+  let struct_decls = List.fold_left add_struct StringMap.empty structs
+  in
 
   (* Collect all function names into one symbol table *)
   let function_decls = List.fold_left add_func built_in_decls functions
   in
 
-  (* Collect all struct names into one symbol table *)
-  (* let struct_decls = List.fold_left add_struct StringMap.empty structs
-  in *)
-
-    (* Return a function from our symbol table *)
-  (* let find_struct s =
+  (* Return a struct from our symbol table *)
+  let find_struct s =
     try StringMap.find s struct_decls
     with Not_found -> raise (Failure ("unrecognized struct " ^ s))
-  in *)
+  in
 
   (* Return a function from our symbol table *)
   let find_func s =
@@ -93,8 +100,8 @@ let check ((structs: struct_def list), (functions: func_def list)) =
   let _ = find_func "main" in (* Ensure "main" is defined *)
 
   let check_struct (s:struct_def) =
-    (* TODO: *)
-    check_binds "structs" s.members; (* these will be the instance variables *)
+    (* Make sure no members are void or duplicate *)
+    check_binds "struct members" s.members;
     (* body of check_struct *)
     { 
       sname = s.name;
@@ -104,7 +111,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
 
   let check_func func =
     (* Make sure no formals are void or duplicates *)
-    check_binds "formal" func.formals;
+    check_binds "function formals" func.formals;
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
