@@ -3,9 +3,9 @@ open Parser
 (* this code will be called with dune -ts flag, for ensuring we scan correct program *)
 let string_of_token (t : token) : string  =
   match t with
-    | ID_VAR(x)  -> String.concat "" ["ID_VAR("; x ; ")"]
-    | ID_FUNC(x)  -> String.concat "" ["ID_FUNC("; x ; ")"]
-    | ID_STRUCT(x)  -> String.concat "" ["ID_STRUCT("; x ; ")"]
+    | UNCAP_ID(x) -> String.concat "" ["UNCAP_ID(\""; x ; "\")"]
+    | CAP_ID(x)  -> String.concat "" ["CAP_ID(\""; x ; "\")"]
+    | ID_VAR(x) -> String.concat "" ["ID_VAR(\""; x ; "\")"]
     | LIT_BOOL(x) -> String.concat "" ["LIT_BOOL("; Bool.to_string x ; ")"]
     | LIT_STR(x) -> String.concat "" ["LIT_STR("; x ; ")"]
     | LIT_INT(x) -> String.concat "" ["LIT_INT("; Int.to_string x ; ")"]
@@ -68,7 +68,7 @@ let string_of_token (t : token) : string  =
     | QUESTION -> "QUESTION"
     | RANGE -> "RANGE"    
     | BAR -> "BAR"  
-    | _ -> "UNABLE TO FORMAT THIS TOKEN"
+    | _ -> "UNABLE TO FORMAT THIS TOKEN, PLEASE ADD IT TO 'token_fmt.ml'"
 
 (* lexm.sh via CTeX group project 4115*)
 let string_of_lexbuf lexbuf =

@@ -103,10 +103,9 @@ rule token = parse
 | "->" { ARROW    }
 
 (* --------- IDs ------------ *)
-| uppercase lowercase* as lxm { ID_STRUCT(lxm) } (* example: Shape, Person, Edge *)
-| letter (digit | letter | '_')* as lxm { ID_FUNC(lxm) } (* function names dont need @ *)
+| uppercase lowercase* as lxm { CAP_ID(lxm) } (* capitalized UNCAP_ID, example: Shape, Person, Edge *)
+| lowercase (digit | letter | '_')* as lxm { UNCAP_ID(lxm) } (* uncapitalized UNCAP_ID, example: shape, person *)
 | "@" letter (digit | letter | '_')* as lxm { ID_VAR(String.sub lxm 1 ((String.length lxm) - 1)) } (* variable access and decl need @ *)
-| letter (digit | letter | '_')* as lxm { ID_MEMBER(lxm) }
 
 (* -------- Other ----------- *)
 | eof { EOF }

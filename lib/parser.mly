@@ -24,10 +24,10 @@ open Ast
 
 /* split id into two, nothing changes outside of parser file */
 
-%token <string> ID_FUNC /* function names */
+%token <string> UNCAP_ID /* function names */
 %token <string> ID_VAR /* variable access or assign */
-%token <string> ID_STRUCT /* struct names */
-%token <string> ID_MEMBER /* struct member */
+%token <string> CAP_ID /* struct names */
+%token <string> UNCAP_ID /* struct member */
 %token <string> LIT_STR
 %token <int> LIT_INT
 %token <float> LIT_FLOAT
@@ -80,12 +80,12 @@ typ:
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
   | T_ARRAY BAR typ BAR { ArrayType(Some($3), None) }
-  | ID_STRUCT { StructType($1) }
+  | CAP_ID { StructType($1) }
 
 /* function declaration */
 fdecl:
   /* func with args */ 
-  | FUNC ID_FUNC LPAREN formals_opt RPAREN COLON typ LBRACE stmt_list RBRACE
+  | FUNC UNCAP_ID LPAREN formals_opt RPAREN COLON typ LBRACE stmt_list RBRACE
   {
     { 
       rtyp = $7;
@@ -99,7 +99,7 @@ fdecl:
 sdecl:
   /* struct definition, more like a C struct currently */ 
   /* I guess we need locals if we want class functions */
-  | STRUCT ID_STRUCT LBRACE members_list RBRACE
+  | STRUCT CAP_ID LBRACE members_list RBRACE
   { 
     { 
       sname = $2;
@@ -243,7 +243,7 @@ expr:
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */
 
   /* function call */
-  | ID_FUNC LPAREN exprs_opt RPAREN { FuncCall($1, $3) }
+  | UNCAP_ID LPAREN exprs_opt RPAREN { FuncCall($1, $3) }
 
   /* just need to ensure that this is right associative */
   | BAR AS typ BAR expr {TypeCast($3, $5)}
@@ -267,6 +267,6 @@ exprs:
 postfix_expr:
   /* variable access */
   | ID_VAR { Id($1) }
-  | postfix_expr DOT ID_MEMBER { MemberAccess($1, $3) }
+  | postfix_expr DOT UNCAP_ID { MemberAccess($1, $3) }
     /* Array subscript [] */
   | postfix_expr LBRACKET expr RBRACKET { Subscript($1, $3) }
