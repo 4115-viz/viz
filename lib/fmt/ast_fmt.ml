@@ -90,7 +90,7 @@ and fmt_var_decl ((t, s), e) = fmt_typ t ^ " " ^ s ^ " = " ^
 ^ ";\n"
 
 and fmt_stmt = function
-  | Expr e -> "  " ^ fmt_expr e
+  | Expr e -> fmt_expr e
   | Block (stmts) ->
     "{\n" ^ String.concat "" (List.map fmt_stmt stmts) ^ "}\n"
   | ID_Block (stmts) ->
@@ -121,16 +121,18 @@ let fmt_vdecl (t, n) =
     | Some(e) -> ", value: " ^ fmt_expr e *)
 
 let fmt_fdecl fdecl =
+  "Function Declartion: " ^
   fmt_typ fdecl.rtyp ^ " " ^
-  fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
-  ")\n{\n" ^
-  String.concat "" (List.map fmt_stmt fdecl.body) ^
-  "}\n"
+  fdecl.fname ^
+  "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
+  ")" ^ "\n{\n" ^ "  " ^
+  String.concat "  " (List.map fmt_stmt fdecl.body) ^
+  "\n}\n"
 
 let fmt_sdecl struct_decl = 
   
-  "STRUCT DECLARATION( " ^ struct_decl.sname ^ " )\n{\n" ^
-  String.concat "" (List.map fmt_vdecl struct_decl.locals) ^
+  "Struct Declaration(\"" ^ struct_decl.sname ^ "\")\n{\n" ^
+    "  " ^ String.concat "  " (List.map fmt_vdecl struct_decl.locals) ^
   "}\n"
 
 let fmt_program (structs, funcs) =
