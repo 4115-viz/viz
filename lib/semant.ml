@@ -221,9 +221,9 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                 | FloatType -> "print_float"
                 | StrType -> "print"
                 | BoolType -> "print_bool"
-                | NoneType -> failwith "None type cannot be printed"
-                | ArrayType _ -> failwith "TODO: print array hasn't been implemented"
-                | StructType _ -> failwith "TODO: does not support print a struct yet"
+                | NoneType -> failwith "Does not support print None type"
+                | ArrayType _ -> failwith "Does not support print Array type"
+                | StructType _ -> failwith "Does not support print custom Struct type"
               )
             else fname
         ) 
