@@ -102,8 +102,8 @@ sdecl:
   | STRUCT CAP_ID LBRACE members_list RBRACE
   { 
     { 
-      sname = $2;
-      locals = $4; 
+      name = $2;
+      members = $4; 
     }
   }
 

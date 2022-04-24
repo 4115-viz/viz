@@ -42,8 +42,8 @@ type sfunc_def = {
 }
 
 type sstruct_def = {
-  ssname: string;
-  slocals: bind list; 
+  sname: string;
+  smembers: bind list; 
 }
 
 type sprogram = sstruct_def list * sfunc_def list

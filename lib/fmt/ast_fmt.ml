@@ -125,8 +125,8 @@ let fmt_fdecl fdecl =
 
 let fmt_sdecl struct_decl = 
   
-  "Struct Declaration(\"" ^ struct_decl.sname ^ "\")\n{\n" ^
-    "  " ^ String.concat "  " (List.map fmt_vdecl struct_decl.locals) ^
+  "Struct Declaration(\"" ^ struct_decl.name ^ "\")\n{\n" ^
+    "  " ^ String.concat "  " (List.map fmt_vdecl struct_decl.members) ^
   "}\n"
 
 let fmt_program (structs, funcs) =

@@ -11,9 +11,9 @@ module StringHash = Hashtbl.Make(struct
   let hash = Hashtbl.hash
 end)
 
-type struct_body {
+(* Used to query a struct using it's name from a StringMap *)
+type struct_body = {
   members: typ StringMap.t
-  fields: typ StringMap.t
 }
 
 (* Semantic checking of the AST. Returns an SAST if successful,
@@ -94,11 +94,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
 
   let check_struct (s:struct_def) =
     (* TODO: *)
-    check_binds "structs" s.locals; (* these will be the instance variables *)
+    check_binds "structs" s.members; (* these will be the instance variables *)
     (* body of check_struct *)
     { 
-      ssname = s.sname;
-      slocals  = s.locals;
+      sname = s.name;
+      smembers  = s.members;
     }
   in 
 
@@ -285,7 +285,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
       | MemberAccess (pe, memebr_id) ->
         (* Check the given postfix expression is a struct *)
         match check_postfix_expr symbols pe with
-        | (StructType _, _) -> failwith "TODO: semant member access"
+        | (StructType _, _) -> failwith ("TODO: semant member access" ^ memebr_id)
         | _ -> failwith "The type of the given postfix expression must be Struct."
         
         (* Check the memebr_id exists in the given struct *)

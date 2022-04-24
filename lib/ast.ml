@@ -55,8 +55,8 @@ type func_def = {
 }
 
 type struct_def = {
-  sname: string;
-  locals: bind list; 
+  name: string;
+  members: bind list; 
 }
 
 (* ----- Entry ----- *)
