@@ -166,9 +166,9 @@ loop:
   /* for counter in starting_num ... <ending condition>ending_num step step_number */
   | FOR ID_VAR IN LIT_INT RANGE end_condition LIT_INT increment stmt
             {
-                let var_init   = Assign($2, IntLit($4)) in (* ex: i = 0 *)
-                let predicate  = Binop(Id($2), $6, IntLit($7)) in (* ex: i < 5 *)
-                let update     = Assign( $2, Binop(Id($2), Add, $8) ) in (* ex1: i=i+1, ex2: i=i+(-1) *)
+                let var_init   = Assign(Id($2), IntLit($4)) in (* ex: i = 0 *)
+                let predicate  = Binop(PostfixExpr(Id($2)), $6, IntLit($7)) in (* ex: i < 5 *)
+                let update     = Assign(Id($2), Binop(PostfixExpr(Id($2)), Add, $8) ) in (* ex1: i=i+1, ex2: i=i+(-1) *)
                 let block_code = $9 in
                 For(var_init, predicate, update, block_code)
             }
@@ -233,11 +233,11 @@ expr:
 
   /* assignment */
   | postfix_expr ASSIGN expr { Assign($1, $3) } /* struct member */
-  | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Add, $3))}
-  | ID_VAR MINUSEQ expr { Assign($1, Binop(Id($1), Sub, $3))} 
-  | ID_VAR TIMESEQ expr { Assign($1, Binop(Id($1), Mult, $3))}
-  | ID_VAR DIVEQ expr { Assign($1, Binop(Id($1), Div, $3))}
-  | ID_VAR MODEQ expr { Assign($1, Binop(Id($1), Mod, $3))}
+  | ID_VAR PLUSEQ expr { Assign(Id($1), Binop(PostfixExpr(Id($1)), Add, $3))}
+  | ID_VAR MINUSEQ expr { Assign(Id($1), Binop(PostfixExpr(Id($1)), Sub, $3))} 
+  | ID_VAR TIMESEQ expr { Assign(Id($1), Binop(PostfixExpr(Id($1)), Mult, $3))}
+  | ID_VAR DIVEQ expr { Assign(Id($1), Binop(PostfixExpr(Id($1)), Div, $3))}
+  | ID_VAR MODEQ expr { Assign(Id($1), Binop(PostfixExpr(Id($1)), Mod, $3))}
   
   /* remove clarifying parens */
   | LPAREN expr RPAREN { $2 } /* (expr) -> expr. get rid of parens */

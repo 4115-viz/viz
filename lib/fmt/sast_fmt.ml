@@ -19,8 +19,8 @@ and fmt_sx se =
       | SBoolLit(true) -> "BoolLit(true)"
       | SBoolLit(false) -> "BoolLit(false)"
       | SArrayLit(a) -> "ArrayLit[" ^ fmt_sarray a ^ "]"
-      | SAssign(v, se) -> 
-        let lhs = match v with
+      | SAssign((_, spx), se) -> 
+        let lhs = match spx with
         | SId x -> String.concat "" ["Id("; x; ")"]
         | _ -> failwith ""
         in
@@ -32,10 +32,10 @@ and fmt_sx se =
       | SUnop(uo, r) ->
           string_of_uop uo ^ " " ^ fmt_sexpr r
       | STypeCast(st, se) -> "(Casting " ^ fmt_sexpr se ^ "->" ^ fmt_typ st ^ "\n"
-      | SPostfixExpr x -> (match x with
+      | SPostfixExpr (_, x) -> (match x with
         | SId id -> "Id(" ^ id ^ ")"
-        | SSubscript((t_spe, spe), i) -> (fmt_sexpr (t_spe, SPostfixExpr spe)) ^ "[" ^ (fmt_sexpr i) ^ "]"
-        | SMemberAccess ((t_spe, spe),member) -> (fmt_sexpr (t_spe, SPostfixExpr spe)) ^ "." ^ member
+        | SSubscript(spe, sexpr) -> (fmt_sx (SPostfixExpr spe)) ^ "[" ^ (fmt_sexpr sexpr) ^ "]"
+        | SMemberAccess (spe, member) -> (fmt_sx (SPostfixExpr spe)) ^ "." ^ member
       )
     )
 

@@ -16,7 +16,6 @@ type typ =
 type bind = typ * string
 
 type expr =
-  | PostfixExpr of postfix_expr
   | StrLit of string
   | IntLit of int
   | FloatLit of float
@@ -28,6 +27,7 @@ type expr =
   | Binop of expr * bop * expr
   | Unop of uop * expr
   | TypeCast of typ * expr
+  | PostfixExpr of postfix_expr
 
 and postfix_expr =
   | Id of string

@@ -142,18 +142,17 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           (ArrayType (Some(t), Some(len)), SArrayLit sa)
         
       )
-      | Id id -> 
-        if StringHash.mem uninited_symbols id then failwith ("uninitialized local variable '" ^ id ^ "' used.")
-        else (type_of_id id symbols, SId id)
-      | Assign(id, e) as ex ->
-        let t = type_of_id id symbols
-        and (rt, e') = check_expr symbols e in
-        let err = "illegal assignment " ^ fmt_typ t ^ " = " ^
-                  fmt_typ rt ^ " in " ^ fmt_expr ex
-        in
-        let t = check_assign t rt err in
-        if StringHash.mem uninited_symbols id then StringHash.remove uninited_symbols id;
-        (t, SAssign(id, (rt, e')))
+      | Assign(pe, e) as ex -> ( match pe with
+        | Id id -> 
+          let t = type_of_id id symbols
+          and (rt, e') = check_expr symbols e in
+          let err = "illegal assignment " ^ fmt_typ t ^ " = " ^
+                    fmt_typ rt ^ " in " ^ fmt_expr ex
+          in
+          let t = check_assign t rt err in
+          if StringHash.mem uninited_symbols id then StringHash.remove uninited_symbols id;
+          (t, SAssign((t, SId id), (rt, e')))
+        | _ -> failwith "TODO: ASSIGN")
       | Binop(l, bo, r) as ex-> 
         let (ltype, l') = check_expr symbols l in
         let (rtype, r') = check_expr symbols r in
@@ -229,21 +228,6 @@ let check ((structs: struct_def list), (functions: func_def list)) =
             else fname
         ) 
         in (fd.rtyp, SFuncCall(func_name, args'))
-      | Subscript(arr_expr, idx_expr) ->
-        let (arr_typ, _) as arr_sexpr = check_expr symbols arr_expr in
-        let idx_sexpr = check_expr symbols idx_expr in
-        let (idx:int) = match (idx_sexpr) with
-          | IntType, SIntLit x -> x
-          | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
-        in
-        let (arr_ele_typ, (len:int)) = match (arr_typ) with
-          | ArrayType (Some(t), Some(l)) -> (t, l) 
-          | ArrayType (None, _) -> failwith "Runtime error: Array type unknown."
-          | ArrayType (_, None) -> failwith "Runtime error: Array length unknown."
-          | t -> failwith (String.concat "" ["Subscript operator [] expect array, got: "; fmt_typ t])
-        in
-        if idx >= len then failwith "Index out of range."
-        else (arr_ele_typ, SSubscript(arr_sexpr, idx_sexpr))
       | TypeCast(ty, expr) ->
         let (ty_exp, var) = check_expr symbols expr in
          (
@@ -269,9 +253,34 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                 else type_cast_err ty_exp ty
               | _ -> type_cast_err ty_exp ty
          )
+      | PostfixExpr pe -> 
+        let _ = check_postfix_expr symbols pe in
+        failwith "TODO:"
 
+    and check_postfix_expr (symbols: typ StringMap.t) (pe: postfix_expr) : spostfix_expr =
+      match pe with
+      | Id id -> 
+        if StringHash.mem uninited_symbols id then failwith ("uninitialized local variable '" ^ id ^ "' used.")
+        else (type_of_id id symbols, SId id)
+      | Subscript(arr_pe, idx_expr) ->
+        let (arr_typ, _) as arr_spe = check_postfix_expr symbols arr_pe in
+        let idx_sexpr = check_expr symbols idx_expr in
+        let (idx:int) = match (idx_sexpr) with
+          | IntType, SIntLit x -> x
+          | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
+        in
+        let (arr_ele_typ, (len:int)) = match (arr_typ) with
+          | ArrayType (Some(t), Some(l)) -> (t, l) 
+          | ArrayType (None, _) -> failwith "Runtime error: Array type unknown."
+          | ArrayType (_, None) -> failwith "Runtime error: Array length unknown."
+          | t -> failwith (String.concat "" ["Subscript operator [] expect array, got: "; fmt_typ t])
+        in
+        if idx >= len then failwith "Index out of range."
+        else (arr_ele_typ, SSubscript(arr_spe, idx_sexpr))
+      | MemberAccess (_, _) ->
+        failwith "TODO:"
     in
-
+    
     let check_bool_expr symbols e =
       let (t, e') = check_expr symbols e in
       match t with
