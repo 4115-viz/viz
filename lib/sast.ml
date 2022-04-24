@@ -8,13 +8,16 @@ and sx =
   | SBoolLit of bool
   | SNoneLit
   | SArrayLit of sexpr list
-  | SId of string
   | SBinop of sexpr * bop * sexpr
-  | SAssign of string * sexpr
+  | SAssign of spostfix_expr * sexpr
   | SFuncCall of string * sexpr list
   | SUnop of uop * sexpr
-  | SSubscript of sexpr * sexpr
   | STypeCast of typ * sexpr
+
+and spostfix_expr =
+  | SId of string
+  | MemberAccess of postfix_expr * string
+  | Subscript of postfix_expr * expr
 
 type svar_decl = bind * sexpr option
 

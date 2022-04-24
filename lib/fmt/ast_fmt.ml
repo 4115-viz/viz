@@ -51,8 +51,13 @@ let rec fmt_expr = function
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
   | ArrayLit(a) -> "ArrayLit[" ^ fmt_array a ^ "]"
-  | Assign(v, e) -> "Assign: " ^ v ^ " = " ^ fmt_expr e
-  | Id(x) -> "Id(" ^ x ^ ")"
+  | Assign(v, e) -> 
+    let lhs = match v with
+    | Id x -> String.concat "" ["Id("; x; ")"]
+    | _ -> failwith ""
+    in
+    let rhs = fmt_expr e in
+    String.concat "" ["Assign("; lhs; " = "; rhs; ")"]
   | FuncCall(name, args) ->
     (*name ^ "(" ^ String.concat ", " (List.map fmt_expr args) ^ ")"*)
     fmt_fcall name args
@@ -60,8 +65,12 @@ let rec fmt_expr = function
     fmt_expr l ^ " " ^ fmt_op bo ^ " " ^ fmt_expr r
   | Unop(uo, r) ->
     string_of_uop uo ^ " " ^ fmt_expr r
-  | Subscript(e, i) -> (fmt_expr e) ^ "[" ^ (fmt_expr i) ^ "]"
   | TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ "->" ^ fmt_typ t ^ "\n"
+  | PostfixExpr x -> (match x with
+    | Id x -> "Id(" ^ x ^ ")"
+    | Subscript(e, i) -> (fmt_expr (PostfixExpr e)) ^ "[" ^ (fmt_expr i) ^ "]"
+    | MemberAccess (e,member) -> (fmt_expr (PostfixExpr e)) ^ "." ^ member
+  )
   
 and fmt_fcall name args = 
   "FuncCall(" ^

@@ -232,7 +232,6 @@ expr:
   | NOT expr { Unop(Not, $2) }
 
   /* assignment */
-  | ID_VAR ASSIGN expr { Assign($1, $3) }
   | postfix_expr ASSIGN expr { Assign($1, $3) } /* struct member */
   | ID_VAR PLUSEQ expr { Assign($1, Binop(Id($1), Add, $3))}
   | ID_VAR MINUSEQ expr { Assign($1, Binop(Id($1), Sub, $3))} 
