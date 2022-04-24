@@ -16,8 +16,8 @@ and sx =
 
 and spostfix_expr =
   | SId of string
-  | MemberAccess of postfix_expr * string
-  | Subscript of postfix_expr * expr
+  | SMemberAccess of postfix_expr * string
+  | SSubscript of postfix_expr * expr
 
 type svar_decl = bind * sexpr option
 

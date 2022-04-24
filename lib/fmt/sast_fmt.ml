@@ -19,15 +19,24 @@ and fmt_sx se =
       | SBoolLit(true) -> "BoolLit(true)"
       | SBoolLit(false) -> "BoolLit(false)"
       | SArrayLit(a) -> "ArrayLit[" ^ fmt_sarray a ^ "]"
-      | SId(x) -> "Id(" ^ x ^ ")"
-      | SAssign(v, e) -> v ^ " = " ^ fmt_sexpr e
+      | SAssign(v, se) -> 
+        let lhs = match v with
+        | SId x -> String.concat "" ["Id("; x; ")"]
+        | _ -> failwith ""
+        in
+        let rhs = fmt_sexpr se in
+        String.concat "" ["Assign("; lhs; " = "; rhs; ")"]
       | SFuncCall(name, args) -> fmt_sfcall name args
       | SBinop(l, bo, r) -> 
         fmt_sexpr l ^ " " ^ fmt_op bo ^ " " ^ fmt_sexpr r 
       | SUnop(uo, r) ->
           string_of_uop uo ^ " " ^ fmt_sexpr r
-      | SSubscript(e, i) -> (fmt_sexpr e) ^ "[" ^ (fmt_sexpr i) ^ "]"
       | STypeCast(st, se) -> "(Casting " ^ fmt_sexpr se ^ "->" ^ fmt_typ st ^ "\n"
+      | SPostfixExpr x -> (match x with
+        | SId x -> "Id(" ^ x ^ ")"
+        | SSubscript(e, i) -> (fmt_sexpr (PostfixExpr e)) ^ "[" ^ (fmt_sexpr i) ^ "]"
+        | SMemberAccess (e,member) -> (fmt_expr (PostfixExpr e)) ^ "." ^ member
+      )
     )
 
 and fmt_sarray (sa : sexpr list) : string =
