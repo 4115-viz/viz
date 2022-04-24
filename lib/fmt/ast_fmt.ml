@@ -51,8 +51,7 @@ let rec fmt_expr = function
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
   | ArrayLit(a) -> "ArrayLit[" ^ fmt_array a ^ "]"
-  | Assign(v, e) -> 
-    String.concat "" ["Assign("; fmt_expr(PostfixExpr v) ; " = "; fmt_expr e; ")"]
+  | Assign(v, e) -> String.concat "" ["Assign("; fmt_expr(PostfixExpr v) ; " = "; fmt_expr e; ")"]
   | FuncCall(name, args) ->
     (*name ^ "(" ^ String.concat ", " (List.map fmt_expr args) ^ ")"*)
     fmt_fcall name args

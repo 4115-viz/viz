@@ -19,13 +19,7 @@ and fmt_sx se =
       | SBoolLit(true) -> "BoolLit(true)"
       | SBoolLit(false) -> "BoolLit(false)"
       | SArrayLit(a) -> "ArrayLit[" ^ fmt_sarray a ^ "]"
-      | SAssign((_, spx), se) -> 
-        let lhs = match spx with
-        | SId x -> String.concat "" ["Id("; x; ")"]
-        | _ -> failwith ""
-        in
-        let rhs = fmt_sexpr se in
-        String.concat "" ["Assign("; lhs; " = "; rhs; ")"]
+      | SAssign(spe, se) -> String.concat "" ["Assign("; fmt_sx(SPostfixExpr spe); " = "; fmt_sexpr se; ")"]
       | SFuncCall(name, args) -> fmt_sfcall name args
       | SBinop(l, bo, r) -> 
         fmt_sexpr l ^ " " ^ fmt_op bo ^ " " ^ fmt_sexpr r 
