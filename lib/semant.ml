@@ -122,10 +122,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let check_assign (lvaluet:typ) (rvaluet:typ) (err:string): typ =
+    let check_assign (lvaluet:typ) (rvaluet:typ): typ =
       if lvaluet = rvaluet then 
         lvaluet
-      else raise (Failure err)
+      else 
+        failwith ("illegal assignment " ^ fmt_typ lvaluet ^ " = " ^ fmt_typ rvaluet)
     in
 
     (* Build local symbol table of variables for this function *)
@@ -161,17 +162,15 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           (ArrayType (Some(t), Some(len)), SArrayLit sa)
         
       )
-      | Assign(pe, e) as ex -> ( match pe with
-        | Id id -> 
-          let t = type_of_id id symbols
-          and (rt, e') = check_expr symbols e in
-          let err = "illegal assignment " ^ fmt_typ t ^ " = " ^
-                    fmt_typ rt ^ " in " ^ fmt_expr ex
-          in
-          let t = check_assign t rt err in
-          if StringHash.mem uninited_symbols id then StringHash.remove uninited_symbols id;
-          (t, SAssign((t, SId id), (rt, e')))
-        | _ -> failwith "TODO: ASSIGN")
+      | Assign(pe, e) -> 
+        let (l_t, _) as l_spe = check_postfix_expr symbols pe
+        in 
+        let (r_t, _) as r_se = check_expr symbols e in
+        let t = check_assign l_t r_t in
+        (* Assigned successfully, removed the symbol from uninited symbol table *)
+        if StringHash.mem uninited_symbols "TODO: uninited_id" then StringHash.remove uninited_symbols "TODO: uninited_id";
+        (t, SAssign(l_spe, r_se))
+
       | Binop(l, bo, r) as ex-> 
         let (ltype, l') = check_expr symbols l in
         let (rtype, r') = check_expr symbols r in
@@ -224,12 +223,9 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                           " arguments in " ^ fmt_expr call))
         else 
         let check_call (ft, _) e =
-                let (et, e') = check_expr symbols e in
-                let err = "illegal argument found " ^ fmt_typ et ^
-                          " expected " ^ fmt_typ ft ^ " in " ^ fmt_expr e
-                in 
-                if fname = "print" then (et, e') (*convert to string*)
-                else (check_assign ft et err, e')
+          let (et, e') = check_expr symbols e in
+          if fname = "print" then (et, e') (*convert to string*)
+          else (check_assign ft et, e')
         in
         let args' = List.map2 check_call fd.formals args in
         let func_name = (
