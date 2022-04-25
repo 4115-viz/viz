@@ -57,9 +57,7 @@ let rec fmt_expr = function
     " = ";
     fmt_expr e;
     ")\n"]
-  | FuncCall(name, args) ->
-    (*name ^ "(" ^ String.concat ", " (List.map fmt_expr args) ^ ")"*)
-    fmt_fcall name args
+  | FuncCall(name, args) -> fmt_fcall name args
   | Binop(l, bo, r) ->
     fmt_expr l ^ " " ^ fmt_op bo ^ " " ^ fmt_expr r
   | Unop(uo, r) ->
@@ -75,7 +73,7 @@ and fmt_fcall name args =
   "FuncCall(" ^
      "name: " ^ fmt_string name ^
      ", args: " ^ fmt_expr_list args ^
-  ")"
+  ")\n"
   
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
