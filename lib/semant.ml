@@ -283,14 +283,16 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                 else type_cast_err ty_exp ty
               | _ -> type_cast_err ty_exp ty
          )
-      | PostfixExpr pe -> let spe = check_postfix_expr symbols pe in
+      | PostfixExpr pe -> (match pe with
+        | Id id -> if StringHash.mem uninited_symbols id 
+          then failwith ("uninitialized local variable '" ^ id ^ "' used.")
+        | _ -> ());
+        let spe = check_postfix_expr symbols pe in
         (fst spe, SPostfixExpr spe)
 
     and check_postfix_expr (symbols: typ StringMap.t) (pe: postfix_expr) : spostfix_expr =
       match pe with
-      | Id id -> 
-        if StringHash.mem uninited_symbols id then failwith ("uninitialized local variable '" ^ id ^ "' used.")
-        else (type_of_id id symbols, SId id)
+      | Id id -> (type_of_id id symbols, SId id)
       | Subscript(arr_pe, idx_expr) ->
         let (arr_typ, _) as arr_spe = check_postfix_expr symbols arr_pe in
         let idx_sexpr = check_expr symbols idx_expr in
