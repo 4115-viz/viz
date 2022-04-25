@@ -167,12 +167,17 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         
       )
       | Assign(pe, e) -> 
-        let (l_t, _) as l_spe = check_postfix_expr symbols pe
+        let (l_t, _) as l_spe = match pe with
+          | Id id -> (type_of_id id symbols, SId(id))
+          | _ -> check_postfix_expr symbols pe
         in 
         let (r_t, _) as r_se = check_expr symbols e in
         let t = check_assign l_t r_t in
-        (* Assigned successfully, removed the symbol from uninited symbol table *)
-        if StringHash.mem uninited_symbols "TODO: uninited_id" then StringHash.remove uninited_symbols "TODO: uninited_id";
+        (* If the left side is a variable, removed the symbol from uninited symbol table *)
+        (match pe with
+        | Id id -> (if StringHash.mem uninited_symbols id 
+          then StringHash.remove uninited_symbols id);
+        | _ -> ());
         (t, SAssign(l_spe, r_se))
 
       | Binop(l, bo, r) as ex-> 
@@ -368,7 +373,10 @@ let check ((structs: struct_def list), (functions: func_def list)) =
       match e with
       | None -> (* rhs is empty *)
         let new_symbols = StringMap.add id t symbols in
-        StringHash.add uninited_symbols id true;
+        (* Struct don't need to be initialized *)
+        (match t with
+        | StructType _ -> ()
+        | _ -> StringHash.add uninited_symbols id true);
         ((b, None), new_symbols)
       | Some(e) -> match t with (* match variable's type *)
         | ArrayType (Some(arr_ele_typ), None) -> (* Special case: lhs is array type *)

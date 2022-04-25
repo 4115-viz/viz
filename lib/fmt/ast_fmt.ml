@@ -51,7 +51,12 @@ let rec fmt_expr = function
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
   | ArrayLit(a) -> "ArrayLit[" ^ fmt_array a ^ "]"
-  | Assign(v, e) -> String.concat "" ["Assign("; fmt_expr(PostfixExpr v) ; " = "; fmt_expr e; ")"]
+  | Assign(v, e) -> String.concat "" [
+    "Assign("; 
+    fmt_expr(PostfixExpr v);
+    " = ";
+    fmt_expr e;
+    ")\n"]
   | FuncCall(name, args) ->
     (*name ^ "(" ^ String.concat ", " (List.map fmt_expr args) ^ ")"*)
     fmt_fcall name args
@@ -121,10 +126,9 @@ let fmt_fdecl fdecl =
   "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")" ^ "\n{\n" ^ "  " ^
   String.concat "  " (List.map fmt_stmt fdecl.body) ^
-  "\n}\n"
+  "}\n"
 
 let fmt_sdecl struct_decl = 
-  
   "Struct Declaration(\"" ^ struct_decl.name ^ "\")\n{\n" ^
     "  " ^ String.concat "  " (List.map fmt_vdecl struct_decl.members) ^
   "}\n"
