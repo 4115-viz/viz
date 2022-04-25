@@ -283,9 +283,8 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                 else type_cast_err ty_exp ty
               | _ -> type_cast_err ty_exp ty
          )
-      | PostfixExpr pe -> 
-        let _ = check_postfix_expr symbols pe in
-        failwith "TODO: Semant PostfixExpr"
+      | PostfixExpr pe -> let spe = check_postfix_expr symbols pe in
+        (fst spe, SPostfixExpr spe)
 
     and check_postfix_expr (symbols: typ StringMap.t) (pe: postfix_expr) : spostfix_expr =
       match pe with
