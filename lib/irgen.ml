@@ -28,11 +28,10 @@ let translate (_, functions) =
 
   (* Get types from the context *)
   let i32_t      = L.i32_type    context
-  (* and i8_t       = L.i8_type     context *)
   and i1_t       = L.i1_type     context
   and void_t     = L.void_type    context
   and float_t    = L.double_type context 
-  and str_t      = L.pointer_type   (L.i8_type context)
+  and str_t      = L.pointer_type (L.i8_type context)
   in
   (* Return the LLVM type for a Viz type *)
   let rec ltype_of_typ = function
@@ -44,7 +43,10 @@ let translate (_, functions) =
     | A.ArrayType(t, _) -> (match t with
       | Some(t) -> L.pointer_type (ltype_of_typ t)
       | None -> failwith "Runtime error: unable to deduce the array's type")
-    | A.StructType(_) -> failwith "TODO:"
+    | A.StructType(name) -> 
+      let struct_t = L.named_struct_type context name in
+      L.struct_set_body struct_t (Array.of_list []) false;
+      struct_t
   in
 
   (* for casting error messages *)
@@ -205,11 +207,21 @@ let translate (_, functions) =
                 let _ = (L.build_store elem cptr builder) 
                 in i+1)
                 0 all_elem); ptr)
-      | SAssign (spe, e) -> 
-        let e' = (build_expr local_vars) builder e in
-        (match spe with
+      | SAssign (l_spe, r_e) -> 
+        let r_val = (build_expr local_vars) builder r_e in
+        (match l_spe with
+        (* If left is a variable, simply store the r_val into the address of that variable *)
         | (_, SId id) -> 
-          ignore(L.build_store e' (lookup local_vars id) builder); e'
+          ignore(L.build_store r_val (lookup local_vars id) builder); r_val
+        | (_, SMemberAccess((_, spx), member_id)) ->
+            (match spx with
+            (* The expression before dot is a @variable *)
+            | SId id -> 
+              let struct_addr = lookup local_vars id in
+              let member_addr = struct_addr in
+              ignore(L.build_store r_val member_addr builder); r_val
+            (* The expression before is another postfix expression: recursively evaluate its value *)
+            | _ -> ignore(L.build_store r_val (lookup local_vars member_id) builder); r_val)
         | _ -> failwith "TODO: irgen SAssign"
         )
       | SBinop ((op_ret_type, _ ) as e1, op, e2) ->
