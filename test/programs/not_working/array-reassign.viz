@@ -1,0 +1,29 @@
+func main(): none {
+    @a: array |int| = [1,2,3,4];
+
+    print("Array before reaassignment");
+    print("----------------");
+    print(@a[0]);
+    print(@a[1]);
+    print(@a[2]);
+    print(@a[3]);
+
+    \* this will work *\
+    @a = [5,6,7,8];
+
+    print("");
+    print("Array after reaassignment");
+    print("----------------");
+    print(@a[0]);
+    print(@a[1]);
+    print(@a[2]);
+    print(@a[3]);
+
+    \* neither of these will not work, reassignment must be of same length  *\
+    @a = [9,10,11];
+    @a = [12,13,14,15];
+
+
+
+
+}
