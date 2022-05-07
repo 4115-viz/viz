@@ -5,18 +5,18 @@ echo "-------------------------------------"
 echo "running master shell script from $PWD"
 echo "-------------------------------------"
 
-# These need to be refactored, at end of project
+# run scanner tests
 cd test/scanner
 BASH script-token-scanning.sh
 
-# These need to be refactored, at end of project
+# run parser tests
 cd ../parser
 BASH script-parsing.sh
 
-# These need to be refactored, at end of project
-#cd ../semantic
-#BASH script-semantic.sh
+# run semantic tests
+cd ../semantic
+BASH script-semantic.sh
 
-# build and run the test programs
+# change back to root + build and run the test programs
 cd ../../
 ./script-test-programs.sh

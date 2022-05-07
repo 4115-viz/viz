@@ -1,0 +1,22 @@
+func main(): none {
+
+  print("Hello World from Viz Dev Team!");
+  println();
+  print(1);
+  print(1.1101);
+  print(true);
+  print(false);
+
+  @x :float = 1.0;
+  @y : float = @x + 1.2;
+  @z : string = "GG";
+  print(@z);
+  print(@y);
+  print(@x + @y);
+
+  @j : bool = true;
+  print(@j);
+
+  print(1 + 1 + 2 * 3);
+  print(true and not false);
+}

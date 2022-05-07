@@ -1,0 +1,7 @@
+
+Type(None) main()
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Hello World from Viz Dev Team!"))));
+  (Type(None) : FuncCall(name: "println", args: ));
+}
+

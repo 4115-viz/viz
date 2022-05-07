@@ -1,0 +1,42 @@
+
+Type(None) main()
+{
+Type(Int) x = (Type(Int) : (Type(Int) : IntLit(1)) + (Type(Int) : IntLit(1)));
+Type(Int) y = (Type(Int) : (Type(Int) : IntLit(1)) - (Type(Int) : IntLit(1)));
+Type(Int) z = (Type(Int) : (Type(Int) : IntLit(1)) * (Type(Int) : IntLit(5)));
+Type(Int) a = (Type(Int) : (Type(Int) : IntLit(100)) / (Type(Int) : IntLit(10)));
+Type(Int) b = (Type(Int) : (Type(Int) : IntLit(5)) % (Type(Int) : IntLit(4)));
+Type(Float) x1 = (Type(Float) : (Type(Float) : FloatLit(1.)) + (Type(Float) : FloatLit(1.)));
+Type(Float) y1 = (Type(Float) : (Type(Float) : FloatLit(1.)) - (Type(Float) : FloatLit(1.)));
+Type(Float) z1 = (Type(Float) : (Type(Float) : FloatLit(1.)) * (Type(Float) : FloatLit(5.)));
+Type(Float) a1 = (Type(Float) : (Type(Float) : FloatLit(5.)) / (Type(Float) : FloatLit(5.)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("1+1 -> 2"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("1-1 -> 0"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(y))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("1*5 -> 5"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(z))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("100/10 -> 10"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("5%4 -> 1"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(b))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("1.0+1.0 -> 2.0"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(x1))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("1.0-1.0 -> 0.0"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(y1))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("1.0*5.0 -> 5.0"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(z1))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("10.0/5.0 -> 2.0"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(a1))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("======================"))));
+}
+

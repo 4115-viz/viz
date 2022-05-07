@@ -1,0 +1,76 @@
+
+Type(None) main()
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Test Number 1"))));
+if ((Type(Bool) : (Type(Int) : IntLit(3)) < (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("this is true"))));
+if ((Type(Bool) : BoolLit(true)))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if"))));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested else"))));
+ }
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("this is false"))));
+if ((Type(Bool) : BoolLit(true)))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if with no else stmt"))));
+ }
+ }
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("------------------------"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Test Number 2"))));
+if ((Type(Bool) : (Type(Int) : IntLit(3)) < (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("this is true"))));
+if ((Type(Bool) : (Type(Bool) : BoolLit(true)) == (Type(Bool) : BoolLit(false))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if"))));
+ }
+else
+if ((Type(Bool) : (Type(Bool) : BoolLit(true)) == (Type(Bool) : BoolLit(true))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested elif"))));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested else"))));
+ }
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("this is false"))));
+if ((Type(Bool) : BoolLit(true)))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if with no else stmt"))));
+ }
+ }
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("------------------------"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Test Number 3"))));
+if ((Type(Bool) : (Type(Int) : IntLit(3)) > (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("this is true"))));
+if ((Type(Bool) : (Type(Bool) : BoolLit(true)) == (Type(Bool) : BoolLit(false))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if"))));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested else"))));
+ }
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("this is false"))));
+if ((Type(Bool) : BoolLit(true)))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if with no else stmt"))));
+ }
+ }
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("------------------------"))));
+}
+

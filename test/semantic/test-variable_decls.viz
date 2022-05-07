@@ -1,0 +1,64 @@
+func test(@z: int): int {
+    return @z;
+}
+
+func main(): none {
+  @x: string = "Good"; // declare
+  @y: int = 5; // declare and assign
+  @x = "Hello World"; // refer to x and assign
+
+  print("========================================");
+  print("refer to x after assignment"); 
+  print(@x); // refer to x
+  print("========================================");
+  println();
+  
+  print("========================================");
+  print("declare and initialize y"); 
+  print("call test() using y as a param"); 
+  print(@y + test(@y));
+  print("========================================");
+  println();
+  
+  print("========================================");
+  print("y = y + 5");
+  @y = @y + 5;
+  print(@y);
+  print("========================================");
+  println();
+  
+  
+  print("========================================");
+  print("assign and delcare int variable");
+  @z: int = 7;
+  print(@z);
+  print("========================================");
+  println();
+  
+  print("========================================");
+  print("y+z = 12");
+  print(@y + @z);
+  print("========================================");
+  println();
+  
+  print("========================================");
+  print("assign and declare string variable");
+  @h: string = "Hello World";
+  print(@h);
+  println();
+  print("========================================");
+  
+  print("========================================");
+  print("default value for float is 0");
+  @a: float = 0.0;
+  print_float(@a);
+  println();
+  print("========================================");
+
+  print("========================================");
+  print("default value for bool is false");
+  @b: bool = true;
+  print_bool(@b);
+  println();
+  print("========================================");
+}

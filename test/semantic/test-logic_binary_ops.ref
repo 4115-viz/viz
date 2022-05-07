@@ -1,0 +1,58 @@
+
+Type(None) main()
+{
+Type(Bool) b1 = (Type(Bool) : BoolLit(true));
+Type(Bool) b2 = (Type(Bool) : BoolLit(false));
+Type(Bool) b3 = (Type(Bool) : BoolLit(false));
+Type(Bool) b4 = (Type(Bool) : BoolLit(true));
+Type(Bool) b5 = (Type(Bool) : BoolLit(false));
+Type(Bool) b6 = (Type(Bool) : BoolLit(true));
+Type(Bool) b7 = (Type(Bool) : BoolLit(true));
+Type(Bool) b8 = (Type(Bool) : BoolLit(false));
+Type(Bool) b9 = (Type(Bool) : BoolLit(true));
+Type(Bool) b10 = (Type(Bool) : BoolLit(true));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Assigning bool expressions to variables"))));
+  (Type(Bool) : Assign(Id(b1) = (Type(Bool) : (Type(Int) : IntLit(1)) == (Type(Int) : IntLit(1)))));
+  (Type(Bool) : Assign(Id(b2) = (Type(Bool) : (Type(Int) : IntLit(1)) != (Type(Int) : IntLit(1)))));
+  (Type(Bool) : Assign(Id(b3) = (Type(Bool) : (Type(Int) : IntLit(5)) < (Type(Int) : IntLit(4)))));
+  (Type(Bool) : Assign(Id(b4) = (Type(Bool) : (Type(Int) : IntLit(5)) > (Type(Int) : IntLit(4)))));
+  (Type(Bool) : Assign(Id(b5) = (Type(Bool) : (Type(Int) : IntLit(4)) <= (Type(Int) : IntLit(5)))));
+  (Type(Bool) : Assign(Id(b6) = (Type(Bool) : (Type(Int) : IntLit(5)) >= (Type(Int) : IntLit(5)))));
+  (Type(Bool) : Assign(Id(b7) = (Type(Bool) : (Type(Bool) : BoolLit(true)) and (Type(Bool) : BoolLit(true)))));
+  (Type(Bool) : Assign(Id(b8) = (Type(Bool) : (Type(Bool) : BoolLit(false)) or (Type(Bool) : BoolLit(false)))));
+  (Type(Bool) : Assign(Id(b9) = (Type(Bool) : (Type(Bool) : (Type(Bool) : BoolLit(true)) and (Type(Bool) : BoolLit(false))) or (Type(Bool) : BoolLit(true)))));
+  (Type(Bool) : Assign(Id(b10) = (Type(Bool) : (Type(Bool) : (Type(Bool) : not (Type(Bool) : BoolLit(false))) and (Type(Bool) : BoolLit(false))) or (Type(Bool) : BoolLit(true)))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("printing results"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(1 == 1) -> 1"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b1))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(1 != 1) -> 0"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b2))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(5 < 4) -> 0"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b3))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(5 > 4) -> 1"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b4))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(4 <= 5) -> 1"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b5))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(5 >= 5) -> 1"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b6))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(true and true) -> 1"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b7))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(false or false) -> 0"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b8))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(true and false or true) -> 1"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b9))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("(not false and false or true) -> 1"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b10))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("================="))));
+}
+

@@ -1,0 +1,13 @@
+
+Type(Int) main()
+{
+Type(Str) x = (Type(Str) : (StrLit("PLT"));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("declaring and assigning variable"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("x before re-assignment"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("x after re-assignment"))));
+  (Type(Str) : (Assign(Id(x) = (Type(Str) : (StrLit("Programming Languages And Translators"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(x))));
+return (Type(Int) : IntLit(0));
+}
+

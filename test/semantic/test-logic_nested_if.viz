@@ -1,0 +1,33 @@
+func main(): none {
+
+
+    /*
+        nested if
+    */
+    print("========================="); 
+    print("logic test 1: enter true block");
+    if (3 < 4) {
+        print("if -> true block");
+        if (true) {
+            print("nested if -> true block"); 
+        }
+    } 
+
+    println();
+    
+    /*
+        two nested if
+    */
+    print("=========================");
+    print("logic test 2: 2 nested if blocks");
+    if (3 < 4) {
+        print("if statment");
+        if (true) {
+            print("first nested if statment"); 
+            if (not false) {
+                print("second nested if statment"); 
+            }
+        }
+    } 
+}
+

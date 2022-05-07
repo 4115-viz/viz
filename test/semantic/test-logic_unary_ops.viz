@@ -1,0 +1,16 @@
+func main(): none {
+  
+  @b9: bool = false;
+
+  print("Assigning bool expressions to variables");
+
+  @b9 = (not true); // false
+
+  print("printing result of `not true`");
+
+  print(@b9);
+
+  @b9 = not false; // false
+  print("printing result of `not false`");
+  print(@b9);
+}  

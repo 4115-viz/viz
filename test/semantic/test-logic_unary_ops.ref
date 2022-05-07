@@ -1,0 +1,13 @@
+
+Type(None) main()
+{
+Type(Bool) b9 = (Type(Bool) : BoolLit(false));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Assigning bool expressions to variables"))));
+  (Type(Bool) : Assign(Id(b9) = (Type(Bool) : not (Type(Bool) : BoolLit(true)))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("printing result of `not true`"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b9))));
+  (Type(Bool) : Assign(Id(b9) = (Type(Bool) : not (Type(Bool) : BoolLit(false)))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("printing result of `not false`"))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b9))));
+}
+

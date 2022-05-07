@@ -1,0 +1,21 @@
+
+Type(None) main()
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Hello World from Viz Dev Team!"))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : IntLit(1))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : FloatLit(1.1101))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : BoolLit(true))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : BoolLit(false))));
+Type(Float) x = (Type(Float) : FloatLit(1.));
+Type(Float) y = (Type(Float) : (Type(Float) : Id(x)) + (Type(Float) : FloatLit(1.2)));
+Type(Str) z = (Type(Str) : (StrLit("GG"));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(z))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(y))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : (Type(Float) : Id(x)) + (Type(Float) : Id(y)))));
+Type(Bool) j = (Type(Bool) : BoolLit(true));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(j))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : (Type(Int) : (Type(Int) : IntLit(1)) + (Type(Int) : IntLit(1))) + (Type(Int) : (Type(Int) : IntLit(2)) * (Type(Int) : IntLit(3))))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Bool) : BoolLit(true)) and (Type(Bool) : not (Type(Bool) : BoolLit(false))))));
+}
+

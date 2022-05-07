@@ -1,0 +1,18 @@
+
+Type(Int) main()
+{
+Type(Int) i = (Type(Int) : IntLit(0));
+while ((Type(Bool) : BoolLit(true))) {
+if ((Type(Bool) : (Type(Int) : Id(i)) == (Type(Int) : IntLit(15))))
+{
+return (Type(Int) : IntLit(0));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("let do this forever, or until I count to 15 LOL"))));
+ }
+  (Type(Int) : Assign(Id(i) = (Type(Int) : (Type(Int) : Id(i)) + (Type(Int) : IntLit(1)))));
+ }
+return (Type(Int) : IntLit(0));
+}
+

@@ -1,0 +1,15 @@
+func main(): none {
+    
+    print("------------------------");
+    
+    if (1 > 5) {
+        print("x is less than 5");
+    } elif (1 == 2) {
+        print("x is in first elif");
+    } elif (6 == 6) {
+        print("testing multiple elif, x = 6");
+    } else {
+        print("x is larger than 6");
+    }
+
+}

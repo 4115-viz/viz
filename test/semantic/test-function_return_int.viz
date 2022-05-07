@@ -1,0 +1,9 @@
+func ret_number(): int {
+    return 4115;
+}
+
+func main(): none {
+    @x: int = 1;
+    @x = ret_number();
+    print(@x);
+}

@@ -1,0 +1,3 @@
+func hello_world(): none {
+    print("hello world");
+}

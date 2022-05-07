@@ -1,0 +1,15 @@
+func main(): none {
+    
+    @a : int = 5;
+
+    {
+        print(@a);
+        @a : int = 1;
+        print(@a);
+
+        @b : int = @a + 1;
+        print(@b);
+    };
+
+    print(@a);
+}

@@ -1,0 +1,36 @@
+
+Type(None) hello()
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("hello guys"))));
+return (Type(None) : NoneLit(NONE));
+}
+
+Type(Str) hello2()
+{
+return (Type(Str) : (StrLit("hello my friends"));
+}
+
+Type(Int) hello3()
+{
+return (Type(Int) : IntLit(1));
+}
+
+Type(Float) hello4()
+{
+return (Type(Float) : FloatLit(1.));
+}
+
+Type(Bool) hello5()
+{
+return (Type(Bool) : BoolLit(true));
+}
+
+Type(None) main()
+{
+  (Type(None) : FuncCall(name: "hello", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (FuncCall(name: "hello2", args: ))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : FuncCall(name: "hello3", args: ))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : FuncCall(name: "hello4", args: ))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : FuncCall(name: "hello5", args: ))));
+}
+

@@ -5,10 +5,8 @@ PWD=$(pwd)
 echo "Running Parser Tests in: $PWD"
 #echo "Will run all files using -ts dune exec flag and compare .out files with .ref"
 
-# scanner tests to run
-# -ts is a dune flag to print the tokens, we will pipe them to an out file
-# dune exec -- vc {test-filename} -ts >  {filename.out}
-# dune exec -- vc {fail-filename} -ts 2> {filename.out}
+# parser tests to run
+# -a is a dune flag to print the AST, we will pipe them to an out file
 
 # pipe all of the filenames into a txt file, for looping
 ls test-*.viz > viz_test_files.txt 

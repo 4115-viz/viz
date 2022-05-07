@@ -1,0 +1,22 @@
+
+Type(None) main()
+{
+Type(Int) x = (Type(Int) : IntLit(0));
+Type(Float) y = (Type(Float) : FloatLit(0.));
+Type(Bool) z = (Type(Bool) : BoolLit(false));
+Type(Bool) a = (Type(Bool) : BoolLit(true));
+Type(Str) b = (Type(Str) : (StrLit(""));
+  (Type(Int) : Assign(Id(x) = (Type(Int) : IntLit(1))));
+  (Type(Float) : Assign(Id(y) = (Type(Float) : FloatLit(1.))));
+  (Type(Bool) : Assign(Id(z) = (Type(Bool) : BoolLit(true))));
+  (Type(Bool) : Assign(Id(a) = (Type(Bool) : BoolLit(false))));
+  (Type(Str) : (Assign(Id(b) = (Type(Str) : (StrLit("Hello World"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Assigning literals to variables"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Accessing the variables and printing values"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(y))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(z))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(a))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(b))));
+}
+
