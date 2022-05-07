@@ -38,10 +38,10 @@ while IFS= read -r line; do
     run_test=$(diff $OUTFILE $REFFILE)
     if [$run_test = ""]
     then
-        echo "Test $counter: $FILENAME passed"
+        echo "Scanner Test $counter: $FILENAME passed"
         ((num_passed++))
     else
-        echo "Test $counter: $FILENAME failed"
+        echo "Scanner Test $counter: $FILENAME failed"
         echo "--------------------------------"
         echo $run_test
         echo "--------------------------------"
@@ -89,10 +89,10 @@ while IFS= read -r line; do
     run_test=$(diff $OUTFILE $REFFILE)
     if [$run_test = ""]
     then
-        echo "Test $counter: $FILENAME passed"
+        echo "Scanner Test $counter: $FILENAME passed"
         ((num_passed++))
     else
-        echo "Test $counter: $FILENAME failed"
+        echo "Scanner Test $counter: $FILENAME failed"
         echo "--------------------------------"
         echo $run_test
         echo "--------------------------------"
@@ -104,7 +104,7 @@ while IFS= read -r line; do
 done < ./viz_err_files.txt
 
 # print results back out to the console
-echo "($num_passed / $num_tests) tests passed"
+echo "($num_passed / $num_tests) Scanner Tests Passed"
 
 # remove .out files
 echo

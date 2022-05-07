@@ -85,10 +85,10 @@ while IFS= read -r line; do
     run_test=$(diff $OUTFILE $REFFILE)
     if [$run_test = ""]
     then
-        echo "Test $counter: $FILENAME passed"
+        echo "Viz Exe Test $counter: $FILENAME passed"
         ((num_passed++))
     else
-        echo "Test $counter: $FILENAME failed"
+        echo "Viz Exe Test $counter: $FILENAME failed"
         echo "--------------------------------"
         echo $run_test
         echo "--------------------------------"
@@ -121,10 +121,10 @@ while IFS= read -r line; do
     run_test=$(diff $OUTFILE $REFFILE)
     if [$run_test = ""]
     then
-        echo "Test $counter: $FILENAME passed"
+        echo "Viz Exe Test $counter: $FILENAME passed"
         ((num_passed++))
     else
-        echo "Test $counter: $FILENAME failed"
+        echo "Viz Exe Test $counter: $FILENAME failed"
         echo "--------------------------------"
         echo $run_test
         echo "--------------------------------"
@@ -137,7 +137,7 @@ done < test/programs/viz_err_files.txt
 
 
 # print results back out to the console
-echo "($num_passed / $num_tests) tests passed"
+echo "($num_passed / $num_tests) Viz Executable Tests Passed"
 
 # remove .out files
 echo
