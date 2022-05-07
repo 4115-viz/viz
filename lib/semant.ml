@@ -126,11 +126,14 @@ let check ((structs: struct_def list), (functions: func_def list)) =
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let check_assign (lvaluet:typ) (rvaluet:typ): typ =
-      if lvaluet = rvaluet then 
-        lvaluet
-      else 
-        failwith ("illegal assignment " ^ fmt_typ lvaluet ^ " = " ^ fmt_typ rvaluet)
+    let rec check_assign (lvaluet:typ) (rvaluet:typ): typ = match lvaluet with
+    (* If the lhs and rhs are both array and have the same type, using the rhs array length *)
+      | ArrayType(l_arr_typ, _) -> (match rvaluet with
+        | ArrayType(r_arr_typ, _) when l_arr_typ = r_arr_typ -> rvaluet
+        | _ -> check_assign lvaluet rvaluet
+      )
+      | _ when lvaluet = rvaluet -> lvaluet
+      | _ -> failwith ("illegal assignment " ^ fmt_typ lvaluet ^ " = " ^ fmt_typ rvaluet)
     in
 
     (* Build local symbol table of variables for this function *)
