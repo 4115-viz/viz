@@ -1,13 +1,13 @@
 FUNC
-UNCAP_ID(main)
+UNCAP_ID("main")
 LPAREN
 RPAREN
 COLON
 T_NONE
 LBRACE
-UNCAP_ID(print)
+UNCAP_ID("print")
 LPAREN
-LIT_STR(Hello World)
+LIT_STR("Hello World")
 RPAREN
 SEMI
 RBRACE

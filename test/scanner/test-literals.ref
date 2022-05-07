@@ -1,10 +1,12 @@
 LIT_BOOL(true)
 LIT_BOOL(false)
 LIT_INT(1)
-LIT_INT(-1)
+MINUS
+LIT_INT(1)
 LIT_INT(0)
-LIT_FLOAT(1.000000)
-LIT_FLOAT(-1.000000)
-LIT_FLOAT(0.000000)
-LIT_STR(string literal)
-LIT_STR(viz is a beginner language)
+LIT_FLOAT(1.)
+MINUS
+LIT_FLOAT(1.)
+LIT_FLOAT(0.)
+LIT_STR("string literal")
+LIT_STR("viz is a beginner language")
