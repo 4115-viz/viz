@@ -2,15 +2,19 @@
 
 ## Getting Started
 ### Environment Setup
+```
+TBD
+```
 
-### Building
+## Building the Code
 #### Build the Viz compiler files
 
 ```
-dune clean
-dune build
+dune clean /* clean the Dune _build folder */
+dune build /* build our compiler code */
 ```
 
+## Running Viz Test Suite
 #### Run the scanner test
 ```
 # from /viz directory
