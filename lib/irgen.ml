@@ -222,7 +222,13 @@ let translate (_, functions) =
               ignore(L.build_store r_val member_addr builder); r_val
             (* The expression before is another postfix expression: recursively evaluate its value *)
             | _ -> ignore(L.build_store r_val (lookup local_vars member_id) builder); r_val)
-        | _ -> failwith "TODO: irgen SAssign"
+        | (typ, SSubscript(spe, idx_sexpr)) ->
+            let arr_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
+            let idx_v = build_expr local_vars builder idx_sexpr in
+            let ptr =
+              L.build_gep arr_v [|idx_v|] "Subscript Assign" builder
+            in
+            ignore(L.build_store r_val ptr builder); r_val
         )
       | SBinop ((op_ret_type, _ ) as e1, op, e2) ->
         (
