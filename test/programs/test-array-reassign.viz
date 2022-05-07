@@ -27,9 +27,7 @@ func main(): none {
     print(@a[0]);
     print(@a[1]);
     print(@a[2]);
-    print(@a[3]);
     
-    /* fails for arrays that are larger than orginally declared array
     @a = [12,13,14,15,16];
     print("");
     print("Array after larger size reaassignment");
@@ -38,8 +36,8 @@ func main(): none {
     print(@a[1]);
     print(@a[2]);
     print(@a[3]);
-    print(@a[4])
-    */
+    print(@a[4]);
+    
     
 
 
