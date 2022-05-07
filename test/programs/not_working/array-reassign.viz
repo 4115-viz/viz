@@ -8,7 +8,7 @@ func main(): none {
     print(@a[2]);
     print(@a[3]);
 
-    \* this will work *\
+    /* this will work */
     @a = [5,6,7,8];
 
     print("");
@@ -19,7 +19,7 @@ func main(): none {
     print(@a[2]);
     print(@a[3]);
 
-    \* neither of these will not work, reassignment must be of same length  *\
+    /* neither of these will not work, reassignment must be of same length  */
     @a = [9,10,11];
     @a = [12,13,14,15];
 

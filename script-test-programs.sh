@@ -9,7 +9,7 @@ chmod 766 test/programs/
 cd test/programs/
 echo
 PWD=$(pwd)
-echo "Running Test Programs in: $PWD"
+echo "Running Viz Test Programs in: $PWD"
 
 # Need to use the Docker Container to run our programs since LLVM is installed in it
 
@@ -28,9 +28,25 @@ counter=1
 # loop through the viz_test_files.txt file to build the .exe files 
 # in the _build folder
 
-echo "Building all of the Executables be patient..."
+# Build the C static library of builtin functions.
+builtins_ar="viz_builtins.a"
+build_dir="_build"
+BuildCLib() {
+  cd lib/builtins
+  make clean
+  make
+  cp ${builtins_ar} ../../${build_dir}
+  cd ../..
+}
 
-echo "Working on building valid .viz files"
+echo "Building the builtin c static library"
+BuildCLib
+if [ $? -ne 0 ]; then
+    echo "Failed while building the builtin c static library"
+    exit;
+fi
+echo "Done."
+echo "Building all of the .viz executables please be patient..."
 
 while IFS= read -r line; do
 
@@ -39,15 +55,14 @@ while IFS= read -r line; do
     FILENAME="test/programs/$BASE.viz"
     
     # build inside the container
-    ./viz $FILENAME
-    clear # clear the terminal
+    ./vizSilent $FILENAME
+    #clear # clear the terminal
 
 done < test/programs/viz_test_files.txt
 
 echo "Done building the executables... "
-echo
-echo
 echo "Now lets run the executables and tests..."
+echo
 
 # loop through the viz_test_files.txt file
 while IFS= read -r line; do
@@ -84,7 +99,7 @@ while IFS= read -r line; do
     
 done < test/programs/viz_test_files.txt
 
-# loop through the viz_test_files.txt file
+# loop through the viz_err_files.txt file
 while IFS= read -r line; do
 
     BASE=$(echo "$line" | cut -d'.' -f 1) 
@@ -100,7 +115,7 @@ while IFS= read -r line; do
 
     # run the executable and pipe into .out file
     # pipe the err message into .out file, and the other garbage into log.txt
-    ./viz $FILENAME 2> $OUTFILE >> "test/programs/log.txt"
+    ./vizSilent $FILENAME 2> $OUTFILE >> "test/programs/log.txt"
 
     # get the diff
     run_test=$(diff $OUTFILE $REFFILE)

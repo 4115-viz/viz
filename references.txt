@@ -29,3 +29,7 @@ also:
  I was able to reason about how the pattern for these ops should look based on our starter
  microC code, and then I exteneded it to floats, and Bools (which really could just be left
  as ints, since they are of type i1_t)
+
+6) viz and vizSilent shell script shamelessly borrow lot from pocaml: 
+   https://github.com/Pocaml/Pocaml/blob/main/pocamlc
+   Thank you, pocaml team! 
