@@ -52,7 +52,7 @@ while IFS= read -r line; do
     
 done < ./viz_test_files.txt
 
-# loop through the viz_test_files.txt file
+# loop through the viz_err_files.txt file
 while IFS= read -r line; do
 
     # split by '.' into array choose base

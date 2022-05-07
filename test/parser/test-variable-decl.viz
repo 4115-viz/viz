@@ -1,14 +1,16 @@
+func main(): none {
+    // these are the 
+    // variable declarations, then init 
+    @my_int: int;
+    @my_float: float;
+    @my_bool: bool;
+    @my_null_var: none;
+    @my_string: string;
+    @my_int = 40;
 
-// variable declarations: not yet implemented
-// this file needs to be updated when the grammar works...
+    // declare and init at same time
+    @x: float = 500.50;
 
-// variable declarations
-//@my_int: int;
-//@my_float: float;
-//@my_bool: bool;
-//@my_null_var: none;
-//@my_string: string;
-
-// how we would declare a list of arguments
-//@arg1: int, @arg2: string, @arg3: float
-@pass;
+    //initializer lists
+    @arg1, @arg2, @arg3 -> (float, 0.0);
+}

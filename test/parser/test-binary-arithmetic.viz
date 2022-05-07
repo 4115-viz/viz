@@ -1,14 +1,14 @@
-// operators for float types
-1.0 - 1.0;
-2.0 + 2.0;
-5.0 / 2.0;
-2.5 * 3.0;
-5.0 % 2.0;
-
-// operators for int types
-1 - 1;
-2 + 2;
-5 / 2;
-2 * 3;
-5 % 2;
-
+func main(): none {
+    // operators for float types
+    1.0 - 1.0;
+    2.0 + 2.0;
+    5.0 / 2.0;
+    2.5 * 3.0;
+    5.0 % 4.0;
+    // operators for int types
+    1 - 1;
+    2 + 2;
+    5 / 2;
+    2 * 3;
+    5 % 2;
+}

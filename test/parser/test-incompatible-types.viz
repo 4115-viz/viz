@@ -1,3 +1,5 @@
-// this will pass the parser
-// but will fail semantically
-1 + "hello world";
+func main(): none {
+    // this will pass the parser
+    // but will fail semantically
+    1 + "hello world";
+}

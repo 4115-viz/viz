@@ -19,15 +19,14 @@ open Ast
 %token T_NONE T_STR T_INT T_BOOL T_FLOAT T_ARRAY
 
 /* delimiters */
-%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
+%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR
 %token EOF ARROW /*LINECONTINUATION*/
 
 /* split id into two, nothing changes outside of parser file */
 
-%token <string> UNCAP_ID /* function names */
+%token <string> UNCAP_ID /* function names and struct member */
 %token <string> ID_VAR /* variable access or assign */
 %token <string> CAP_ID /* struct names */
-%token <string> UNCAP_ID /* struct member */
 %token <string> LIT_STR
 %token <int> LIT_INT
 %token <float> LIT_FLOAT

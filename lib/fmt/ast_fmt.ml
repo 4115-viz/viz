@@ -62,7 +62,7 @@ let rec fmt_expr = function
     fmt_expr l ^ " " ^ fmt_op bo ^ " " ^ fmt_expr r
   | Unop(uo, r) ->
     string_of_uop uo ^ " " ^ fmt_expr r
-  | TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ "->" ^ fmt_typ t ^ "\n"
+  | TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ " -> " ^ fmt_typ t ^ "\n"
   | PostfixExpr x -> (match x with
     | Id id -> "Id(" ^ id ^ ")"
     | Subscript(e, i) -> (fmt_expr (PostfixExpr e)) ^ "[" ^ (fmt_expr i) ^ "]"
@@ -81,13 +81,13 @@ and fmt_array (a : expr list) : string =
  String.concat ", " (List.map fmt_expr a)
 
 and fmt_var_decl ((t, s), e) = fmt_typ t ^ " " ^ s ^ " = " ^
-(match e with
-| None -> "uninitialized"
-| Some(e) -> fmt_expr e)
+  (match e with
+  | None -> "uninitialized"
+  | Some(e) -> fmt_expr e)
 ^ ";\n"
 
 and fmt_stmt = function
-  | Expr e -> fmt_expr e
+  | Expr e -> fmt_expr e ^ "\n"
   | Block (stmts) ->
     "{\n" ^ String.concat "" (List.map fmt_stmt stmts) ^ "}\n"
   | ID_Block (stmts) ->

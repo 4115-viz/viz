@@ -10,8 +10,8 @@ cd test/scanner
 BASH script-token-scanning.sh
 
 # These need to be refactored, at end of project
-#cd ../parser
-#BASH script-parsing.sh
+cd ../parser
+BASH script-parsing.sh
 
 # These need to be refactored, at end of project
 #cd ../semantic

@@ -1,10 +1,15 @@
-  ((FloatLit("1.")) - (FloatLit("1.")))
-  ((FloatLit("2.")) + (FloatLit("2.")))
-  ((FloatLit("5.")) / (FloatLit("2.")))
-  ((FloatLit("2.5")) * (FloatLit("3.")))
-  ((FloatLit("5.")) / (FloatLit("2.")))
-  ((IntLit("1")) - (IntLit("1")))
-  ((IntLit("2")) + (IntLit("2")))
-  ((IntLit("5")) / (IntLit("2")))
-  ((IntLit("2")) * (IntLit("3")))
-  ((IntLit("5")) / (IntLit("2")))
+
+Function Declartion: Type(None) main()
+{
+  FloatLit(1.) - FloatLit(1.)
+  FloatLit(2.) + FloatLit(2.)
+  FloatLit(5.) / FloatLit(2.)
+  FloatLit(2.5) * FloatLit(3.)
+  FloatLit(5.) % FloatLit(4.)
+  IntLit(1) - IntLit(1)
+  IntLit(2) + IntLit(2)
+  IntLit(5) / IntLit(2)
+  IntLit(2) * IntLit(3)
+  IntLit(5) % IntLit(2)
+}
+

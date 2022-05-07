@@ -1,1 +1,6 @@
-  ((IntLit("1")) + (StrLit("hello world")))
+
+Function Declartion: Type(None) main()
+{
+  IntLit(1) + StrLit("hello world")
+}
+
