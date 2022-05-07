@@ -49,6 +49,9 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                (IntType, "str_len", [StrType, "x"]);
                                                                (StrType, "to_upper", [StrType, "x"]);
                                                                (StrType, "to_lower", [StrType, "x"]);
+                                                               (*(ArrayType, "push", ([ArrayType, "x"]));*)
+                                                               (IntType, "array_len", [(ArrayType (Some(IntType),Some(3))), "x"]);
+                                                               (IntType, "array_len_srt", [(ArrayType (Some(StrType),Some(3))), "x"])
                                                                ]
   in
 
@@ -254,6 +257,17 @@ let check ((structs: struct_def list), (functions: func_def list)) =
               match (fst (List.hd args')) with
               | StrType -> fname
               | _ -> raise (Failure ("invalid type for to_upper/to_lower"))
+            )
+          
+          (* for push function *)
+          else if fname = "push" then
+            raise (Failure ("in the push function"))
+       
+          else if fname = "array_len" then
+            (
+              match (fst (List.hd args')) with
+              | ArrayType (_, _) -> "array_len"
+              | _ -> raise (Failure ("cannot get array length of non array"))
             )
             else fname
         ) 

@@ -1,0 +1,7 @@
+func main(): none {
+    @a: array |int| = [1,4,3];
+    @my_str: string;
+    
+    print(array_len(@a));
+
+}

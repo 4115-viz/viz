@@ -32,6 +32,7 @@ let translate (_, functions) =
   and void_t     = L.void_type    context
   and float_t    = L.double_type context 
   and str_t      = L.pointer_type (L.i8_type context)
+  and arr_t      = L.pointer_type (L.i32_type context)
   in
   (* Return the LLVM type for a Viz type *)
   let rec ltype_of_typ = function
@@ -105,6 +106,10 @@ let translate (_, functions) =
   (* string concat library function *)
   let str_len_func_t = L.var_arg_function_type i32_t [| str_t |] in
   let str_len_func = L.declare_function "str_len" str_len_func_t the_module in
+
+  (* array length library function *)
+  let array_len_func_t = L.var_arg_function_type i32_t [| arr_t |] in
+  let array_len_func = L.declare_function "array_len" array_len_func_t the_module in
 
   (* to_upper string library function *)
   let to_upper_func_t = L.var_arg_function_type str_t [| str_t |] in
@@ -343,6 +348,9 @@ let translate (_, functions) =
       | SFuncCall("str_len", [e])  -> 
             L.build_call str_len_func [| ((build_expr local_vars) builder e)|]
             "str_len" builder
+      | SFuncCall("array_len", [e])  -> 
+            L.build_call array_len_func [| ((build_expr local_vars) builder e)|]
+            "array_len" builder
       | SFuncCall("to_upper", [e])  -> 
             L.build_call to_upper_func [| ((build_expr local_vars) builder e)|]
             "to_upper" builder
