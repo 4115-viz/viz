@@ -189,24 +189,23 @@ let translate (_, functions) =
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SNoneLit -> L.const_null void_t
       | SArrayLit sa -> 
-        (match sa with
-        | [] -> raise (Failure "TODO: empty array")
-        | sa ->
-            let all_elem = List.map (fun e ->
-              build_expr local_vars builder e) sa in
-            let llarray_t = L.type_of (List.hd all_elem) in
-            let num_elems = List.length sa in
-            let ptr = L.build_array_malloc llarray_t
-                (L.const_int i32_t num_elems) "" builder 
-            in
-            ignore (List.fold_left (fun i elem ->
-                let idx = L.const_int i32_t i in
-                let eptr = L.build_gep ptr [|idx|] "" builder in
-                let cptr = L.build_pointercast eptr 
-                    (L.pointer_type (L.type_of elem)) "" builder in
-                let _ = (L.build_store elem cptr builder) 
-                in i+1)
-                0 all_elem); ptr)
+        let all_elem = List.map (fun e ->
+          build_expr local_vars builder e) sa in
+        let num_elems = List.length sa in
+        let llarray_t = match num_elems with
+          | 0 -> void_t
+          | _ -> L.type_of (List.hd all_elem)
+        in
+        let ptr = L.build_malloc llarray_t "" builder 
+        in
+        ignore (List.fold_left (fun i elem ->
+            let idx = L.const_int i32_t i in
+            let eptr = L.build_gep ptr [|idx|] "" builder in
+            let cptr = L.build_pointercast eptr 
+                (L.pointer_type (L.type_of elem)) "" builder in
+            let _ = (L.build_store elem cptr builder) 
+            in i+1)
+            0 all_elem); ptr
       | SAssign (l_spe, r_e) -> 
         let r_val = (build_expr local_vars) builder r_e in
         (match l_spe with
@@ -441,7 +440,7 @@ let translate (_, functions) =
           let arr_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
           let idx_v = build_expr local_vars builder idx_sexpr in
           L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
-        | _ -> failwith "TODO:")
+        | _ -> failwith "TODO: MemeberAccess")
       in
 
     (* LLVM insists each basic block end with exactly one "terminator"

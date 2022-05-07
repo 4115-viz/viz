@@ -359,9 +359,8 @@ let check ((structs: struct_def list), (functions: func_def list)) =
       let (bind, sexpr) = (match arr_t with
         (* rhs is empty array, we need to deduce the empty array's type *)
         | ArrayType (None, _) -> 
-          let bind = (arr_ele_typ, id) in
           let deduced_expr_t = ArrayType(Some(arr_ele_typ), Some(0)) in
-          (bind, Some((deduced_expr_t, arr_sx)))
+          ((deduced_expr_t, id), Some((deduced_expr_t, arr_sx)))
         (* rhs has the same type as lhs *)
         | ArrayType (Some(expr_ele_t), _) when expr_ele_t == arr_ele_typ -> 
           ((arr_t, id), Some(arr_sexpr))
