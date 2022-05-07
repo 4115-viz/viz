@@ -182,7 +182,7 @@ let translate (_, functions) =
     in
 
     (* Construct code for an expression; return its value *)
-    let rec build_expr local_vars builder ((_, e) : sexpr) = match e with
+    let rec build_expr local_vars builder ((t, e) : sexpr) = match e with
         SStrLit s -> L.build_global_stringptr s "str" builder
       | SIntLit i  -> L.const_int i32_t i
       | SFloatLit f -> L.const_float float_t f
@@ -193,7 +193,10 @@ let translate (_, functions) =
           build_expr local_vars builder e) sa in
         let num_elems = List.length sa in
         let llarray_t = match num_elems with
-          | 0 -> void_t
+          | 0 -> (match t with
+            | ArrayType(Some(arr_ele_t), _) -> ltype_of_typ arr_ele_t
+            | _ -> failwith "Runtime error: unexpected error during the semantical check of empty ArrayLit"
+          )
           | _ -> L.type_of (List.hd all_elem)
         in
         let ptr = L.build_malloc llarray_t "" builder 
