@@ -6,6 +6,10 @@ struct Person {
     @graduated: bool;
 }
 
+struct Friends {
+    @friend1: Person;
+    @friend2: Person;
+}
 
 func init_person(@name: string, @age: int, @major: string, @school: string, @graduated: bool): Person {
     
@@ -56,4 +60,17 @@ func main(): none {
     show_person_details(@yanhao);
     print("=======");
 
+    @my_group: Friends;
+    @my_group.friend1   = @yanhao;
+    @my_group.friend2   = @matt; 
+
+    print("printing friends from Friends Struct");
+    println();
+    print("Friends.friend1");
+    show_person_details(@my_group.friend1);
+    
+    println();
+    print("Friends.friend2");
+    show_person_details(@my_group.friend2);
+    print("=======");
 }
