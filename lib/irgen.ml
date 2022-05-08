@@ -466,13 +466,36 @@ let translate (structs, functions) =
               )
             | _ -> type_cast_err ty_exp typ
         )
-      | SPostfixExpr (typ, spx) -> ( match spx with
+      | SPostfixExpr (typ, spx) -> (match spx with
         | SId id -> L.build_load (lookup local_vars id) id builder
         | SSubscript (spe, idx_sexpr) -> 
           let arr_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
           let idx_v = build_expr local_vars builder idx_sexpr in
           L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
-        | _ -> failwith "TODO: MemeberAccess")
+        | SMemberAccess((t, spx), member_id) ->
+          (match spx with
+          (* The expression before dot is a @variable *)
+          | SId id -> 
+            let struct_name = match t with
+              | StructType(s) -> s
+              | _ -> failwith (String.concat "" [id ^ " is not a struct"])
+            in
+            let struct_addr = lookup local_vars id in
+            let llname = String.concat "" [id; "_"; member_id] in
+            let struct_decl = find_struct_decl struct_name in
+            let struct_addr_load = L.build_load struct_addr ("struct_" ^ id) builder in
+            let get_member_idx (sd: sstruct_def) member = 
+              let rec find idx = function
+                | [] -> failwith ("struct member " ^ member_id ^ " undefined.")
+                | (_, name) :: _ when name = member -> idx
+                | (_) :: tl -> find (idx + 1) tl
+              in find 0 sd.smembers
+            in
+            let idx = get_member_idx struct_decl member_id in
+            let member_addr = L.build_struct_gep struct_addr_load idx llname builder in
+            L.build_load member_addr ("load_" ^ llname) builder
+          (* The expression before is another postfix expression: recursively evaluate its value *)
+          | _ -> failwith "TODO: nested member access."))
       in
 
     (* LLVM insists each basic block end with exactly one "terminator"
