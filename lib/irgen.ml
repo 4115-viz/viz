@@ -19,7 +19,7 @@ open Sast
 module StringMap = Map.Make(String)
 
 (* translate : Sast.program -> Llvm.module *)
-let translate (_, functions) =
+let translate (structs, functions) =
   let context    = L.global_context () in
 
   (* Create the LLVM compilation module into which
@@ -34,19 +34,16 @@ let translate (_, functions) =
   and str_t      = L.pointer_type (L.i8_type context)
   in
   (* Return the LLVM type for a Viz type *)
-  let rec ltype_of_typ = function
+  let rec ltype_of_typ struct_decls = function
       A.IntType   -> i32_t
     | A.BoolType  -> i1_t
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
     | A.ArrayType(t, _) -> (match t with
-      | Some(t) -> L.pointer_type (ltype_of_typ t)
+      | Some(t) -> L.pointer_type (ltype_of_typ struct_decls t)
       | None -> failwith "Runtime error: unable to deduce the array's type")
-    | A.StructType(name) -> 
-      let struct_t = L.named_struct_type context name in
-      L.struct_set_body struct_t (Array.of_list []) false;
-      struct_t
+    | A.StructType(name) -> L.pointer_type (fst (StringMap.find name struct_decls))
   in
 
   (* for casting error messages *)
@@ -145,14 +142,27 @@ let translate (_, functions) =
   and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder 
   in
 
+  let struct_decls : (L.lltype * sstruct_def) StringMap.t =
+    let add_struct m struct_decl =
+      let name = struct_decl.sname in
+      let members = Array.of_list 
+        (List.map (fun (t, _) -> ltype_of_typ m t) struct_decl.smembers)
+      in
+      let struct_type = L.named_struct_type context name in
+      L.struct_set_body struct_type members false;
+      StringMap.add name (struct_type, struct_decl) m
+    in
+    List.fold_left add_struct StringMap.empty structs
+  in
+
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
   let function_decls : (L.llvalue * sfunc_def) StringMap.t =
     let function_decl m fdecl =
       let name = fdecl.sfname
       and formal_types =
-        Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
-      in let ftype = L.function_type (ltype_of_typ fdecl.srtyp) formal_types in
+        Array.of_list (List.map (fun (t,_) -> ltype_of_typ struct_decls t) fdecl.sformals)
+      in let ftype = L.function_type (ltype_of_typ struct_decls fdecl.srtyp) formal_types in
       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
     List.fold_left function_decl StringMap.empty functions in
 
@@ -167,7 +177,7 @@ let translate (_, functions) =
     let local_vars =
       let add_formal m (t, n) p =
         L.set_value_name n p;
-        let local = L.build_alloca (ltype_of_typ t) n builder in
+        let local = L.build_alloca (ltype_of_typ struct_decls t) n builder in
         ignore (L.build_store p local builder);
         StringMap.add n local m
       in
@@ -194,7 +204,7 @@ let translate (_, functions) =
         let num_elems = List.length sa in
         let llarray_t = match num_elems with
           | 0 -> (match t with
-            | ArrayType(Some(arr_ele_t), _) -> ltype_of_typ arr_ele_t
+            | ArrayType(Some(arr_ele_t), _) -> ltype_of_typ struct_decls arr_ele_t
             | _ -> failwith "Runtime error: unexpected error during the semantical check of empty ArrayLit"
           )
           | _ -> L.type_of (List.hd all_elem)
@@ -509,7 +519,7 @@ let translate (_, functions) =
         fun (local, b) v -> build_stmt local b (SVarDecl v))
         (local_vars, builder) vl
       | SVarDecl ((t, id), e) ->
-        let local_var = L.build_alloca (ltype_of_typ t) id builder in
+        let local_var = L.build_alloca (ltype_of_typ struct_decls t) id builder in
         let new_local_vars = StringMap.add id local_var local_vars in
         let _ = (match e with
           | Some se -> 
@@ -529,7 +539,7 @@ let translate (_, functions) =
     add_terminal (func_builder local_vars) (match fdecl.srtyp with
         A.NoneType -> L.build_ret_void
       | A.FloatType -> L.build_ret (L.const_float float_t 0.0)
-      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
+      | t -> L.build_ret (L.const_int (ltype_of_typ struct_decls t) 0))
   in
 
   List.iter build_function_body functions;
