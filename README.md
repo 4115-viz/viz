@@ -3,7 +3,10 @@
 ## Getting Started
 ### Environment Setup
 ```
-TBD
+Need to ensure that you have the following software installed.
+ocaml = 4.13.1 (group lets discuss...)
+dune >= 3.0
+llvm = 11.0.0 or Docker installed to build our container image with LLVM installed (see below)
 ```
 
 ## Building the Code
@@ -15,32 +18,53 @@ dune build /* build our compiler code */
 ```
 
 ## Running Viz Test Suite
-#### Run the scanner test
+
+#### Compiling an Individual .viz Program at a Particular Build Stage
 ```
-# from /viz directory
-dune exec -- vc test/helloworld.viz -a    /* abstract syntax tree */
-dune exec -- vc test/helloworld.viz -s    /* semantically checked abstract syntax tree */
-dune exec -- vc test/helloworld.viz -ts   /* scan the tokens and send to stdout */
+We leverage the Dune Build system to compile our program with different flags
+and show the corresponding output. Check viz/bin/vc.ml for more details.
+
+# from /viz root directory
+dune exec -- vc <program-name>.viz  -ts    /* scan tokens and print to stdout */
+dune exec -- vc <program-name>.viz  -a    /* abstract syntax tree */
+dune exec -- vc <program-name>.viz  -s    /* abstract syntax tree */
+dune exec -- vc <program-name>.viz  -l    /* abstract syntax tree */
+
 ```
 
-#### Run the automated test scripts
+#### Run Our Scanner Test Suite
 ```
-# hello world test file
-./run_hello_world.sh
-
-# run the whole test suite
-./run_viz_tests.sh
-
-# scanner test files
+# from /viz root directory
 cd test/scanner
-./script-token-parsing.sh
+./script-token-scanning.sh
+```
 
-# parser test files
-TBD
+#### Run Our Parser Test Suite
+```
+# from /viz root directory
+cd test/parser
+./script-parsing.sh
+```
 
-# All test programs
-cd test/programs
-./script-test-programs
+#### Run Our Semantic Test Suite
+```
+# from /viz root directory
+cd test/semantic
+./script-semantic.sh
+```
+
+#### Compile and Run Test Programs
+```
+# from /viz root directory
+./script-test-programs.sh
+```
+
+#### Run the Full Automated Test Suite
+```
+This shell script will run all of the tests across all of the test/* 
+directories.
+# from /viz root directory
+./run_viz_tests.sh
 ```
 
 #### How to compile and run programs!
