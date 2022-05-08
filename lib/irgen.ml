@@ -238,12 +238,12 @@ let translate (structs, functions) =
                 | _ -> failwith (String.concat "" [id ^ " is not a struct"])
               in
               let struct_addr = lookup local_vars id in
-              let llname = String.concat "" [id; "."; member_id] in
+              let llname = String.concat "" [id; "_"; member_id] in
               let struct_decl = find_struct_decl struct_name in
               let struct_addr_load = L.build_load struct_addr ("struct_" ^ id) builder in
               let get_member_idx (sd: sstruct_def) member = 
                 let rec find idx = function
-                  | [] -> failwith "member not found in struct"
+                  | [] -> failwith ("struct member " ^ member_id ^ " undefined.")
                   | (_, name) :: _ when name = member -> idx
                   | (_) :: tl -> find (idx + 1) tl
                 in find 0 sd.smembers
