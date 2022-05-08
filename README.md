@@ -31,7 +31,7 @@ dune build
 ```
 
 # At this point, the container image should be downloaded
-# To use the bash of the docker container:
+#### To use the bash of the docker container:
 
 1. Start the container if it's not running.
 ```
