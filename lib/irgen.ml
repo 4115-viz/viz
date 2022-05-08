@@ -178,7 +178,7 @@ let translate (structs, functions) =
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
        value, if appropriate, and remember their values in the "locals" map *)
-    let local_vars =
+    let local_vars : (L.llvalue StringMap.t) =
       let add_formal m (t, n) p =
         L.set_value_name n p;
         let local = L.build_alloca (ltype_of_typ struct_decls t) n builder in
@@ -249,8 +249,8 @@ let translate (structs, functions) =
                 in find 0 sd.smembers
               in
               let idx = get_member_idx struct_decl member_id in
-              let struct_gep = L.build_struct_gep struct_addr_load idx llname builder in
-              ignore(L.build_store r_val struct_gep builder); r_val
+              let member_addr = L.build_struct_gep struct_addr_load idx llname builder in
+              ignore(L.build_store r_val member_addr builder); r_val
             (* The expression before is another postfix expression: recursively evaluate its value *)
             | _ -> ignore(L.build_store r_val (lookup local_vars member_id) builder); r_val)
         | (typ, SSubscript(spe, idx_sexpr)) ->
@@ -405,7 +405,7 @@ let translate (structs, functions) =
                               string_of_type e1 ^ " to " ^ 
                               string_of_type e2)) 
             in
-            (* typ is what we would like to cast the expr to *)
+            (* typ is what we mywould like to cast the expr to *)
             match typ with
             | IntType -> 
                   (match ty_exp with 
@@ -538,8 +538,18 @@ let translate (structs, functions) =
         fun (local, b) v -> build_stmt local b (SVarDecl v))
         (local_vars, builder) vl
       | SVarDecl ((t, id), e) ->
-        let local_var = L.build_alloca (ltype_of_typ struct_decls t) ("var_" ^ id) builder in
+        let local_var = match t with
+          | StructType(name) -> 
+            let struct_ptr_t = ltype_of_typ struct_decls t in
+            let struct_type = L.element_type struct_ptr_t in
+            let struct_addr = L.build_alloca struct_ptr_t name builder in 
+            let struct_val = L.build_malloc struct_type name builder in
+            ignore(L.build_store struct_val struct_addr builder);
+            struct_addr
+          | _ -> L.build_alloca (ltype_of_typ struct_decls t) ("var_" ^ id) builder
+        in
         let new_local_vars = StringMap.add id local_var local_vars in
+        (* Handle the uninitalized case *)
         let _ = (match e with
           | Some se -> 
             let e' = build_expr new_local_vars builder se in
