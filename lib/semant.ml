@@ -50,7 +50,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                (StrType, "to_upper", [StrType, "x"]);
                                                                (StrType, "to_lower", [StrType, "x"]);
                                                                (*(ArrayType, "push", ([ArrayType, "x"]));*)
-                                                               (IntType, "array_len", [(ArrayType (Some(IntType),Some(3))), "x"]);
+                                                               (IntType, "array_len", [(ArrayType (Some(IntType),Some(20))), "x"]);
                                                                (IntType, "array_len_srt", [(ArrayType (Some(StrType),Some(3))), "x"])
                                                                ]
   in
