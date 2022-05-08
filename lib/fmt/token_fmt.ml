@@ -17,7 +17,7 @@ let string_of_token (t : token) : string  =
     | T_STR  -> "T_STR"
     | T_INT  -> "T_INT"
     | T_FLOAT  -> "T_FLOAT"
-    | T_ARRAY -> "T_ARRAY"
+    | T_LIST -> "T_LIST"
     | LBRACE -> "LBRACE"
     | RBRACE -> "RBRACE"
     | LPAREN -> "LPAREN"

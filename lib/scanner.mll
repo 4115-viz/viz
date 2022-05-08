@@ -52,7 +52,7 @@ rule token = parse
 | "string" { T_STR }
 | "bool" { T_BOOL }
 | "float" { T_FLOAT }
-| "array" { T_ARRAY }
+| "list" { T_LIST }
 
 (* -------- arithmetic operators -------- *)
 | '+' { PLUS }

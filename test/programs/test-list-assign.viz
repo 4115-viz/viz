@@ -1,8 +1,8 @@
 func main(): none {
-    @a: array |int| = [1,4,5,7];
-    @b: array |string| = ["Hello","from","viz","team"];
+    @a: list |int| = [1,4,5,7];
+    @b: list |string| = ["Hello","from","viz","team"];
 
-    print("Int array");
+    print("Int list");
     print("----------------");
     print(@a[0]);
     print(@a[1]);
@@ -10,7 +10,7 @@ func main(): none {
     print(@a[3]);
 
     print(" ");
-    print("String array");
+    print("String list");
     print("----------------");
     print(@b[0]);
     print(@b[1]);

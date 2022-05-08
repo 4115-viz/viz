@@ -1,5 +1,5 @@
 func main(): none {
-    @a: array |int| = [1,4,5,7];
+    @a: list |int| = [1,4,5,7];
 
     /* 
     can only assign at declaration

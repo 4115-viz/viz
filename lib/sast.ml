@@ -7,7 +7,7 @@ and sx =
   | SFloatLit of float
   | SBoolLit of bool
   | SNoneLit
-  | SArrayLit of sexpr list
+  | SListLit of sexpr list
   | SBinop of sexpr * bop * sexpr
   | SAssign of spostfix_expr * sexpr
   | SFuncCall of string * sexpr list

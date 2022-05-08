@@ -10,7 +10,7 @@ type typ =
   | IntType
   | BoolType
   | FloatType
-  | ArrayType of (typ option) * (int option)
+  | ListType of (typ option) * (int option)
   | StructType of string
 
 type bind = typ * string
@@ -21,7 +21,7 @@ type expr =
   | FloatLit of float
   | BoolLit of bool
   | NoneLit
-  | ArrayLit of expr list
+  | ListLit of expr list
   | Assign of postfix_expr * expr
   | FuncCall of string * expr list
   | Binop of expr * bop * expr

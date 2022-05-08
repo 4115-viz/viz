@@ -1,7 +1,7 @@
 func main(): none {
-    @a: array |int| = [1,2,3,4];
+    @a: list |int| = [1,2,3,4];
 
-    print("Array before reaassignment");
+    print("List before reaassignment");
     print("----------------");
     print(@a[0]);
     print(@a[1]);
@@ -12,7 +12,7 @@ func main(): none {
     @a = [5,6,7,8];
 
     print("");
-    print("Array after reaassignment");
+    print("List after reaassignment");
     print("----------------");
     print(@a[0]);
     print(@a[1]);
@@ -22,7 +22,7 @@ func main(): none {
     /* neither of these will not work, reassignment must be of same length  */
     @a = [9,10,11];
     print("");
-    print("Array after reaassignment");
+    print("List after reaassignment");
     print("----------------");
     print(@a[0]);
     print(@a[1]);
@@ -30,7 +30,7 @@ func main(): none {
 
     @a = [12,13,14,15];
     print("");
-    print("Array after reaassignment");
+    print("List after reaassignment");
     print("----------------");
     print(@a[0]);
     print(@a[1]);
@@ -39,13 +39,13 @@ func main(): none {
 
     @a[0] = @a[1] + @a[2];
     print("");
-    print("Array after reaassignment");
+    print("List after reaassignment");
     print("----------------");
     print(@a[0]);
     
     @a = [1,2,3,4, 5];
     print("");
-    print("Array after reaassignment");
+    print("List after reaassignment");
     print("----------------");
     print(@a[0]);
     print(@a[1]);

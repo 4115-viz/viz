@@ -22,7 +22,7 @@ let rec fmt_typ = function
   | IntType   -> "Type(Int)"
   | BoolType  -> "Type(Bool)"
   | FloatType -> "Type(Float)"
-  | ArrayType(t, l) -> 
+  | ListType(t, l) -> 
     let typ = match t with
     | Some(t) -> fmt_typ t
     | None -> "Unknown" in
@@ -30,7 +30,7 @@ let rec fmt_typ = function
     | Some(i) -> string_of_int i
     | None -> "Unknown" in
     String.concat "" [
-      "Type(Array<"; 
+      "Type(List<"; 
       typ ;
       ">[" ;
       len ;
@@ -50,7 +50,7 @@ let rec fmt_expr = function
   | NoneLit  -> "NoneLit(NONE)" (* used for return statement *)
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
-  | ArrayLit(a) -> "ArrayLit[" ^ fmt_array a ^ "]"
+  | ListLit(a) -> "ListLit[" ^ fmt_list a ^ "]"
   | Assign(v, e) -> String.concat "" [
     "Assign("; 
     fmt_expr(PostfixExpr v);
@@ -77,7 +77,7 @@ and fmt_fcall name args =
   
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
-and fmt_array (a : expr list) : string =
+and fmt_list (a : expr list) : string =
  String.concat ", " (List.map fmt_expr a)
 
 and fmt_var_decl ((t, s), e) = fmt_typ t ^ " " ^ s ^ " = " ^

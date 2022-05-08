@@ -40,9 +40,9 @@ let translate (structs, functions) =
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
-    | A.ArrayType(t, _) -> (match t with
+    | A.ListType(t, _) -> (match t with
       | Some(t) -> L.pointer_type (ltype_of_typ struct_decls t)
-      | None -> failwith "Runtime error: unable to deduce the array's type")
+      | None -> failwith "Runtime error: unable to deduce the list's type")
     | A.StructType(name) -> L.pointer_type (fst (StringMap.find name struct_decls))
   in
 
@@ -53,7 +53,7 @@ let translate (structs, functions) =
     | A.NoneType -> "NoneType"
     | A.StrType -> "StrType"
     | A.FloatType -> "FloatType"
-    | A.ArrayType(_,_) -> "ArrayType"
+    | A.ListType(_,_) -> "ListType"
     | A.StructType(_) -> "StructType"
   in
 
@@ -202,18 +202,18 @@ let translate (structs, functions) =
       | SFloatLit f -> L.const_float float_t f
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SNoneLit -> L.const_null void_t
-      | SArrayLit sa -> 
+      | SListLit sl -> 
         let all_elem = List.map (fun e ->
-          build_expr local_vars builder e) sa in
-        let num_elems = List.length sa in
-        let llarray_t = match num_elems with
+          build_expr local_vars builder e) sl in
+        let num_elems = List.length sl in
+        let lllist_t = match num_elems with
           | 0 -> (match t with
-            | ArrayType(Some(arr_ele_t), _) -> ltype_of_typ struct_decls arr_ele_t
-            | _ -> failwith "Runtime error: unexpected error during the semantical check of empty ArrayLit"
+            | ListType(Some(list_ele_t), _) -> ltype_of_typ struct_decls list_ele_t
+            | _ -> failwith "Runtime error: unexpected error during the semantical check of empty ListLit"
           )
           | _ -> L.type_of (List.hd all_elem)
         in
-        let ptr = L.build_malloc llarray_t "" builder 
+        let ptr = L.build_malloc lllist_t "" builder 
         in
         ignore (List.fold_left (fun i elem ->
             let idx = L.const_int i32_t i in
@@ -254,10 +254,10 @@ let translate (structs, functions) =
             (* The expression before is another postfix expression: recursively evaluate its value *)
             | _ -> ignore(L.build_store r_val (lookup local_vars member_id) builder); r_val)
         | (typ, SSubscript(spe, idx_sexpr)) ->
-            let arr_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
+            let list_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
             let idx_v = build_expr local_vars builder idx_sexpr in
             let ptr =
-              L.build_gep arr_v [|idx_v|] "Subscript Assign" builder
+              L.build_gep list_v [|idx_v|] "Subscript Assign" builder
             in
             ignore(L.build_store r_val ptr builder); r_val
         )
@@ -335,7 +335,7 @@ let translate (structs, functions) =
             | _ -> raise ((Failure "Unimplemented Binary Op for StrType"))
             )
           | A.NoneType -> failwith "TODO: Unimplemented Binary Op for NoneType"
-          | A.ArrayType _ -> failwith "TODO: Unimplemented Binary Op for ArrayType"
+          | A.ListType _ -> failwith "TODO: Unimplemented Binary Op for ListType"
           | A.StructType _ -> failwith "does not support binary operation for struct"
         )
       | SUnop (op, ((ret_ty, _ ) as e)) ->
@@ -359,7 +359,7 @@ let translate (structs, functions) =
               )
             | A.StrType   -> failwith "Unimplemented Unary Op for StrType"
             | A.NoneType  -> failwith "Unimplemented Unary Op for NoneType"
-            | A.ArrayType _  -> failwith "Unimplemented Unary Op for NoneType"
+            | A.ListType _  -> failwith "Unimplemented Unary Op for NoneType"
             | A.StructType _ -> failwith "Does not import unary operation for StructType"
         )
       | SFuncCall("println", [])   -> 
@@ -469,9 +469,9 @@ let translate (structs, functions) =
       | SPostfixExpr (typ, spx) -> (match spx with
         | SId id -> L.build_load (lookup local_vars id) id builder
         | SSubscript (spe, idx_sexpr) -> 
-          let arr_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
+          let list_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
           let idx_v = build_expr local_vars builder idx_sexpr in
-          L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
+          L.build_load (L.build_gep list_v [| idx_v |] "subscript" builder) "" builder
         | SMemberAccess((t, spx), member_id) ->
           (match spx with
           (* The expression before dot is a @variable *)
