@@ -155,6 +155,10 @@ let translate (structs, functions) =
     List.fold_left add_struct StringMap.empty structs
   in
 
+  let find_struct_decl name = try snd (StringMap.find name struct_decls)
+  with Not_found -> raise (Failure ("undeclared struct " ^ name))
+  in
+
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
   let function_decls : (L.llvalue * sfunc_def) StringMap.t =
@@ -225,13 +229,28 @@ let translate (structs, functions) =
         (* If left is a variable, simply store the r_val into the address of that variable *)
         | (_, SId id) -> 
           ignore(L.build_store r_val (lookup local_vars id) builder); r_val
-        | (_, SMemberAccess((_, spx), member_id)) ->
+        | (_, SMemberAccess((t, spx), member_id)) ->
             (match spx with
             (* The expression before dot is a @variable *)
             | SId id -> 
+              let struct_name = match t with
+                | StructType(s) -> s
+                | _ -> failwith (String.concat "" [id ^ " is not a struct"])
+              in
               let struct_addr = lookup local_vars id in
-              let member_addr = struct_addr in
-              ignore(L.build_store r_val member_addr builder); r_val
+              let llname = String.concat "" [id; "."; member_id] in
+              let struct_decl = find_struct_decl struct_name in
+              let struct_addr_load = L.build_load struct_addr ("struct_" ^ id) builder in
+              let get_member_idx (sd: sstruct_def) member = 
+                let rec find idx = function
+                  | [] -> failwith "member not found in struct"
+                  | (_, name) :: _ when name = member -> idx
+                  | (_) :: tl -> find (idx + 1) tl
+                in find 0 sd.smembers
+              in
+              let idx = get_member_idx struct_decl member_id in
+              let struct_gep = L.build_struct_gep struct_addr_load idx llname builder in
+              ignore(L.build_store r_val struct_gep builder); r_val
             (* The expression before is another postfix expression: recursively evaluate its value *)
             | _ -> ignore(L.build_store r_val (lookup local_vars member_id) builder); r_val)
         | (typ, SSubscript(spe, idx_sexpr)) ->
@@ -519,12 +538,13 @@ let translate (structs, functions) =
         fun (local, b) v -> build_stmt local b (SVarDecl v))
         (local_vars, builder) vl
       | SVarDecl ((t, id), e) ->
-        let local_var = L.build_alloca (ltype_of_typ struct_decls t) id builder in
+        let local_var = L.build_alloca (ltype_of_typ struct_decls t) ("var_" ^ id) builder in
         let new_local_vars = StringMap.add id local_var local_vars in
         let _ = (match e with
           | Some se -> 
             let e' = build_expr new_local_vars builder se in
             ignore(L.build_store e' local_var builder);
+          (* rhs is uninitialized *)
           | _ -> ()
         ) in
         new_local_vars, builder
