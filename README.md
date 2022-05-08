@@ -67,10 +67,10 @@ We leverage the Dune Build system to compile our program with different flags
 and show the corresponding output. Check viz/bin/vc.ml for more details.
 
 # from /viz root directory
-dune exec -- vc <program-name>.viz  -ts    /* scan tokens and print to stdout */
+dune exec -- vc <program-name>.viz  -ts   /* scan tokens and print to stdout */
 dune exec -- vc <program-name>.viz  -a    /* abstract syntax tree */
-dune exec -- vc <program-name>.viz  -s    /* abstract syntax tree */
-dune exec -- vc <program-name>.viz  -l    /* abstract syntax tree */
+dune exec -- vc <program-name>.viz  -s    /* semantically checked abstract syntax tree */
+dune exec -- vc <program-name>.viz  -l    /* LLVM IR */
 
 ```
 
