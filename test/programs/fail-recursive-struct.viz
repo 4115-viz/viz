@@ -1,0 +1,15 @@
+struct Person {
+    @name: string;
+    @age: int;
+    @major: string;
+    @school: string;
+    @graduated: bool;
+    
+    // here is where the error is
+    @parent1: Person;
+    @parent2: Person;
+}
+
+func main(): none {
+    print("recursive struct def");
+}
