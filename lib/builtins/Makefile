@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-I.
-OBJ = print.o cast.o strings.o array.o list.o
+OBJ = print.o cast.o strings.o list.o
 
 .PHONY: default
 default: viz_builtins.a
