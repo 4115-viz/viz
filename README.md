@@ -47,14 +47,11 @@ of the tests in the next section without fear of software dependency issues.
 ./launch-container.sh
 ```
 
-3. Run the bash shell of the container. (TODO DELETE)
-```
-docker exec -it <container_name> /bin/bash 
-```
-
 ## Building the Code
-#### Build the Viz compiler files
+At this point you should have built the Viz Docker Image, and be inside the container. That
+will ensure no issues with running any of the following commands.
 
+#### Build the Viz compiler files
 ```
 dune clean /* clean the Dune _build folder */
 dune build /* build our compiler code */
