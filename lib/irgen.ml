@@ -19,7 +19,7 @@ open Sast
 module StringMap = Map.Make(String)
 
 (* translate : Sast.program -> Llvm.module *)
-let translate (_, functions) =
+let translate (structs, functions) =
   let context    = L.global_context () in
 
   (* Create the LLVM compilation module into which
@@ -35,19 +35,16 @@ let translate (_, functions) =
   and arr_t      = L.pointer_type (L.i32_type context)
   in
   (* Return the LLVM type for a Viz type *)
-  let rec ltype_of_typ = function
+  let rec ltype_of_typ struct_decls = function
       A.IntType   -> i32_t
     | A.BoolType  -> i1_t
     | A.NoneType -> void_t
     | A.StrType -> str_t
     | A.FloatType -> float_t
-    | A.ArrayType(t, _) -> (match t with
-      | Some(t) -> L.pointer_type (ltype_of_typ t)
-      | None -> failwith "Runtime error: unable to deduce the array's type")
-    | A.StructType(name) -> 
-      let struct_t = L.named_struct_type context name in
-      L.struct_set_body struct_t (Array.of_list []) false;
-      struct_t
+    | A.ListType(t, _) -> (match t with
+      | Some(t) -> L.pointer_type (ltype_of_typ struct_decls t)
+      | None -> failwith "Runtime error: unable to deduce the list's type")
+    | A.StructType(name) -> L.pointer_type (fst (StringMap.find name struct_decls))
   in
 
   (* for casting error messages *)
@@ -57,7 +54,7 @@ let translate (_, functions) =
     | A.NoneType -> "NoneType"
     | A.StrType -> "StrType"
     | A.FloatType -> "FloatType"
-    | A.ArrayType(_,_) -> "ArrayType"
+    | A.ListType(_,_) -> "ListType"
     | A.StructType(_) -> "StructType"
   in
 
@@ -150,14 +147,31 @@ let translate (_, functions) =
   and float_format_str builder = L.build_global_stringptr "%f\n" "fmt" builder 
   in
 
+  let struct_decls : (L.lltype * sstruct_def) StringMap.t =
+    let add_struct m struct_decl =
+      let name = struct_decl.sname in
+      let members = Array.of_list 
+        (List.map (fun (t, _) -> ltype_of_typ m t) struct_decl.smembers)
+      in
+      let struct_type = L.named_struct_type context name in
+      L.struct_set_body struct_type members false;
+      StringMap.add name (struct_type, struct_decl) m
+    in
+    List.fold_left add_struct StringMap.empty structs
+  in
+
+  let find_struct_decl name = try snd (StringMap.find name struct_decls)
+  with Not_found -> raise (Failure ("undeclared struct " ^ name))
+  in
+
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
   let function_decls : (L.llvalue * sfunc_def) StringMap.t =
     let function_decl m fdecl =
       let name = fdecl.sfname
       and formal_types =
-        Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
-      in let ftype = L.function_type (ltype_of_typ fdecl.srtyp) formal_types in
+        Array.of_list (List.map (fun (t,_) -> ltype_of_typ struct_decls t) fdecl.sformals)
+      in let ftype = L.function_type (ltype_of_typ struct_decls fdecl.srtyp) formal_types in
       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
     List.fold_left function_decl StringMap.empty functions in
 
@@ -169,10 +183,10 @@ let translate (_, functions) =
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
        value, if appropriate, and remember their values in the "locals" map *)
-    let local_vars =
+    let local_vars : (L.llvalue StringMap.t) =
       let add_formal m (t, n) p =
         L.set_value_name n p;
-        let local = L.build_alloca (ltype_of_typ t) n builder in
+        let local = L.build_alloca (ltype_of_typ struct_decls t) n builder in
         ignore (L.build_store p local builder);
         StringMap.add n local m
       in
@@ -187,47 +201,70 @@ let translate (_, functions) =
     in
 
     (* Construct code for an expression; return its value *)
-    let rec build_expr local_vars builder ((_, e) : sexpr) = match e with
+    let rec build_expr local_vars builder ((t, e) : sexpr) = match e with
         SStrLit s -> L.build_global_stringptr s "str" builder
       | SIntLit i  -> L.const_int i32_t i
       | SFloatLit f -> L.const_float float_t f
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SNoneLit -> L.const_null void_t
-      | SArrayLit sa -> 
-        (match sa with
-        | [] -> raise (Failure "TODO: empty array")
-        | sa ->
-            let all_elem = List.map (fun e ->
-              build_expr local_vars builder e) sa in
-            let llarray_t = L.type_of (List.hd all_elem) in
-            let num_elems = List.length sa in
-            let ptr = L.build_array_malloc llarray_t
-                (L.const_int i32_t num_elems) "" builder 
-            in
-            ignore (List.fold_left (fun i elem ->
-                let idx = L.const_int i32_t i in
-                let eptr = L.build_gep ptr [|idx|] "" builder in
-                let cptr = L.build_pointercast eptr 
-                    (L.pointer_type (L.type_of elem)) "" builder in
-                let _ = (L.build_store elem cptr builder) 
-                in i+1)
-                0 all_elem); ptr)
+      | SListLit sl -> 
+        let all_elem = List.map (fun e ->
+          build_expr local_vars builder e) sl in
+        let num_elems = List.length sl in
+        let lllist_t = match num_elems with
+          | 0 -> (match t with
+            | ListType(Some(list_ele_t), _) -> ltype_of_typ struct_decls list_ele_t
+            | _ -> failwith "Runtime error: unexpected error during the semantical check of empty ListLit"
+          )
+          | _ -> L.type_of (List.hd all_elem)
+        in
+        let ptr = L.build_malloc lllist_t "" builder 
+        in
+        ignore (List.fold_left (fun i elem ->
+            let idx = L.const_int i32_t i in
+            let eptr = L.build_gep ptr [|idx|] "" builder in
+            let cptr = L.build_pointercast eptr 
+                (L.pointer_type (L.type_of elem)) "" builder in
+            let _ = (L.build_store elem cptr builder) 
+            in i+1)
+            0 all_elem); ptr
       | SAssign (l_spe, r_e) -> 
         let r_val = (build_expr local_vars) builder r_e in
         (match l_spe with
         (* If left is a variable, simply store the r_val into the address of that variable *)
         | (_, SId id) -> 
           ignore(L.build_store r_val (lookup local_vars id) builder); r_val
-        | (_, SMemberAccess((_, spx), member_id)) ->
+        | (_, SMemberAccess((t, spx), member_id)) ->
             (match spx with
             (* The expression before dot is a @variable *)
             | SId id -> 
+              let struct_name = match t with
+                | StructType(s) -> s
+                | _ -> failwith (String.concat "" [id ^ " is not a struct"])
+              in
               let struct_addr = lookup local_vars id in
-              let member_addr = struct_addr in
+              let llname = String.concat "" [id; "_"; member_id] in
+              let struct_decl = find_struct_decl struct_name in
+              let struct_addr_load = L.build_load struct_addr ("struct_" ^ id) builder in
+              let get_member_idx (sd: sstruct_def) member = 
+                let rec find idx = function
+                  | [] -> failwith ("struct member " ^ member_id ^ " undefined.")
+                  | (_, name) :: _ when name = member -> idx
+                  | (_) :: tl -> find (idx + 1) tl
+                in find 0 sd.smembers
+              in
+              let idx = get_member_idx struct_decl member_id in
+              let member_addr = L.build_struct_gep struct_addr_load idx llname builder in
               ignore(L.build_store r_val member_addr builder); r_val
             (* The expression before is another postfix expression: recursively evaluate its value *)
             | _ -> ignore(L.build_store r_val (lookup local_vars member_id) builder); r_val)
-        | _ -> failwith "TODO: irgen SAssign"
+        | (typ, SSubscript(spe, idx_sexpr)) ->
+            let list_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
+            let idx_v = build_expr local_vars builder idx_sexpr in
+            let ptr =
+              L.build_gep list_v [|idx_v|] "Subscript Assign" builder
+            in
+            ignore(L.build_store r_val ptr builder); r_val
         )
       | SBinop ((op_ret_type, _ ) as e1, op, e2) ->
         (
@@ -303,7 +340,7 @@ let translate (_, functions) =
             | _ -> raise ((Failure "Unimplemented Binary Op for StrType"))
             )
           | A.NoneType -> failwith "TODO: Unimplemented Binary Op for NoneType"
-          | A.ArrayType _ -> failwith "TODO: Unimplemented Binary Op for ArrayType"
+          | A.ListType _ -> failwith "TODO: Unimplemented Binary Op for ListType"
           | A.StructType _ -> failwith "does not support binary operation for struct"
         )
       | SUnop (op, ((ret_ty, _ ) as e)) ->
@@ -327,7 +364,7 @@ let translate (_, functions) =
               )
             | A.StrType   -> failwith "Unimplemented Unary Op for StrType"
             | A.NoneType  -> failwith "Unimplemented Unary Op for NoneType"
-            | A.ArrayType _  -> failwith "Unimplemented Unary Op for NoneType"
+            | A.ListType _  -> failwith "Unimplemented Unary Op for NoneType"
             | A.StructType _ -> failwith "Does not import unary operation for StructType"
         )
       | SFuncCall("println", [])   -> 
@@ -376,7 +413,7 @@ let translate (_, functions) =
                               string_of_type e1 ^ " to " ^ 
                               string_of_type e2)) 
             in
-            (* typ is what we would like to cast the expr to *)
+            (* typ is what we mywould like to cast the expr to *)
             match typ with
             | IntType -> 
                   (match ty_exp with 
@@ -437,13 +474,36 @@ let translate (_, functions) =
               )
             | _ -> type_cast_err ty_exp typ
         )
-      | SPostfixExpr (typ, spx) -> ( match spx with
+      | SPostfixExpr (typ, spx) -> (match spx with
         | SId id -> L.build_load (lookup local_vars id) id builder
         | SSubscript (spe, idx_sexpr) -> 
-          let arr_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
+          let list_v = build_expr local_vars builder (typ, SPostfixExpr spe) in
           let idx_v = build_expr local_vars builder idx_sexpr in
-          L.build_load (L.build_gep arr_v [| idx_v |] "subscript" builder) "" builder
-        | _ -> failwith "TODO:")
+          L.build_load (L.build_gep list_v [| idx_v |] "subscript" builder) "" builder
+        | SMemberAccess((t, spx), member_id) ->
+          (match spx with
+          (* The expression before dot is a @variable *)
+          | SId id -> 
+            let struct_name = match t with
+              | StructType(s) -> s
+              | _ -> failwith (String.concat "" [id ^ " is not a struct"])
+            in
+            let struct_addr = lookup local_vars id in
+            let llname = String.concat "" [id; "_"; member_id] in
+            let struct_decl = find_struct_decl struct_name in
+            let struct_addr_load = L.build_load struct_addr ("struct_" ^ id) builder in
+            let get_member_idx (sd: sstruct_def) member = 
+              let rec find idx = function
+                | [] -> failwith ("struct member " ^ member_id ^ " undefined.")
+                | (_, name) :: _ when name = member -> idx
+                | (_) :: tl -> find (idx + 1) tl
+              in find 0 sd.smembers
+            in
+            let idx = get_member_idx struct_decl member_id in
+            let member_addr = L.build_struct_gep struct_addr_load idx llname builder in
+            L.build_load member_addr ("load_" ^ llname) builder
+          (* The expression before is another postfix expression: recursively evaluate its value *)
+          | _ -> failwith "TODO: nested member access."))
       in
 
     (* LLVM insists each basic block end with exactly one "terminator"
@@ -509,12 +569,23 @@ let translate (_, functions) =
         fun (local, b) v -> build_stmt local b (SVarDecl v))
         (local_vars, builder) vl
       | SVarDecl ((t, id), e) ->
-        let local_var = L.build_alloca (ltype_of_typ t) id builder in
+        let local_var = match t with
+          | StructType(name) -> 
+            let struct_ptr_t = ltype_of_typ struct_decls t in
+            let struct_type = L.element_type struct_ptr_t in
+            let struct_addr = L.build_alloca struct_ptr_t name builder in 
+            let struct_val = L.build_malloc struct_type name builder in
+            ignore(L.build_store struct_val struct_addr builder);
+            struct_addr
+          | _ -> L.build_alloca (ltype_of_typ struct_decls t) ("var_" ^ id) builder
+        in
         let new_local_vars = StringMap.add id local_var local_vars in
+        (* Handle the uninitalized case *)
         let _ = (match e with
           | Some se -> 
             let e' = build_expr new_local_vars builder se in
             ignore(L.build_store e' local_var builder);
+          (* rhs is uninitialized *)
           | _ -> ()
         ) in
         new_local_vars, builder
@@ -529,7 +600,7 @@ let translate (_, functions) =
     add_terminal (func_builder local_vars) (match fdecl.srtyp with
         A.NoneType -> L.build_ret_void
       | A.FloatType -> L.build_ret (L.const_float float_t 0.0)
-      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
+      | t -> L.build_ret (L.const_int (ltype_of_typ struct_decls t) 0))
   in
 
   List.iter build_function_body functions;

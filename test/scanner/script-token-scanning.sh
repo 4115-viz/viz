@@ -10,19 +10,21 @@ echo "Running Scanner Tests in: $PWD"
 # dune exec -- vc {test-filename} -ts >  {filename.out}
 # dune exec -- vc {fail-filename} -ts 2> {filename.out}
 
-#scanner_test_dir=/viz/test/scanner
-test_files='*.viz'
-fail_cases='*.err'
+
+# pipe all of the filenames into a txt file, for looping
+ls test-*.viz > viz_test_files.txt 
+ls fail-*.err > viz_err_files.txt
+
+# book-keep test files
 num_tests=0
 num_passed=0
 counter=1
 
-# run the test_files
-for entry in $test_files
-do
+# loop through the viz_test_files.txt file
+while IFS= read -r line; do
 
     # split by '.' into array choose base
-    BASE=$(echo "$entry" | cut -d'.' -f 1)
+    BASE=$(echo "$line" | cut -d'.' -f 1)
     
     #echo $BASE
     FILENAME="$BASE.viz"
@@ -36,10 +38,10 @@ do
     run_test=$(diff $OUTFILE $REFFILE)
     if [$run_test = ""]
     then
-        echo "Test $counter: $FILENAME passed"
+        echo "Scanner Test $counter: $FILENAME passed"
         ((num_passed++))
     else
-        echo "Test $counter: $FILENAME failed"
+        echo "Scanner Test $counter: $FILENAME failed"
         echo "--------------------------------"
         echo $run_test
         echo "--------------------------------"
@@ -48,13 +50,13 @@ do
     ((counter++))
     ((num_tests++))
     
-done
+done < ./viz_test_files.txt
 
-# run the error cases
-for entry in $fail_cases
-do
+# loop through the viz_err_files.txt file
+while IFS= read -r line; do
+
     # split by '.' into array choose base
-    BASE=$(echo "$entry" | cut -d'.' -f 1)
+    BASE=$(echo "$line" | cut -d'.' -f 1)
     
     FILENAME="$BASE.err"
     REFFILE="$BASE.ref"
@@ -87,10 +89,10 @@ do
     run_test=$(diff $OUTFILE $REFFILE)
     if [$run_test = ""]
     then
-        echo "Test $counter: $FILENAME passed"
+        echo "Scanner Test $counter: $FILENAME passed"
         ((num_passed++))
     else
-        echo "Test $counter: $FILENAME failed"
+        echo "Scanner Test $counter: $FILENAME failed"
         echo "--------------------------------"
         echo $run_test
         echo "--------------------------------"
@@ -99,10 +101,10 @@ do
     ((counter++))
     ((num_tests++))
     
-done
+done < ./viz_err_files.txt
 
 # print results back out to the console
-echo "($num_passed / $num_tests) tests passed"
+echo "($num_passed / $num_tests) Scanner Tests Passed"
 
 # remove .out files
 echo
@@ -110,4 +112,4 @@ echo "removing all the intermediate files in $PWD"
 echo
 
 # comment this out to see the intermediary files
-rm *.out *.tmp log.txt
+rm *.out *.tmp log.txt viz_err_files.txt viz_test_files.txt

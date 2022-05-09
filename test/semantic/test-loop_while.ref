@@ -1,0 +1,32 @@
+
+Type(None) main()
+{
+Type(Int) i = (Type(Int) : IntLit(0));
+  (Type(Int) : Assign(Id(i) = (Type(Int) : IntLit(0))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=========================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("loop counting up"))));
+while ((Type(Bool) : (Type(Int) : Id(i)) < (Type(Int) : IntLit(10)))) {
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(i))));
+  (Type(Int) : Assign(Id(i) = (Type(Int) : (Type(Int) : Id(i)) + (Type(Int) : IntLit(1)))));
+ }
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=========================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("loop counting down"))));
+while ((Type(Bool) : (Type(Int) : Id(i)) > (Type(Int) : IntLit(0)))) {
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(i))));
+  (Type(Int) : Assign(Id(i) = (Type(Int) : (Type(Int) : Id(i)) - (Type(Int) : IntLit(1)))));
+ }
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=========================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing nested while loop"))));
+  (Type(Int) : Assign(Id(i) = (Type(Int) : IntLit(10))));
+Type(Int) j = (Type(Int) : IntLit(10));
+while ((Type(Bool) : (Type(Int) : Id(i)) > (Type(Int) : IntLit(0)))) {
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(i))));
+while ((Type(Bool) : (Type(Int) : Id(j)) > (Type(Int) : IntLit(0)))) {
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested loop"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(j))));
+  (Type(Int) : Assign(Id(j) = (Type(Int) : (Type(Int) : Id(j)) - (Type(Int) : IntLit(1)))));
+ }
+  (Type(Int) : Assign(Id(i) = (Type(Int) : (Type(Int) : Id(i)) - (Type(Int) : IntLit(1)))));
+ }
+}
+

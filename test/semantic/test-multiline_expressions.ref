@@ -1,0 +1,33 @@
+
+Type(Int) multi_line(x, y, z)
+{
+return (Type(Int) : (Type(Int) : (Type(Int) : Id(x)) + (Type(Int) : Id(y))) + (Type(Int) : Id(z)));
+}
+
+Type(None) main()
+{
+Type(Str) my_str = (Type(Str) : (StrLit("Hello,
+                        World! This is a
+                        Multiline String
+                        without line continuation."));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(Str) : (Assign(Id(my_str) = (Type(Str) : (StrLit("Hello World! This is a Multiline String."))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("expecting: Hello, World! This is a Multiline String."))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "println", args: ));
+Type(Int) test = (Type(Int) : FuncCall(name: "multi_line", args: (Type(Int) : IntLit(500))
+(Type(Int) : IntLit(100))
+(Type(Int) : IntLit(200))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("implicit multi_line func call"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(test))));
+Type(Int) test2 = (Type(Int) : FuncCall(name: "multi_line", args: (Type(Int) : IntLit(800))
+(Type(Int) : IntLit(200))
+(Type(Int) : IntLit(800))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("explicit multi_line func call"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(test2))));
+Type(Int) math = (Type(Int) : (Type(Int) : IntLit(10000)) + (Type(Int) : IntLit(10000)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("multi line math expr"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(math))));
+}
+

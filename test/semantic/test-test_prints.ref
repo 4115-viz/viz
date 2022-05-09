@@ -1,0 +1,22 @@
+
+Type(None) test_prints(x, y, z, h)
+{
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(x))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(y))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(z))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(h))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : BoolLit(false))));
+}
+
+Type(None) main()
+{
+Type(Float) b = (Type(Float) : FloatLit(0.));
+  (Type(Float) : Assign(Id(b) = (Type(Float) : neg (Type(Float) : FloatLit(10.)))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(b))));
+  (Type(None) : FuncCall(name: "test_prints", args: (Type(Float) : neg (Type(Float) : FloatLit(10.5)))
+(Type(Int) : IntLit(100))
+(Type(Str) : (StrLit("Hello world"))
+(Type(Bool) : BoolLit(true))));
+}
+

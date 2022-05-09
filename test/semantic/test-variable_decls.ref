@@ -1,0 +1,59 @@
+
+Type(Int) test(z)
+{
+return (Type(Int) : Id(z));
+}
+
+Type(None) main()
+{
+Type(Str) x = (Type(Str) : (StrLit("Good"));
+Type(Int) y = (Type(Int) : IntLit(5));
+  (Type(Str) : (Assign(Id(x) = (Type(Str) : (StrLit("Hello World"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("refer to x after assignment"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("declare and initialize y"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("call test() using y as a param"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : (Type(Int) : Id(y)) + (Type(Int) : FuncCall(name: "test", args: (Type(Int) : Id(y)))))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("y = y + 5"))));
+  (Type(Int) : Assign(Id(y) = (Type(Int) : (Type(Int) : Id(y)) + (Type(Int) : IntLit(5)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(y))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("assign and delcare int variable"))));
+Type(Int) z = (Type(Int) : IntLit(7));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(z))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("y+z = 12"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : (Type(Int) : Id(y)) + (Type(Int) : Id(z)))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("assign and declare string variable"))));
+Type(Str) h = (Type(Str) : (StrLit("Hello World"));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(h))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("default value for float is 0"))));
+Type(Float) a = (Type(Float) : FloatLit(0.));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(a))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("default value for bool is false"))));
+Type(Bool) b = (Type(Bool) : BoolLit(true));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : Id(b))));
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================================"))));
+}
+

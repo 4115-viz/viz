@@ -1,0 +1,9 @@
+
+Type(None) main()
+{
+if ((Type(Bool) : (Type(Int) : IntLit(3)) < (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("simple if statement"))));
+ }
+}
+

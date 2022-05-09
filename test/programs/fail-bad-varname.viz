@@ -1,0 +1,4 @@
+func main() : none {
+    // invalid variable name
+    @x!123: int;
+}

@@ -1,0 +1,25 @@
+
+Type(None) main()
+{
+Type(Int) x = (Type(Int) : IntLit(5));
+if ((Type(Bool) : (Type(Int) : Id(x)) < (Type(Int) : IntLit(5))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("x is less than 5"))));
+ }
+else
+if ((Type(Bool) : (Type(Int) : Id(x)) == (Type(Int) : IntLit(5))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("x is equal to 5"))));
+ }
+else
+if ((Type(Bool) : (Type(Int) : Id(x)) == (Type(Int) : IntLit(6))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing multiple elif, x = 6"))));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("x is larger than 6"))));
+ }
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("------------------------"))));
+}
+

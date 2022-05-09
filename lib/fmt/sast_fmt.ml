@@ -18,7 +18,7 @@ and fmt_sx se =
       | SNoneLit  -> "NoneLit(NONE)" (* used for return statement *)
       | SBoolLit(true) -> "BoolLit(true)"
       | SBoolLit(false) -> "BoolLit(false)"
-      | SArrayLit(a) -> "ArrayLit[" ^ fmt_sarray a ^ "]"
+      | SListLit(a) -> "ListLit[" ^ fmt_slist a ^ "]"
       | SAssign(spe, se) -> String.concat "" ["Assign("; fmt_sx(SPostfixExpr spe); " = "; fmt_sexpr se; ")"]
       | SFuncCall(name, args) -> fmt_sfcall name args
       | SBinop(l, bo, r) -> 
@@ -33,7 +33,7 @@ and fmt_sx se =
       )
     )
 
-and fmt_sarray (sa : sexpr list) : string =
+and fmt_slist (sa : sexpr list) : string =
 String.concat ", " (List.map fmt_sexpr sa)
 
 and fmt_svar_decl ((t, s), e) = fmt_typ t ^ " " ^ s ^ " = " ^

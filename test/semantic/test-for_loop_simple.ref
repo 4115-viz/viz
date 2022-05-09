@@ -1,0 +1,60 @@
+
+Type(None) main()
+{
+Type(Int) x = (Type(Int) : IntLit(0));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing <= condition with default step 1"))));
+For Loop (variable: (Type(Int) : Assign(Id(x) = (Type(Int) : IntLit(1)))), predicate: (Type(Bool) : (Type(Int) : Id(x)) <= (Type(Int) : IntLit(5))), update: (Type(Int) : Assign(Id(x) = (Type(Int) : (Type(Int) : Id(x)) + (Type(Int) : IntLit(1)))))) {
+	{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("for loop <=, default step 1"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("iteration"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+ }
+}
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing <= condition with step 2"))));
+For Loop (variable: (Type(Int) : Assign(Id(x) = (Type(Int) : IntLit(1)))), predicate: (Type(Bool) : (Type(Int) : Id(x)) <= (Type(Int) : IntLit(5))), update: (Type(Int) : Assign(Id(x) = (Type(Int) : (Type(Int) : Id(x)) + (Type(Int) : IntLit(2)))))) {
+	{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("for loop <=, step 2"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("iteration"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+ }
+}
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing < condition with step 1"))));
+For Loop (variable: (Type(Int) : Assign(Id(x) = (Type(Int) : IntLit(1)))), predicate: (Type(Bool) : (Type(Int) : Id(x)) < (Type(Int) : IntLit(5))), update: (Type(Int) : Assign(Id(x) = (Type(Int) : (Type(Int) : Id(x)) + (Type(Int) : IntLit(1)))))) {
+	{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("for loop <, step 1"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("iteration"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+ }
+}
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing > condition with step -1"))));
+For Loop (variable: (Type(Int) : Assign(Id(x) = (Type(Int) : IntLit(10)))), predicate: (Type(Bool) : (Type(Int) : Id(x)) > (Type(Int) : IntLit(5))), update: (Type(Int) : Assign(Id(x) = (Type(Int) : (Type(Int) : Id(x)) + (Type(Int) : IntLit(-1)))))) {
+	{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("for loop >, step -1"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("iteration"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+ }
+}
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing >= condition with step -5"))));
+For Loop (variable: (Type(Int) : Assign(Id(x) = (Type(Int) : IntLit(110)))), predicate: (Type(Bool) : (Type(Int) : Id(x)) >= (Type(Int) : IntLit(95))), update: (Type(Int) : Assign(Id(x) = (Type(Int) : (Type(Int) : Id(x)) + (Type(Int) : IntLit(-5)))))) {
+	{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("for loop >=, step -5"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("iteration"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================"))));
+ }
+}
+}
+

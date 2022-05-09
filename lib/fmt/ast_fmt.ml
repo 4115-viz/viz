@@ -22,7 +22,7 @@ let rec fmt_typ = function
   | IntType   -> "Type(Int)"
   | BoolType  -> "Type(Bool)"
   | FloatType -> "Type(Float)"
-  | ArrayType(t, l) -> 
+  | ListType(t, l) -> 
     let typ = match t with
     | Some(t) -> fmt_typ t
     | None -> "Unknown" in
@@ -30,11 +30,11 @@ let rec fmt_typ = function
     | Some(i) -> string_of_int i
     | None -> "Unknown" in
     String.concat "" [
-      "Type(Array<"; 
+      "Type(List<"; 
       typ ;
       ">[" ;
       len ;
-      "]"]
+      "])"]
   | StructType(id:string) -> "Type(Struct(\"" ^ id ^ "\"))"
 
 let string_of_uop = function
@@ -50,7 +50,7 @@ let rec fmt_expr = function
   | NoneLit  -> "NoneLit(NONE)" (* used for return statement *)
   | BoolLit(true) -> "BoolLit(true)"
   | BoolLit(false) -> "BoolLit(false)"
-  | ArrayLit(a) -> "ArrayLit[" ^ fmt_array a ^ "]"
+  | ListLit(a) -> "ListLit[" ^ fmt_list a ^ "]"
   | Assign(v, e) -> String.concat "" [
     "Assign("; 
     fmt_expr(PostfixExpr v);
@@ -62,7 +62,7 @@ let rec fmt_expr = function
     fmt_expr l ^ " " ^ fmt_op bo ^ " " ^ fmt_expr r
   | Unop(uo, r) ->
     string_of_uop uo ^ " " ^ fmt_expr r
-  | TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ "->" ^ fmt_typ t ^ "\n"
+  | TypeCast(t, e) -> "Casting " ^ fmt_expr e ^ " -> " ^ fmt_typ t ^ "\n"
   | PostfixExpr x -> (match x with
     | Id id -> "Id(" ^ id ^ ")"
     | Subscript(e, i) -> (fmt_expr (PostfixExpr e)) ^ "[" ^ (fmt_expr i) ^ "]"
@@ -77,17 +77,17 @@ and fmt_fcall name args =
   
 and fmt_expr_list l = String.concat "\n" (List.map fmt_expr l)
 
-and fmt_array (a : expr list) : string =
+and fmt_list (a : expr list) : string =
  String.concat ", " (List.map fmt_expr a)
 
 and fmt_var_decl ((t, s), e) = fmt_typ t ^ " " ^ s ^ " = " ^
-(match e with
-| None -> "uninitialized"
-| Some(e) -> fmt_expr e)
+  (match e with
+  | None -> "uninitialized"
+  | Some(e) -> fmt_expr e)
 ^ ";\n"
 
 and fmt_stmt = function
-  | Expr e -> fmt_expr e
+  | Expr e -> fmt_expr e ^ "\n"
   | Block (stmts) ->
     "{\n" ^ String.concat "" (List.map fmt_stmt stmts) ^ "}\n"
   | ID_Block (stmts) ->

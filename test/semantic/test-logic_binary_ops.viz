@@ -1,0 +1,60 @@
+func main(): none {
+
+  @b1: bool = true; // true
+  @b2: bool = false; // false
+  @b3: bool = false; // false
+  @b4: bool = true; // true
+  @b5: bool = false; // false 
+  @b6: bool = true; // true
+  @b7: bool = true; // true
+  @b8: bool = false; // false 
+  @b9: bool = true; 
+  @b10: bool = true;
+  print("Assigning bool expressions to variables");
+
+  @b1 = (1 == 1); // true
+  @b2 = (1 != 1); // false
+  @b3 = (5 < 4); // false
+  @b4 = (5 > 4); // true
+  @b5 = (4 <= 5); // false 
+  @b6 = (5 >= 5); // true
+  @b7 = (true and true); // true
+  @b8 = (false or false); // false 
+  @b9 = (true and false or true);
+  @b10 = (not false and false or true);
+
+  print("printing results");
+  print("=================");
+  print("(1 == 1) -> 1");
+  print(@b1);
+  print("=================");
+  print("(1 != 1) -> 0");
+  print(@b2);
+  print("=================");
+  print("(5 < 4) -> 0");
+  print(@b3);
+  print("=================");
+  print("(5 > 4) -> 1");
+  print(@b4);
+  print("=================");
+  print("(4 <= 5) -> 1");
+  print(@b5);
+  print("=================");
+  print("(5 >= 5) -> 1");
+  print(@b6);
+  print("=================");
+  print("(true and true) -> 1");
+  print(@b7);
+  print("=================");
+  print("(false or false) -> 0");
+  print(@b8);
+  print("=================");
+  print("(true and false or true) -> 1");
+  print(@b9);
+  print("=================");
+  print("(not false and false or true) -> 1");
+  print(@b10);
+  print("=================");
+
+
+}  

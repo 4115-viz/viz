@@ -16,18 +16,17 @@ open Ast
 %token CONTINUE TRY CATCH RAISE LINK USE IN STEP AS RANGE STRUCT 
 
 /* type */
-%token T_NONE T_STR T_INT T_BOOL T_FLOAT T_ARRAY
+%token T_NONE T_STR T_INT T_BOOL T_FLOAT T_LIST
 
 /* delimiters */
-%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR BAR
+%token SEMI LPAREN RPAREN LBRACE RBRACE COLON COMMA LBRACKET RBRACKET DOT BAR
 %token EOF ARROW /*LINECONTINUATION*/
 
 /* split id into two, nothing changes outside of parser file */
 
-%token <string> UNCAP_ID /* function names */
+%token <string> UNCAP_ID /* function names and struct member */
 %token <string> ID_VAR /* variable access or assign */
 %token <string> CAP_ID /* struct names */
-%token <string> UNCAP_ID /* struct member */
 %token <string> LIT_STR
 %token <int> LIT_INT
 %token <float> LIT_FLOAT
@@ -79,7 +78,7 @@ typ:
   | T_INT { IntType }
   | T_BOOL { BoolType }
   | T_FLOAT { FloatType }
-  | T_ARRAY BAR typ BAR { ArrayType(Some($3), None) }
+  | T_LIST BAR typ BAR { ListType(Some($3), None) }
   | CAP_ID { StructType($1) }
 
 /* function declaration */
@@ -208,7 +207,7 @@ expr:
   | LIT_INT   { IntLit($1)   }
   | LIT_BOOL  { BoolLit($1)  }
   | LIT_FLOAT { FloatLit($1) }
-  | LBRACKET exprs_opt RBRACKET { ArrayLit($2) }
+  | LBRACKET exprs_opt RBRACKET { ListLit($2) }
 
   /* arithmetic */
   | expr PLUS   expr { Binop($1, Add,   $3)   }
@@ -268,5 +267,5 @@ postfix_expr:
   /* variable access */
   | ID_VAR { Id($1) }
   | postfix_expr DOT UNCAP_ID { MemberAccess($1, $3) }
-    /* Array subscript [] */
+    /* List subscript [] */
   | postfix_expr LBRACKET expr RBRACKET { Subscript($1, $3) }

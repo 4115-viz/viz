@@ -1,0 +1,21 @@
+
+Type(None) main()
+{
+if ((Type(Bool) : (Type(Int) : IntLit(3)) < (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("simple if statement"))));
+if ((Type(Bool) : (Type(Int) : IntLit(4)) < (Type(Int) : IntLit(3))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if statement"))));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested else statement"))));
+ }
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("simple else statement"))));
+ }
+}
+

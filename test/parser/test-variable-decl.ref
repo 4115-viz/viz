@@ -1,1 +1,18 @@
-  (Id(pass))
+
+Function Declartion: Type(None) main()
+{
+  Type(Int) my_int = uninitialized;
+  Type(Float) my_float = uninitialized;
+  Type(Bool) my_bool = uninitialized;
+  Type(None) my_null_var = uninitialized;
+  Type(Str) my_string = uninitialized;
+  Assign(Id(my_int) = IntLit(40))
+
+  Type(Float) x = FloatLit(500.5);
+  variable initializer list: 
+Type(Float) arg3 = FloatLit(0.);
+Type(Float) arg2 = FloatLit(0.);
+Type(Float) arg1 = FloatLit(0.);
+
+}
+

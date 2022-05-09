@@ -7,7 +7,7 @@ let string_of_token (t : token) : string  =
     | CAP_ID(x)  -> String.concat "" ["CAP_ID(\""; x ; "\")"]
     | ID_VAR(x) -> String.concat "" ["ID_VAR(\""; x ; "\")"]
     | LIT_BOOL(x) -> String.concat "" ["LIT_BOOL("; Bool.to_string x ; ")"]
-    | LIT_STR(x) -> String.concat "" ["LIT_STR("; x ; ")"]
+    | LIT_STR(x) -> String.concat "" ["LIT_STR(\""; x ; "\")"]
     | LIT_INT(x) -> String.concat "" ["LIT_INT("; Int.to_string x ; ")"]
     | LIT_FLOAT(x) -> String.concat "" ["LIT_FLOAT("; Float.to_string x ; ")"]
     | FUNC   -> "FUNC"
@@ -17,7 +17,7 @@ let string_of_token (t : token) : string  =
     | T_STR  -> "T_STR"
     | T_INT  -> "T_INT"
     | T_FLOAT  -> "T_FLOAT"
-    | T_ARRAY -> "T_ARRAY"
+    | T_LIST -> "T_LIST"
     | LBRACE -> "LBRACE"
     | RBRACE -> "RBRACE"
     | LPAREN -> "LPAREN"
@@ -68,6 +68,7 @@ let string_of_token (t : token) : string  =
     | QUESTION -> "QUESTION"
     | RANGE -> "RANGE"    
     | BAR -> "BAR"  
+    | ARROW -> "ARROW"
     | _ -> "UNABLE TO FORMAT THIS TOKEN, PLEASE ADD IT TO 'token_fmt.ml'"
 
 (* lexm.sh via CTeX group project 4115*)

@@ -1,0 +1,14 @@
+func main(): none {
+
+
+    /*
+        simple if
+    */
+    if (3 < 4) {
+        print("simple if statement"); // want to print this
+        if (3 < 4) {
+        print("nested if statement"); // want to print this
+    } 
+    } 
+}
+

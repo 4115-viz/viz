@@ -1,0 +1,33 @@
+passing struct to function, and printing the members
+matt
+29
+Computer Science
+Columbia University
+matt has graduated :)
+=======
+using parameters, passed in instantiate struct and return it
+passing struct to function, and printing the members
+yanhao
+25
+Software Systems
+Columbia SEAS
+yanhao has graduated :)
+=======
+printing friends from Friends Struct
+
+Friends.friend1
+passing struct to function, and printing the members
+yanhao
+25
+Software Systems
+Columbia SEAS
+yanhao has graduated :)
+
+Friends.friend2
+passing struct to function, and printing the members
+matt
+29
+Computer Science
+Columbia University
+matt has graduated :)
+=======

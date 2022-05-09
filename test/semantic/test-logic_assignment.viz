@@ -1,0 +1,21 @@
+func main(): none {
+    
+    @x: int = 5;
+
+    /*
+        else if
+    */
+    
+    if (@x < 5) {
+        print("x is less than 5");
+    } elif (@x == 5) {
+        print("x is equal to 5");
+    } elif (@x == 6) {
+        print("testing multiple elif, x = 6");
+    } else {
+        print("x is larger than 6");
+    }
+    
+    print("------------------------");
+
+}

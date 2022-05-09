@@ -1,0 +1,34 @@
+
+Type(None) main()
+{
+Type(Int) a = (Type(Int) : IntLit(10));
+Type(Float) b = (Type(Float) : FloatLit(10.5));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing complex assingment for floats"))));
+  (Type(Float) : Assign(Id(b) = (Type(Float) : (Type(Float) : Id(b)) + (Type(Float) : FloatLit(1.)))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(b))));
+  (Type(Float) : Assign(Id(b) = (Type(Float) : (Type(Float) : Id(b)) - (Type(Float) : FloatLit(1.1)))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(b))));
+  (Type(Float) : Assign(Id(b) = (Type(Float) : (Type(Float) : Id(b)) * (Type(Float) : FloatLit(1.1)))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(b))));
+  (Type(Float) : Assign(Id(b) = (Type(Float) : (Type(Float) : Id(b)) / (Type(Float) : FloatLit(1.1)))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(b))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing complex assingment for ints"))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) + (Type(Int) : IntLit(1)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) - (Type(Int) : IntLit(1)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) * (Type(Int) : IntLit(1)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) / (Type(Int) : IntLit(1)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) % (Type(Int) : IntLit(1)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing complex assingment (with expr on rhs) for ints"))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) + (Type(Int) : (Type(Int) : IntLit(1)) + (Type(Int) : IntLit(5))))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) - (Type(Int) : (Type(Int) : IntLit(1)) * (Type(Int) : IntLit(5))))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+  (Type(Int) : Assign(Id(a) = (Type(Int) : (Type(Int) : Id(a)) * (Type(Int) : (Type(Int) : IntLit(1)) % (Type(Int) : IntLit(5))))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+}
+

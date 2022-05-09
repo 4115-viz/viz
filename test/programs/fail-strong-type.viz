@@ -1,0 +1,5 @@
+func main(): none {
+    
+    // viz is strongly typed
+    print(5 + 4.0);
+}

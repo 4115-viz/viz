@@ -1,0 +1,63 @@
+/* 
+    How for loop works
+    
+    for counter in starting_num ... <ending condition>ending_num step step_number
+    supported conditions:
+        <, >, <=, >=
+
+    step_number defaults to 1 if there is nothing present
+    but step_number could be positive, negative
+*/
+
+func main(): none {
+    @x: int = 0;
+    
+    print("testing <= condition with default step 1");
+    for @x in 1 ... <= 5 {
+        print("========================");
+        print("for loop <=, default step 1");
+        print("iteration");
+        print(@x);
+        print("========================");
+    }
+    println();
+    
+    print("testing <= condition with step 2");
+    for @x in 1 ... <= 5 step 2{
+        print("========================");
+        print("for loop <=, step 2");
+        print("iteration");
+        print(@x);
+        print("========================");
+    }
+    println();
+
+    print("testing < condition with step 1");
+    for @x in 1 ... < 5 step 1{
+        print("========================");
+        print("for loop <, step 1");
+        print("iteration");
+        print(@x);
+        print("========================");
+    }
+    println();
+  
+    print("testing > condition with step -1");
+    for @x in 10 ... > 5 step -1 {
+        print("========================");
+        print("for loop >, step -1");
+        print("iteration");
+        print(@x);
+        print("========================");
+    }
+    println();
+
+    print("testing >= condition with step -5");
+    for @x in 110 ... >= 95 step -5 {
+        print("========================");
+        print("for loop >=, step -5");
+        print("iteration");
+        print(@x);
+        print("========================");
+    }
+}

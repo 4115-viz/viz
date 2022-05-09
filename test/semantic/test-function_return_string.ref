@@ -1,0 +1,14 @@
+
+Type(Str) ret_string()
+{
+return (Type(Str) : (StrLit("hello world from viz dev team"));
+}
+
+Type(Int) main()
+{
+Type(Str) x = (Type(Str) : (StrLit("True"));
+  (Type(Str) : (Assign(Id(x) = (Type(Str) : (FuncCall(name: "ret_string", args: ))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(x))));
+return (Type(Int) : IntLit(0));
+}
+

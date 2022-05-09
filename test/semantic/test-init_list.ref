@@ -1,0 +1,43 @@
+
+Type(None) main()
+{
+variable initializer list: 
+Type(Int) z = (Type(Int) : IntLit(10));
+Type(Int) y = (Type(Int) : IntLit(10));
+Type(Int) x = (Type(Int) : IntLit(10));
+
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("declaring and initializing a list of variables at once using initializer list syntax"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("@x, @y, @z -> (int, 10)"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("expecting 10"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("expecting 20"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : (Type(Int) : Id(y)) + (Type(Int) : Id(x)))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("expecting 47"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : (Type(Int) : (Type(Int) : (Type(Int) : (Type(Int) : Id(z)) + (Type(Int) : IntLit(15))) + (Type(Int) : IntLit(2))) + (Type(Int) : Id(x))) + (Type(Int) : Id(y)))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("declaring a list of variables at once using initializer list syntax"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("@x, @y, @z -> (int)"))));
+variable initializer list: 
+Type(Float) c = uninitialized;
+Type(Float) b = uninitialized;
+Type(Float) a = uninitialized;
+
+  (Type(Float) : Assign(Id(a) = (Type(Float) : FloatLit(10.))));
+  (Type(Float) : Assign(Id(b) = (Type(Float) : FloatLit(11.))));
+  (Type(Float) : Assign(Id(c) = (Type(Float) : FloatLit(12.))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("expecting 10.0"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(a))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("expecting 11.0"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(b))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("==================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("expecting 12.0"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(c))));
+}
+

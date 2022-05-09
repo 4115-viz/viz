@@ -1,0 +1,11 @@
+
+Type(None) main()
+{
+Type(Int) x = (Type(Int) : IntLit(500));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("x before re-assignment"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("x after re-assignment"))));
+  (Type(Int) : Assign(Id(x) = (Type(Int) : IntLit(400))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+}
+

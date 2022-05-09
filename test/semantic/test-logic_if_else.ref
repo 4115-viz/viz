@@ -1,0 +1,27 @@
+
+Type(None) main()
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit(""))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("logic test 1: enter true block"))));
+if ((Type(Bool) : (Type(Int) : IntLit(3)) < (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("if/else --> in true block"))));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("if/else --> in false block"))));
+ }
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit(""))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("logic test 1: enter false block"))));
+if ((Type(Bool) : (Type(Int) : IntLit(3)) == (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("if/else --> in true block"))));
+ }
+else
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("if/else --> in false block"))));
+ }
+}
+

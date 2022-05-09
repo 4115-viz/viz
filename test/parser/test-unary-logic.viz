@@ -1,4 +1,6 @@
-// test unary logic
-not true;
-not false;
-not false and true;
+func main(): none {
+    // test unary logic
+    not true;
+    not false;
+    not false and true;
+}

@@ -1,0 +1,10 @@
+func main(): none {
+
+    @x: int = 500;
+    print("x before re-assignment");
+    print(@x);
+
+    print("x after re-assignment");
+    @x = 400;
+    print(@x);
+}

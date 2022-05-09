@@ -1,0 +1,9 @@
+
+Type(None) main()
+{
+Type(Int) i = uninitialized;
+  (Type(Int) : Assign(Id(i) = (Type(Int) : IntLit(2))));
+  (Type(Int) : Assign(Id(i) = (Type(Int) : (Type(Int) : Id(i)) + (Type(Int) : IntLit(2)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(i))));
+}
+

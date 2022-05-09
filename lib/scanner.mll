@@ -33,13 +33,13 @@ rule token = parse
 | "while" { WHILE }
 | "infinite_loop" { INFINITE_LOOP }
 | "return" {RETURN}
-| "break" {BREAK}
-| "continue" {CONTINUE}
-| "try" {TRY}
-| "catch" {CATCH}
-| "raise" {RAISE} (* i guess we will also need exception right? *)
-| "link" {LINK}
-| "use" {USE}
+| "break" {BREAK} (* functionality unimplemented *)
+| "continue" {CONTINUE} (* functionality unimplemented *)
+| "try" {TRY} (* functionality unimplemented *)
+| "catch" {CATCH} (* functionality unimplemented *)
+| "raise" {RAISE} (* functionality unimplemented *)
+| "link" {LINK} (* functionality unimplemented *)
+| "use" {USE} (* functionality unimplemented *)
 | "in" {IN}
 | "step" {STEP}
 | "as" {AS}
@@ -52,7 +52,7 @@ rule token = parse
 | "string" { T_STR }
 | "bool" { T_BOOL }
 | "float" { T_FLOAT }
-| "array" { T_ARRAY }
+| "list" { T_LIST }
 
 (* -------- arithmetic operators -------- *)
 | '+' { PLUS }

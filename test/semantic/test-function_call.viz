@@ -1,0 +1,8 @@
+func viz_greeting(): none {
+    print("hello back from Viz Dev Team!!");
+}
+
+func main(): none {
+    print("hello world: ");
+    viz_greeting();
+}

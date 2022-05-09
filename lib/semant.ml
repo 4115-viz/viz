@@ -129,11 +129,14 @@ let check ((structs: struct_def list), (functions: func_def list)) =
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let check_assign (lvaluet:typ) (rvaluet:typ): typ =
-      if lvaluet = rvaluet then 
-        lvaluet
-      else 
-        failwith ("illegal assignment " ^ fmt_typ lvaluet ^ " = " ^ fmt_typ rvaluet)
+    let rec check_assign (lvaluet:typ) (rvaluet:typ): typ = match lvaluet with
+    (* If the lhs and rhs are both list and have the same type, using the rhs list length *)
+      | ListType(l_list_typ, _) -> (match rvaluet with
+        | ListType(r_list_typ, _) when l_list_typ = r_list_typ -> rvaluet
+        | _ -> check_assign lvaluet rvaluet
+      )
+      | _ when lvaluet = rvaluet -> lvaluet
+      | _ -> failwith ("illegal assignment " ^ fmt_typ lvaluet ^ " = " ^ fmt_typ rvaluet)
     in
 
     (* Build local symbol table of variables for this function *)
@@ -151,41 +154,42 @@ let check ((structs: struct_def list), (functions: func_def list)) =
     let uninited_symbols = StringHash.create 10 in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec check_expr (symbols: typ StringMap.t) (e: expr) : sexpr = 
+    let rec check_expr (symbols: typ StringMap.t) (e: expr) : (sexpr * typ StringMap.t) = 
       match e with
-        IntLit x -> (IntType, SIntLit x)
-      | FloatLit x -> (FloatType, SFloatLit x)
-      | StrLit x -> (StrType, SStrLit x)
-      | BoolLit x -> (BoolType, SBoolLit x)
-      | NoneLit   -> (NoneType, SNoneLit)
-      | ArrayLit (a : expr list) -> (match a with
-        | [] -> (ArrayType (None, Some(0)), SArrayLit [])
-        | (x :: _) as xxs -> let (t, _) = check_expr symbols x in
+        IntLit x -> ((IntType, SIntLit x), symbols)
+      | FloatLit x -> ((FloatType, SFloatLit x), symbols)
+      | StrLit x -> ((StrType, SStrLit x), symbols)
+      | BoolLit x -> ((BoolType, SBoolLit x), symbols)
+      | NoneLit   -> ((NoneType, SNoneLit), symbols)
+      | ListLit (a : expr list) -> (match a with
+        | [] -> ((ListType (None, Some(0)), SListLit []), symbols)
+        | (x :: _) as xxs -> let ((t, _), symbols) = check_expr symbols x in
           let sa = List.map (fun i -> match (check_expr symbols i) with
-            | (i_t, _) when i_t != t -> raise (Failure ("Invalid array literal. Expect type " ^ fmt_typ t ^ ", found" ^ fmt_typ i_t))
-            | (t', se') -> (t', se')) xxs
+            | ((i_t, _), _) when i_t != t -> raise (Failure ("Invalid list literal. Expect type " ^ fmt_typ t ^ ", found" ^ fmt_typ i_t))
+            | ((t', se'), _) -> (t', se')) xxs
           in
           let len = List.length xxs in
-          (ArrayType (Some(t), Some(len)), SArrayLit sa)
-        
+          ((ListType (Some(t), Some(len)), SListLit sa), symbols)
       )
       | Assign(pe, e) -> 
         let (l_t, _) as l_spe = match pe with
           | Id id -> (type_of_id id symbols, SId(id))
           | _ -> check_postfix_expr symbols pe
         in 
-        let (r_t, _) as r_se = check_expr symbols e in
+        let ((r_t, _) as r_se, symbols) = check_expr symbols e in
         let t = check_assign l_t r_t in
         (* If the left side is a variable, removed the symbol from uninited symbol table *)
-        (match pe with
-        | Id id -> (if StringHash.mem uninited_symbols id 
-          then StringHash.remove uninited_symbols id);
-        | _ -> ());
-        (t, SAssign(l_spe, r_se))
+        let new_symbols = (match pe with
+        | Id id -> 
+          (if StringHash.mem uninited_symbols id then StringHash.remove uninited_symbols id;
+          (* update the id's type in the symbol table, in the case that list has been reassigned *)
+          StringMap.add id t symbols)
+        | _ -> symbols) in
+        ((t, SAssign(l_spe, r_se)), new_symbols)
 
       | Binop(l, bo, r) as ex-> 
-        let (ltype, l') = check_expr symbols l in
-        let (rtype, r') = check_expr symbols r in
+        let ((ltype, l'), symbols) = check_expr symbols l in
+        let ((rtype, r'), symbols) = check_expr symbols r in
         (* we can only do binop on operands of same type *)
         let compatible_types = (ltype = rtype) in
         (* throw error, or return final_type for supported binops *)
@@ -208,16 +212,16 @@ let check ((structs: struct_def list), (functions: func_def list)) =
             | _ -> raise (Failure ("No operator (" ^ fmt_op bo ^ ") " ^ "to handle type (" ^
                           fmt_typ ltype ^ ", " ^ fmt_typ rtype))
             ) bo
-        in (final_type, SBinop((ltype, l'), bo, (rtype, r')))
+        in ((final_type, SBinop((ltype, l'), bo, (rtype, r'))), symbols)
       | Unop(op, e) as ex -> 
-        let (t, e') = check_expr symbols e in
+        let ((t, e'), symbols) = check_expr symbols e in
         let ty = match op with
           Neg when t = IntType || t = FloatType -> t
         | Not when t = BoolType -> BoolType
         | _ -> raise (Failure ("illegal unary operator " ^ 
                                 string_of_uop op ^ fmt_typ t ^
                                 " in " ^ fmt_expr ex))
-        in (ty, SUnop(op, (t, e')))
+        in ((ty, SUnop(op, (t, e'))), symbols)
       | FuncCall(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
@@ -226,7 +230,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                           " arguments in " ^ fmt_expr call))
         else 
         let check_call (ft, _) e =
-          let (et, e') = check_expr symbols e in
+          let ((et, e'), _) = check_expr symbols e in
           if fname = "print" then (et, e') (*convert to string*)
           else (check_assign ft et, e')
         in
@@ -240,11 +244,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                 | StrType -> "print"
                 | BoolType -> "print_bool"
                 | NoneType -> failwith "Does not support print None type"
-                | ArrayType _ -> failwith "Does not support print Array type"
+                | ListType _ -> failwith "Does not support print List type"
                 | StructType _ -> failwith "Does not support print custom Struct type"
               )
           (* we could change this to length, and pattern match types
-            for instance, arrays could have a length function which is sent to array_len
+            for instance, lists could have a length function which is sent to list_len
           *)
           else if fname = "str_len" then (* could change this to length later !*)
             (
@@ -271,9 +275,9 @@ let check ((structs: struct_def list), (functions: func_def list)) =
             )
             else fname
         ) 
-        in (fd.rtyp, SFuncCall(func_name, args'))
+        in ((fd.rtyp, SFuncCall(func_name, args')), symbols)
       | TypeCast(ty, expr) ->
-        let (ty_exp, var) = check_expr symbols expr in
+        let ((ty_exp, var), symbols) = check_expr symbols expr in
          (
           let type_cast_err e1 e2 = 
             raise (Failure("Cast type not supported from " ^ 
@@ -283,17 +287,17 @@ let check ((structs: struct_def list), (functions: func_def list)) =
            match ty with
               | IntType -> (
                 if ty_exp = FloatType || ty_exp = IntType || ty_exp = BoolType || ty_exp = StrType
-                    then (ty , STypeCast(ty, (ty_exp, var)))
+                    then ((ty , STypeCast(ty, (ty_exp, var))), symbols)
                 else type_cast_err ty_exp ty
               )
               | FloatType -> (
                 if ty_exp = IntType || ty_exp = FloatType || ty_exp = StrType 
-                    then (ty ,STypeCast(ty, (ty_exp, var)))
+                    then ((ty ,STypeCast(ty, (ty_exp, var))), symbols)
                 else type_cast_err ty_exp ty
               )
               | StrType ->
                 if ty_exp = IntType || ty_exp = FloatType || ty_exp = BoolType || ty_exp = StrType 
-                then (ty ,STypeCast(ty, (ty_exp, var)))
+                then ((ty ,STypeCast(ty, (ty_exp, var))), symbols)
                 else type_cast_err ty_exp ty
               | _ -> type_cast_err ty_exp ty
          )
@@ -302,26 +306,26 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           then failwith ("uninitialized local variable '" ^ id ^ "' used.")
         | _ -> ());
         let spe = check_postfix_expr symbols pe in
-        (fst spe, SPostfixExpr spe)
+        ((fst spe, SPostfixExpr spe), symbols)
 
     and check_postfix_expr (symbols: typ StringMap.t) (pe: postfix_expr) : spostfix_expr =
       match pe with
       | Id id -> (type_of_id id symbols, SId id)
-      | Subscript(arr_pe, idx_expr) ->
-        let (arr_typ, _) as arr_spe = check_postfix_expr symbols arr_pe in
-        let idx_sexpr = check_expr symbols idx_expr in
+      | Subscript(list_pe, idx_expr) ->
+        let (list_typ, _) as list_spe = check_postfix_expr symbols list_pe in
+        let (idx_sexpr, _) = check_expr symbols idx_expr in
         let (idx:int) = match (idx_sexpr) with
           | IntType, SIntLit x -> x
           | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
         in
-        let (arr_ele_typ, (len:int)) = match (arr_typ) with
-          | ArrayType (Some(t), Some(l)) -> (t, l) 
-          | ArrayType (None, _) -> failwith "Runtime error: Array type unknown."
-          | ArrayType (_, None) -> failwith "Runtime error: Array length unknown."
-          | t -> failwith (String.concat "" ["Subscript operator [] expect array, got: "; fmt_typ t])
+        let (list_ele_typ, (len:int)) = match (list_typ) with
+          | ListType (Some(t), Some(l)) -> (t, l) 
+          | ListType (None, _) -> failwith "Runtime error: List type unknown."
+          | ListType (_, None) -> failwith "Runtime error: List length unknown."
+          | t -> failwith (String.concat "" ["Subscript operator [] expect list, got: "; fmt_typ t])
         in
         if idx >= len then failwith "Index out of range."
-        else (arr_ele_typ, SSubscript(arr_spe, idx_sexpr))
+        else (list_ele_typ, SSubscript(list_spe, idx_sexpr))
       | MemberAccess (pe, member_id) ->
         (* Check the type of the given postfix expression is a struct *)
         let spe = check_postfix_expr symbols pe in
@@ -337,7 +341,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
     in
     
     let check_bool_expr symbols e =
-      let (t, e') = check_expr symbols e in
+      let ((t, e'), _) = check_expr symbols e in
       match t with
       | BoolType -> (t, e')
       |  _ -> raise (Failure ("expected Boolean expression in " ^ fmt_expr e))
@@ -367,21 +371,20 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                   | ID_Block _ -> symbols
                                   | _ -> new_symbols) sl
     
-    and check_arr_var_decl symbols ((arr_ele_typ, id), arr_e):(svar_decl * typ StringMap.t) = 
-      let (arr_t, arr_sx) as arr_sexpr = check_expr symbols arr_e in
+    and check_list_var_decl symbols ((list_ele_typ, id), list_e):(svar_decl * typ StringMap.t) = 
+      let ((list_t, list_sx) as list_sexpr, symbols) = check_expr symbols list_e in
       (* match rhs expression type *)
-      let (bind, sexpr) = (match arr_t with
-        (* rhs is empty array, we need to deduce the empty array's type *)
-        | ArrayType (None, _) -> 
-          let bind = (arr_ele_typ, id) in
-          let deduced_expr_t = ArrayType(Some(arr_ele_typ), Some(0)) in
-          (bind, Some((deduced_expr_t, arr_sx)))
+      let (bind, sexpr) = (match list_t with
+        (* rhs is empty list, we need to deduce the empty list's type *)
+        | ListType (None, _) -> 
+          let deduced_expr_t = ListType(Some(list_ele_typ), Some(0)) in
+          ((deduced_expr_t, id), Some((deduced_expr_t, list_sx)))
         (* rhs has the same type as lhs *)
-        | ArrayType (Some(expr_ele_t), _) when expr_ele_t == arr_ele_typ -> 
-          ((arr_t, id), Some(arr_sexpr))
-        | _ -> failwith "Type mismatch, expected array.")
+        | ListType (Some(expr_ele_t), _) when expr_ele_t == list_ele_typ -> 
+          ((list_t, id), Some(list_sexpr))
+        | _ -> failwith "Type mismatch, expected list.")
       in
-      let new_symbols = StringMap.add id arr_t symbols in
+      let new_symbols = StringMap.add id list_t symbols in
       ((bind, sexpr), new_symbols)
 
     and check_var_decl symbols (((t, id) as b, e):var_decl):(svar_decl * typ StringMap.t) =
@@ -394,9 +397,9 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         | _ -> StringHash.add uninited_symbols id true);
         ((b, None), new_symbols)
       | Some(e) -> match t with (* match variable's type *)
-        | ArrayType (Some(arr_ele_typ), None) -> (* Special case: lhs is array type *)
-          check_arr_var_decl symbols ((arr_ele_typ, id), e)
-        | _ -> let (expr_t, _) as e_sexpr = check_expr symbols e in
+        | ListType (Some(list_ele_typ), None) -> (* Special case: lhs is list type *)
+          check_list_var_decl symbols ((list_ele_typ, id), e)
+        | _ -> let ((expr_t, _) as e_sexpr, symbols) = check_expr symbols e in
           if t <> expr_t then
             failwith (String.concat "" [
               "Type mismatch for variable: '"; id; "'. ";
@@ -418,7 +421,9 @@ let check ((structs: struct_def list), (functions: func_def list)) =
          follows any Return statement.  Nested blocks are flattened. *)
         Block sl -> (SBlock (check_stmt_list symbols sl), symbols)
       | ID_Block sl -> (SID_Block (check_stmt_list symbols sl), symbols)
-      | Expr e -> (SExpr (check_expr symbols e), symbols)
+      | Expr e -> 
+        let sexpr, symbols = check_expr symbols e in
+        (SExpr sexpr, symbols)
       | If(e, st1, st2) ->
         
         (*(* note: we need to check for st2 being a No_op *)
@@ -431,9 +436,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
       | While(e, st) ->
         (SWhile(check_bool_expr symbols e, fst (check_stmt symbols st)), symbols)
       | For(e1, e2, e3, st) ->
-          (SFor(check_expr symbols e1, check_bool_expr symbols e2, check_expr symbols e3, fst (check_stmt symbols st)), symbols)
+          let se1, symbols = check_expr symbols e1 in
+          let se3, symbols = check_expr symbols e3 in
+          (SFor(se1, check_bool_expr symbols e2, se3, fst (check_stmt symbols st)), symbols)
       | Return e ->
-        let (t, e') = check_expr symbols e in
+        let (t, e'), symbols = check_expr symbols e in
         if t = func.rtyp then (SReturn (t, e'), symbols)
         else raise (
             Failure ("return gives " ^ fmt_typ t ^ " expected " ^

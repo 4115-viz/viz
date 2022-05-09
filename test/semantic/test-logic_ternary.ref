@@ -1,0 +1,13 @@
+
+Type(None) main()
+{
+if ((Type(Bool) : (Type(Bool) : BoolLit(true)) == (Type(Bool) : BoolLit(true))))
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("correct"))));
+else
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("incorrect"))));
+if ((Type(Bool) : (Type(Bool) : BoolLit(true)) != (Type(Bool) : BoolLit(true))))
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("correct"))));
+else
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("incorrect"))));
+}
+

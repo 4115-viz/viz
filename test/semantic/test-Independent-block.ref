@@ -1,0 +1,14 @@
+
+Type(None) main()
+{
+Type(Int) a = (Type(Int) : IntLit(5));
+Independent Block {
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+Type(Int) a = (Type(Int) : IntLit(1));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+Type(Int) b = (Type(Int) : (Type(Int) : Id(a)) + (Type(Int) : IntLit(1)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(b))));
+}
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a))));
+}
+
