@@ -1,0 +1,1 @@
+Fatal error: exception Failure("incompatible types for binary operator Type(Int) + Type(Float) in IntLit(5) + FloatLit(4.)")
