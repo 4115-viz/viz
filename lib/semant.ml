@@ -51,6 +51,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                (StrType, "to_lower", [StrType, "x"]);
                                                                (*(ArrayType, "push", ([ArrayType, "x"]));*)
                                                                (IntType, "list_len", [(ListType (Some(IntType), None)), "x"]);
+                                                               (IntType, "list_len_int", [(ListType (Some(IntType), None)), "x"]);
                                                                (IntType, "pop", [(ListType (Some(IntType), None)), "x"]);
                                                                ]
   in
@@ -268,7 +269,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         | "list_len" -> 
           (
             match (fst (List.hd args')) with
-            | ListType (_, _) -> "list_len"
+            | ListType (Some(IntType), _) -> "list_len_int"
             | _ -> raise (Failure ("cannot get array length of non array"))
           )
         | _ -> fname
