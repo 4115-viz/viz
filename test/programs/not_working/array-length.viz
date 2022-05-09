@@ -1,5 +1,0 @@
-func main(): none {
-    @a: array |int| = [1,1,1,1,1,1,1,1,1,1,1,4,3,1,1,1,1,1,1,1];
-    print(array_len(@a));
-    print(@a[19]);
-}
