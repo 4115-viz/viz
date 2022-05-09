@@ -129,11 +129,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let rec check_assign (lvaluet:typ) (rvaluet:typ): typ = match lvaluet with
+    let check_assign (lvaluet:typ) (rvaluet:typ): typ = match lvaluet with
     (* If the lhs and rhs are both list and have the same type, using the rhs list length *)
       | ListType(l_list_typ, _) -> (match rvaluet with
         | ListType(r_list_typ, _) when l_list_typ = r_list_typ -> rvaluet
-        | _ -> check_assign lvaluet rvaluet
+        | _ -> failwith ("illegal assignment " ^ fmt_typ lvaluet ^ " = " ^ fmt_typ rvaluet)
       )
       | _ when lvaluet = rvaluet -> lvaluet
       | _ -> failwith ("illegal assignment " ^ fmt_typ lvaluet ^ " = " ^ fmt_typ rvaluet)
@@ -235,52 +235,45 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           else (check_assign ft et, e')
         in
         let args' = List.map2 check_call fd.formals args in
-        let func_name = (
-            if fname = "print" then
-              (
-                match (fst (List.hd args')) with
-                | IntType -> "print_int"
-                | FloatType -> "print_float"
-                | StrType -> "print"
-                | BoolType -> "print_bool"
-                | NoneType -> failwith "Does not support print None type"
-                | ListType _ -> failwith "Does not support print List type"
-                | StructType _ -> failwith "Does not support print custom Struct type"
-              )
-          (* we could change this to length, and pattern match types
-            for instance, lists could have a length function which is sent to list_len
-          *)
-          else if fname = "str_len" then (* could change this to length later !*)
-            (
-              match (fst (List.hd args')) with
-              | StrType -> "str_len"
-              | _ -> raise (Failure ("cannot get string length of non string"))
-            )
-          else if fname = "to_upper" || fname = "to_lower" then (* could change this to length later !*)
-            (
-              match (fst (List.hd args')) with
-              | StrType -> fname
-              | _ -> raise (Failure ("invalid type for to_upper/to_lower"))
-            )
-          
-          (* for push function *)
-          else if fname = "push" then
-            raise (Failure ("in the push function"))
-          else if fname = "pop" then
-            (
-              match (fst (List.hd args')) with
-              | ListType (_, _) -> "pop"
-              | _ -> raise (Failure ("cannot get array length of non array"))
-            )
-          else if fname = "list_len" then
-            (
-              match (fst (List.hd args')) with
-              | ListType (_, _) -> "list_len"
-              | _ -> raise (Failure ("cannot get array length of non array"))
-            )
-            else fname
-        ) 
-        in ((fd.rtyp, SFuncCall(func_name, args')), symbols)
+        let func_name = match fname with
+          | "print" ->               
+            (match (fst (List.hd args')) with
+            | IntType -> "print_int"
+            | FloatType -> "print_float"
+            | StrType -> "print"
+            | BoolType -> "print_bool"
+            | NoneType -> failwith "Does not support print None type"
+            | ListType _ -> failwith "Does not support print List type"
+            | StructType _ -> failwith "Does not support print custom Struct type"
+          )
+        | "str_len" -> 
+          (
+            match (fst (List.hd args')) with
+            | StrType -> "str_len"
+            | _ -> raise (Failure ("cannot get string length of non string"))
+          )
+        | "to_upper" | "to_lower" ->
+          (
+            match (fst (List.hd args')) with
+            | StrType -> fname
+            | _ -> raise (Failure ("invalid type for to_upper/to_lower"))
+          )
+        | "push" -> raise (Failure ("in the push function"))
+        | "pop" ->
+          (
+            match (fst (List.hd args')) with
+            | ListType (_, _) -> "pop"
+            | _ -> raise (Failure ("cannot get array length of non array"))
+          )
+        | "list_len" -> 
+          (
+            match (fst (List.hd args')) with
+            | ListType (_, _) -> "list_len"
+            | _ -> raise (Failure ("cannot get array length of non array"))
+          )
+        | _ -> fname
+        in 
+        ((fd.rtyp, SFuncCall(func_name, args')), symbols)
       | TypeCast(ty, expr) ->
         let ((ty_exp, var), symbols) = check_expr symbols expr in
          (
