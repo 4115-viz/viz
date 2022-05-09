@@ -1,4 +1,14 @@
 func main(): none {
     @a: list|int| = [1,1,1,8,8];
+    print("original list len");
+    print("-------------------------");
+    print(list_len(@a));
+
+    print("popping value off list");
+    print("-------------------------");
+    print(pop(@a));
+
+    print("new len");
+    print("-------------------------");
     print(list_len(@a));
 }
