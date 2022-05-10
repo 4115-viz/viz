@@ -1,0 +1,21 @@
+func main(): none {
+    @a: list |int| = [1,4,5,7];
+
+    print("Int list");
+    print("----------------");
+
+    print("length of list = " + |as string| list_len(@a));
+    
+    @idx: int = 0;
+    
+    @len: int = list_len(@a);
+    print(@len);
+    
+    print("let's iterate through the list"); 
+    for @idx in 0 ... < @len {
+        //print(@a[@idx]);
+        print(@idx);
+    }
+    
+
+}
