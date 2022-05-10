@@ -1,5 +1,7 @@
 func main(): none {
-    @a: list|int| = [1,4,5,7];
+    @a: list|string| = ["hello","from","viz team"];
 
-    //push(@a);
+    //@a: list|string| = [1,2,3,4];
+
+    push(@a);
 }

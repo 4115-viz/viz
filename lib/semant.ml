@@ -50,9 +50,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                (StrType, "to_upper", [StrType, "x"]);
                                                                (StrType, "to_lower", [StrType, "x"]);
                                                                (*(ArrayType, "push", ([ArrayType, "x"]));*)
-                                                               (IntType, "list_len", [(ListType (Some(IntType), None)), "x"]);
+                                                               (IntType, "list_len", [StrType, "x"]);
                                                                (IntType, "list_len_int", [(ListType (Some(IntType), None)), "x"]);
+                                                               (IntType, "list_len_str", [(ListType (Some(StrType), None)), "x"]);
                                                                (IntType, "pop", [(ListType (Some(IntType), None)), "x"]);
+                                                               (NoneType, "push", [(ListType (Some(StrType), None)), "x"]);
                                                                ]
   in
 
@@ -233,7 +235,8 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         let check_call (ft, _) e =
           let ((et, e'), _) = check_expr symbols e in
           if fname = "print" then (et, e') (*convert to string*)
-          else (check_assign ft et, e')
+          else if fname = "list_len" then (et, e')
+          else(check_assign ft et, e')
         in
         let args' = List.map2 check_call fd.formals args in
         let func_name = match fname with
@@ -259,7 +262,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
             | StrType -> fname
             | _ -> raise (Failure ("invalid type for to_upper/to_lower"))
           )
-        | "push" -> raise (Failure ("in the push function"))
+        | "push" -> (
+            match (fst (List.hd args')) with
+            | ListType (_, _) -> "push"
+            | _ -> raise (Failure ("cannot get array length of non array"))
+          )
         | "pop" ->
           (
             match (fst (List.hd args')) with
@@ -270,6 +277,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           (
             match (fst (List.hd args')) with
             | ListType (Some(IntType), _) -> "list_len_int"
+            | ListType (Some(StrType), _) -> raise (Failure ("need to support str arr"))
             | _ -> raise (Failure ("cannot get array length of non array"))
           )
         | _ -> fname

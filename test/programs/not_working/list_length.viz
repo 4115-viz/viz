@@ -1,14 +1,32 @@
 func main(): none {
-    @a: list|int| = [1,1,1,8,8];
+
     print("original list len");
     print("-------------------------");
-    print(list_len_int(@a));
+    @a: list|int| = [1,1,1,8,8,423,432,432,432,42,32];
+    print(list_len(@a));
 
     print("popping value off list");
     print("-------------------------");
+    print(@a[10]);
     print(pop(@a));
 
     print("new len");
     print("-------------------------");
+    
     print(list_len(@a));
+    print(@a[10]);
+/*
+    print("original string list len");
+    print("-------------------------");
+    //@b: list|string| = ["hello","from","viz team"];
+    //print(list_len_str(@b));
+
+    print("popping string value off list");
+    print("-------------------------");
+    //print(pop(@b));
+
+    print("new string list len");
+    print("-------------------------");
+    //print(list_len(@b));
+    */
 }
