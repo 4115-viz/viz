@@ -33,7 +33,7 @@ void push(char* arr, int value){
     int i = list_len_int(arr);
     int pop = arr[i-1];
     arr[i-1] = NULL;
-    printf("in push = %d\n", arr[5]);
+    printf("in push = %d\n", value);
     
     return;
 }

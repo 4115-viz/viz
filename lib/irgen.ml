@@ -400,8 +400,8 @@ let translate (structs, functions) =
       | SFuncCall("pop", [e])  -> 
             L.build_call pop_func [| ((build_expr local_vars) builder e)|]
             "pop" builder
-      | SFuncCall("push", [e])  -> 
-            L.build_call push_func [| ((build_expr local_vars) builder e) |]
+      | SFuncCall("push", [e;f])  -> 
+            L.build_call push_func [| ((build_expr local_vars) builder e); ((build_expr local_vars) builder f)|]
             "push" builder      
       | SFuncCall("list_len_int", [e])  -> 
             L.build_call list_len_int_func [| ((build_expr local_vars) builder e)|]
