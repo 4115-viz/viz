@@ -2,8 +2,10 @@ Viz references
 
 1) lines 15-20 lexm.sh CTeX final project Fall 2021
     Used for scanner testing code in vc.ml
-2) Guo's microC, and all other lecture code
-3) Edward's microC, for issue with return statement, 
+2) VSCOde final project Fall 2018
+    Used for symbol table and variable declaration reference in parser.myl, semant.ml and irgen.ml
+3) Guo's microC, and all other lecture code
+4) Edward's microC, for issue with return statement, 
 needed help with figuring out why we couldnt return on a void function.
 also, for inspiration for printing all of our various data types. I borrowed
 the int_format_string construct and extended it to all of our various datatypes.
@@ -14,10 +16,10 @@ becasue, if we cant print, then there is no way to fully debug.
     hand in hand with what I wrote above. I just want to be able to compile and get
     these small things out of the way so we can end up building lists/arrays/structs
     * also referenced newbie for various built in print functions
-4) https://docs.python.org/3/reference/grammar.html 
+5) https://docs.python.org/3/reference/grammar.html 
 python grammar. used it as inspiration for some of our conditional logic stuff
 
-5) https://llvm.moe/ocaml-7.0/Llvm.Fcmp.html#TYPEt
+6) https://llvm.moe/ocaml-7.0/Llvm.Fcmp.html#TYPEt
    https://llvm.moe/ocaml-7.0/Llvm.Icmp.html#TYPEt
 
 Used that reference to introduce the predicate for binary operations for floating point types
@@ -30,6 +32,6 @@ also:
  microC code, and then I exteneded it to floats, and Bools (which really could just be left
  as ints, since they are of type i1_t)
 
-6) viz and vizSilent shell script shamelessly borrow lot from pocaml: 
+7) viz and vizSilent shell script shamelessly borrow lot from pocaml: 
    https://github.com/Pocaml/Pocaml/blob/main/pocamlc
    Thank you, pocaml team! 
