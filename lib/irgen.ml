@@ -109,7 +109,7 @@ let translate (structs, functions) =
   let pop_func_t = L.var_arg_function_type i32_t [| arr_t |] in
   let pop_func = L.declare_function "pop" pop_func_t the_module in
 
-  let push_func_t = L.var_arg_function_type i32_t [| str_arr_t |] in
+  let push_func_t = L.var_arg_function_type i32_t [| str_arr_t ; i32_t |] in
   let push_func = L.declare_function "push" push_func_t the_module in
 
   (* int list length library function *)
@@ -400,8 +400,8 @@ let translate (structs, functions) =
       | SFuncCall("pop", [e])  -> 
             L.build_call pop_func [| ((build_expr local_vars) builder e)|]
             "pop" builder
-      | SFuncCall("push", [e])  -> 
-            L.build_call push_func [| ((build_expr local_vars) builder e)|]
+      | SFuncCall("push", [e,f])  -> 
+            L.build_call push_func [| ((build_expr local_vars) builder e) ; ((build_expr local_vars) builder f)|]
             "push" builder      
       | SFuncCall("list_len_int", [e])  -> 
             L.build_call list_len_int_func [| ((build_expr local_vars) builder e)|]

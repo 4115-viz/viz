@@ -18,8 +18,8 @@ func main(): none {
 
     print("original string list len");
     print("-------------------------");
-    @b: list|string| = ["hello","from","viz team"];
-    print(list_len(@b));
+    //@b: list|string| = ["hello","from","viz team"];
+    //print(list_len(@b));
 /*
     print("popping string value off list");
     print("-------------------------");
