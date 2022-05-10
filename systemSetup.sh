@@ -17,7 +17,7 @@ opam install dune
 eval $(opam env)
 
 # Install LLVM
-cd functions/viz
+cd web-interface/functions/viz
 opam init --auto-setup --yes --disable-sandboxing
 chmod +x viz.opam
 opam install . --deps-only --yes
