@@ -33,7 +33,7 @@ let translate (structs, functions) =
   and float_t    = L.double_type context 
   and str_t      = L.pointer_type (L.i8_type context)
   and arr_t      = L.pointer_type (L.i32_type context)
-  and str_arr_t      = L.pointer_type (L.i8_type context)
+  and str_arr_t  = L.pointer_type (L.i32_type context) 
   in
   (* Return the LLVM type for a Viz type *)
   let rec ltype_of_typ struct_decls = function

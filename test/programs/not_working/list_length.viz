@@ -15,12 +15,12 @@ func main(): none {
     
     print(list_len(@a));
     print(@a[10]);
-/*
+
     print("original string list len");
     print("-------------------------");
-    //@b: list|string| = ["hello","from","viz team"];
-    //print(list_len_str(@b));
-
+    @b: list|string| = ["hello","from","viz team"];
+    print(list_len(@b));
+/*
     print("popping string value off list");
     print("-------------------------");
     //print(pop(@b));

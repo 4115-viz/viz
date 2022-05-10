@@ -29,10 +29,11 @@ int pop(int* arr){
 
     return pop;
 }
-int push(char* arr){
+void push(char* arr, int value){
     int i = list_len_int(arr);
     int pop = arr[i-1];
     arr[i-1] = NULL;
-
-    return pop;
+    printf("in push = %d\n", arr[5]);
+    
+    return;
 }

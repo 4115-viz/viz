@@ -1,7 +1,7 @@
 func main(): none {
-    @a: list|string| = ["hello","from","viz team"];
+    //@a: list|string| = ["hello","from","viz team"];
 
-    //@a: list|string| = [1,2,3,4];
+    @a: list|int| = [1,2,3,4];
 
     push(@a);
 }

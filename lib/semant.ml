@@ -49,12 +49,11 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                (IntType, "str_len", [StrType, "x"]);
                                                                (StrType, "to_upper", [StrType, "x"]);
                                                                (StrType, "to_lower", [StrType, "x"]);
-                                                               (*(ArrayType, "push", ([ArrayType, "x"]));*)
                                                                (IntType, "list_len", [StrType, "x"]);
                                                                (IntType, "list_len_int", [(ListType (Some(IntType), None)), "x"]);
                                                                (IntType, "list_len_str", [(ListType (Some(StrType), None)), "x"]);
                                                                (IntType, "pop", [(ListType (Some(IntType), None)), "x"]);
-                                                               (NoneType, "push", [(ListType (Some(StrType), None)), "x"]);
+                                                               (NoneType, "push", [(ListType (Some(IntType), None)), "x"]);
                                                                ]
   in
 
@@ -277,7 +276,9 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           (
             match (fst (List.hd args')) with
             | ListType (Some(IntType), _) -> "list_len_int"
-            | ListType (Some(StrType), _) -> raise (Failure ("need to support str arr"))
+            | ListType (Some(StrType), _) -> raise (Failure ("need to support str arr len"))
+            | ListType (Some(FloatType), _) -> raise (Failure ("need to support float arr len"))
+            | ListType (Some(BoolType), _) -> raise (Failure ("need to support bool arr len"))
             | _ -> raise (Failure ("cannot get array length of non array"))
           )
         | _ -> fname
