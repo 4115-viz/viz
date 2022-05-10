@@ -60,4 +60,13 @@ func main(): none {
         print(@x);
         print("========================");
     }
+    
+    print("testing < condition variable as end condition");
+    @tmp: int = 5;
+    for @x in 1 ... < @tmp {
+        print("========================");
+        print("for loop <, step 1");
+        print(|as string| @x + " < " + |as string| @tmp);
+        print("========================");
+    }
 }
