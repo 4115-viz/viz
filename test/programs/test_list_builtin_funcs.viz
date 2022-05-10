@@ -1,0 +1,34 @@
+func main(): none {
+
+    print("original list len");
+    print("-------------------------");
+    @a: list|int| = [1,1,1,8,8,423,432,432,432,42,32];
+    print(list_len(@a));
+
+    print("popping value off list");
+    print("-------------------------");
+    print(pop(@a));
+
+    print("new list len");
+    print("-------------------------");
+    print(list_len(@a));
+
+
+    print("popping all values off list");
+    print("-------------------------");
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+    print(pop(@a));
+
+    print("popping empty value off list");
+    print("will return 0");
+    print("-------------------------");
+    print(pop(@a));
+}
