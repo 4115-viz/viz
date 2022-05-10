@@ -163,14 +163,20 @@ loop:
   | WHILE LPAREN expr RPAREN stmt           { While ($3, $5)  }
   | INFINITE_LOOP stmt        { While (BoolLit(true), $2)  }
   /* for counter in starting_num ... <ending condition>ending_num step step_number */
-  | FOR ID_VAR IN LIT_INT RANGE end_condition LIT_INT increment stmt
+  | FOR ID_VAR IN LIT_INT RANGE end_condition end_item increment stmt
             {
                 let var_init   = Assign(Id($2), IntLit($4)) in (* ex: i = 0 *)
-                let predicate  = Binop(PostfixExpr(Id($2)), $6, IntLit($7)) in (* ex: i < 5 *)
+                (*let predicate  = Binop(PostfixExpr(Id($2)), $6, IntLit($7)) in *) (* ex: i < 5 *)
+                let predicate  = Binop(PostfixExpr(Id($2)), $6, $7) in (* ex: i < 5 or i < @len where @len = 5 *)
                 let update     = Assign(Id($2), Binop(PostfixExpr(Id($2)), Add, $8) ) in (* ex1: i=i+1, ex2: i=i+(-1) *)
                 let block_code = $9 in
                 For(var_init, predicate, update, block_code)
             }
+
+/* this allows us to support an int final value, or a value stored in a variable */
+end_item:
+  | LIT_INT { IntLit($1) }
+  | ID_VAR  { PostfixExpr(Id($1)) }
 
 end_condition:
   | LT   { Less   }
