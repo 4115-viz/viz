@@ -1,5 +1,6 @@
 func main(): none {
     @a: list |int| = [1,4,5,7];
+    @b: list |bool| = [true, false, false];
 
     print("Int list");
     print("----------------");
@@ -12,9 +13,10 @@ func main(): none {
     print(@len);
     
     print("let's iterate through the list"); 
-    for @idx in 0 ... < @len {
-        //print(@a[@idx]);
-        print(@idx);
+    //for @idx in 0 ... < @len {
+    for @idx in 0 ... < 4 {
+        //print(@a[@idx]); unimplemented
+        print(@a[@idx]);
     }
     
 
