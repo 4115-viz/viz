@@ -16,7 +16,7 @@ func main(): none {
     //for @idx in 0 ... < @len {
     for @idx in 0 ... < 4 {
         //print(@a[@idx]); unimplemented
-        print(@a[@idx]);
+        //print(@a[@idx]);
     }
     
 

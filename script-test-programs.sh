@@ -55,7 +55,7 @@ while IFS= read -r line; do
     FILENAME="test/programs/$BASE.viz"
     
     # build inside the container
-    ./vizSilent $FILENAME
+    ./vizOutput $FILENAME
     #clear # clear the terminal
 
 done < test/programs/viz_test_files.txt
@@ -115,7 +115,7 @@ while IFS= read -r line; do
 
     # run the executable and pipe into .out file
     # pipe the err message into .out file, and the other garbage into log.txt
-    ./vizSilent $FILENAME 2> $OUTFILE >> "test/programs/log.txt"
+    ./vizOutput $FILENAME 2> $OUTFILE >> "test/programs/log.txt"
 
     # get the diff
     run_test=$(diff $OUTFILE $REFFILE)
