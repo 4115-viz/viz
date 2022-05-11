@@ -1,5 +1,5 @@
 func main(): none {
-    @a: list |int| = [1,4,5,7,8,10];
+    @a: list |int| = [1,2,4,5,7,8,10];
 
     print("Int list");
     print("----------------");

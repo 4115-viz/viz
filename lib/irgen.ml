@@ -33,7 +33,7 @@ let translate (structs, functions) =
   and float_t    = L.double_type context 
   and str_t      = L.pointer_type (L.i8_type context)
   and arr_t      = L.pointer_type (L.i32_type context)
-  and str_arr_t  = L.pointer_type (L.i32_type context) 
+
   in
   (* Return the LLVM type for a Viz type *)
   let rec ltype_of_typ struct_decls = function
@@ -109,16 +109,12 @@ let translate (structs, functions) =
   let pop_func_t = L.var_arg_function_type i32_t [| arr_t |] in
   let pop_func = L.declare_function "pop" pop_func_t the_module in
 
-  let push_func_t = L.var_arg_function_type i32_t [| str_arr_t ; i32_t |] in
+  let push_func_t = L.var_arg_function_type i32_t [| arr_t ; i32_t |] in
   let push_func = L.declare_function "push" push_func_t the_module in
 
   (* int list length library function *)
   let list_len_int_func_t = L.var_arg_function_type i32_t [| arr_t |] in
   let list_len_int_func = L.declare_function "list_len_int" list_len_int_func_t the_module in
-
-  (* int list length library function *)
-  let list_len_str_func_t = L.var_arg_function_type i32_t [| str_arr_t |] in
-  let list_len_str_func = L.declare_function "list_len_str" list_len_str_func_t the_module in
 
   (* to_upper string library function *)
   let to_upper_func_t = L.var_arg_function_type str_t [| str_t |] in
@@ -404,9 +400,6 @@ let translate (structs, functions) =
       | SFuncCall("list_len_int", [e])  -> 
             L.build_call list_len_int_func [| ((build_expr local_vars) builder e)|]
             "list_len_int" builder
-      | SFuncCall("list_len_str", [e])  -> 
-            L.build_call list_len_str_func [| ((build_expr local_vars) builder e)|]
-            "list_len_str" builder
       | SFuncCall("to_upper", [e])  -> 
             L.build_call to_upper_func [| ((build_expr local_vars) builder e)|]
             "to_upper" builder

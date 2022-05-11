@@ -51,7 +51,6 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                (StrType, "to_lower", [StrType, "x"]);
                                                                (IntType, "list_len", [StrType, "x"]);
                                                                (IntType, "list_len_int", [(ListType (Some(IntType), None)), "x"]);
-                                                               (IntType, "list_len_str", [(ListType (Some(StrType), None)), "x"]);
                                                                (IntType, "pop", [(ListType (Some(IntType), None)), "x"]);
                                                                (NoneType, "push", [(ListType (Some(IntType), None)), "x"; IntType,"x"]);
                                                                ]
@@ -264,13 +263,13 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         | "push" -> (
             match (fst (List.hd args')) with
             | ListType (_, _) -> "push"
-            | _ -> raise (Failure ("cannot push"))
+            | _ -> raise (Failure ("cannot push to parameter"))
           )
         | "pop" ->
           (
             match (fst (List.hd args')) with
             | ListType (_, _) -> "pop"
-            | _ -> raise (Failure ("cannot get array length of non array"))
+            | _ -> raise (Failure ("cannot pop from parameter"))
           )
         | "list_len" -> 
           (
@@ -279,7 +278,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
             | ListType (Some(StrType), _) -> raise (Failure ("need to support str arr len"))
             | ListType (Some(FloatType), _) -> raise (Failure ("need to support float arr len"))
             | ListType (Some(BoolType), _) -> raise (Failure ("need to support bool arr len"))
-            | _ -> raise (Failure ("cannot get array length of non array"))
+            | _ -> raise (Failure ("cannot get array length of non list"))
           )
         | _ -> fname
         in 

@@ -3,21 +3,21 @@ original list len
 11
 popping value off list
 -------------------------
-32
+11
 new list len
 -------------------------
 10
 popping all values off list
 -------------------------
-42
-432
-432
-432
-423
+10
+9
 8
-8
-1
-1
+7
+6
+5
+4
+3
+2
 1
 popping empty value off list
 will return 0

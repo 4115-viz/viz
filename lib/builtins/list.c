@@ -4,11 +4,10 @@
 
 int list_len_int(int* arr){
     int i = 0;
+
     while(arr[i] != '\0'){
         i++;
     }
-    //printf("arr[5] = %d\n", arr[5]);
-    //arr = (int*) malloc (22 * sizeof(int));
     
     return i;
 }
@@ -17,8 +16,6 @@ int list_len_str(char* arr){
     while(arr[i] != '\0'){
         i++;
     }
-    //printf("arr[5] = %d\n", arr[5]);
-    //arr = (int*) malloc (22 * sizeof(int));
     
     return i;
 }
