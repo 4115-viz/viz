@@ -262,13 +262,13 @@ let check ((structs: struct_def list), (functions: func_def list)) =
           )
         | "push" -> (
             match (fst (List.hd args')) with
-            | ListType (_, _) -> "push"
+            | ListType (Some(IntType), _) -> "push"
             | _ -> raise (Failure ("cannot push to parameter"))
           )
         | "pop" ->
           (
             match (fst (List.hd args')) with
-            | ListType (_, _) -> "pop"
+            | ListType (Some(IntType), _) -> "pop"
             | _ -> raise (Failure ("cannot pop from parameter"))
           )
         | "list_len" -> 

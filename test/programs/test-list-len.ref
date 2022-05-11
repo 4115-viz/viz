@@ -1,13 +1,14 @@
 Int list
 ----------------
-length of list = 6
-6
+length of list = 7
+7
 
 ----------------
 let's iterate through the list
 1 is an odd number :(
+2 is an even number :)
 4 is an even number :)
 5 is an odd number :(
 7 is an odd number :(
-54 is an even number :)
+8 is an even number :)
 10 is an even number :)
