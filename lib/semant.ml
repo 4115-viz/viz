@@ -324,6 +324,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
         let (idx_sexpr, _) = check_expr symbols idx_expr in
         let (idx:int) = match (idx_sexpr) with
           | IntType, SIntLit x -> x
+          | IntType, SPostfixExpr (_ , SId _) -> 0
           | t, _ -> failwith (String.concat "" ["Subscript operator [] expect index to be int, got: "; fmt_typ t])
         in
         let (list_ele_typ, (len:int)) = match (list_typ) with
