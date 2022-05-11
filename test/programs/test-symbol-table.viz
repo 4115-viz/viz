@@ -5,5 +5,7 @@ func main() : none {
         print("x before redeclare = " + |as string| @x);
         @x: int = 600;
         print("x after redeclare = " + |as string| @x);
-    }
+    };
+
+    print("x after redeclare = " + |as string| @x);
 }

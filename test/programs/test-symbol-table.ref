@@ -1,3 +1,4 @@
 inside nested scope
 x before redeclare = 500
 x after redeclare = 600
+x after redeclare = 500
