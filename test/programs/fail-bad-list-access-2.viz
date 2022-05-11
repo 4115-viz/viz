@@ -1,5 +1,4 @@
 func main():none {
     @a: list |int| = [1,2,3,4];
-    @idx : int = -1;
-    print(@a[@idx]);
+    print(@a[(-1)]);
 }
