@@ -1,11 +1,12 @@
 func main(): none {
-    @a: list |int| = [1,4,5,7,8,10];
+    @a: list |int| = [1,4,5,7,8,9,10];
 
     print("Int list");
     print("----------------");
     print("length of list = " + |as string| list_len(@a));
     
     print("testing pop");
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
     print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
     print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
     print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );

@@ -31,8 +31,8 @@ int pop(int* arr){
 }
 void push(int* arr, int value){
     int i = list_len_int(arr);
-    int pop = arr[i-1];
-    arr[i-1] = '\0';
+    arr[i] = value;
+    arr[i+1] = '\0';
     printf("in push = %d\n", value);
     
     return;
