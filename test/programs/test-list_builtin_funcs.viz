@@ -27,7 +27,7 @@ func main(): none {
     print(pop(@a));
     print(pop(@a));
 
-    print("popping value off empty list");
+    print("popping empty value off list");
     print("will return 0");
     print("-------------------------");
     print(pop(@a));
