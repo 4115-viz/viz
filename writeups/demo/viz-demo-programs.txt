@@ -1,0 +1,143 @@
+=========1==== hello world, and interface
+ 
+/*
+Welcome to VizOnline, the official online editor of the Viz programming language.
+*/
+ 
+func main(): none {
+    print("Welcome to the Viz programming language!");
+}
+ 
+==========2== symbol table
+ 
+func main() : none {
+    
+    @x: int = 500;
+    print("x before nested scope = " + |as string| @x);
+    
+    {
+        print("====================");
+        print("inside nested scope");
+        print("x before reassign = " + |as string| @x);
+        @x = 600;
+        print("x after reassign = " + |as string| @x);
+        print("====================");
+    };
+    
+    print("x after nested scope = " + |as string| @x);
+ 
+}
+ 
+=============3======== Structs
+ 
+struct Person {
+    @name: string;
+    @age: int;
+    @graduated: bool;
+}
+ 
+func init_person(@name: string, @age: int, @graduated: bool): Person {
+    
+    print("using parameters, passed in instantiate struct and return it");
+    
+    @my_person: Person;
+    @my_person.name = @name;
+    @my_person.age = @age;
+    @my_person.graduated = @graduated;
+ 
+    return @my_person;
+ 
+}
+ 
+func show_person_details(@my_person: Person): none {
+    
+    print("passing struct to function, and printing the members");
+ 
+    print(@my_person.name);
+    print(@my_person.age);
+    if (@my_person.graduated) {
+        print(@my_person.name + " has graduated :)");
+    } else {
+        print(@my_person.name + " has not graduated :(");
+    }
+ 
+}
+ 
+func main() : none {
+ 
+    @matt: Person;
+    @matt.name = "Matt Duran";
+    @matt.age = 29;
+    @matt.graduated = true;
+    show_person_details(@matt);
+    print("=======");
+    println();
+ 
+    @yanhao: Person = init_person("yanhao", 25, true);
+    show_person_details(@yanhao);
+    print("=======");
+    println();
+ 
+}
+ 
+=======================list stuff===========
+ 
+func main() : none {
+ 
+    
+    // instantiate a list
+    @a: list |int| = [1,4,5,7,5,12,133];
+    
+    // initializer list for int variables
+    @idx, @len, @tmp -> (int, 0);
+ 
+    // list library function
+    @len = list_len(@a);
+ 
+    print("========");  
+ 
+    // print list
+    print(@a);
+ 
+    // casting, and string c lib
+    print("list length = " + |as string| @len);
+ 
+    print("========");  
+ 
+    // for loop through a list
+    for @idx in 0 ... < @len {
+ 
+        // access the array element
+        @tmp = @a[@idx];
+ 
+        if ( @tmp % 2 == 0) {
+ 
+            @tmp_str: string = to_upper(|as string| @tmp + " is an even number :)");
+            //print(|as string| @tmp + " is an even number :)");
+            print(@tmp_str);
+ 
+        } else {
+ 
+            print(|as string| @tmp + " is an odd number :(");
+            
+            // make the item even
+            @a[@idx] = @tmp * 2;
+ 
+        }
+        
+    }
+    
+    // now everything is even
+    print(@a);
+    print("========");
+ 
+    // pop an element
+    @tmp = pop(@a);
+    print("popped tail element, which is " + |as string| @tmp);
+    
+    // push a new element
+    push(@a, 4115);
+    print(@a); 
+ 
+}
+
