@@ -16,16 +16,8 @@ Currently, VizOnline can be accessed by following the link provided below:
 
 http://ec2-23-22-206-12.compute-1.amazonaws.com/
 
-Unfortunately, due to server costs, we are unable to keep the hosted version online permanently. Therefore, we have included the source code for both the frontend and backend of the web interface in our project repository under the web-interface folder.
 
-In order to run the project locally, it requires that the machine has both node and npm installed in addition to opam, dune, and llvm which are required to compile and run the actual code. If you do not already have node installed, you can do so by a tutorial that can be found here. After you have both node and npm installed you can navigate into the ./web-interface directory of the Viz GitHub Repository and run the below commands to start both the backend and frontend servers locally.
+We have the frontend application located at the below repo. The code is ready to clone, and instructions are present there.
 
-Local Run Commands:
+https://github.com/jakobgabrield/vizonline
 
-# Start Backend Server
-npm install
-node server.js
-
-# Start Frontend Server
-cd client
-npm start
