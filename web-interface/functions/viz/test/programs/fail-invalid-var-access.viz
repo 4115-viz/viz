@@ -1,4 +1,0 @@
-func main(): none {
-    @x: int;
-    print(@x);
-}

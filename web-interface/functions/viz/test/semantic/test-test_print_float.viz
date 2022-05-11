@@ -1,5 +1,0 @@
-func main(): none {
-    @b: float = -10.5;
-    print("Printing a float: -10.5");
-    print(@b);
-}

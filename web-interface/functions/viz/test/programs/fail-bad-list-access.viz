@@ -1,4 +1,0 @@
-func main():none {
-    @a: list |int| = [1,2,3,4];
-    print(@a[5]);
-}

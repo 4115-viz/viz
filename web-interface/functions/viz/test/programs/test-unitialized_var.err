@@ -1,4 +1,0 @@
-func main(): none {
-    @i: int;
-    @i + 2; // this should be an error
-}
