@@ -65,6 +65,9 @@ let translate (structs, functions) =
   let print_t = L.var_arg_function_type i32_t [| str_t |] in
   let print_func = L.declare_function "printf" print_t the_module in
 
+  let print_list_t = L.var_arg_function_type i32_t [| arr_t |] in
+  let print_list_func = L.declare_function "print_list" print_list_t the_module in
+
   (* cast int to double C lib function *)
   let int_to_double_t = L.var_arg_function_type float_t [| i32_t |] in
   let int_to_double_func = L.declare_function "int_to_double" int_to_double_t the_module in
@@ -388,6 +391,9 @@ let translate (structs, functions) =
       | SFuncCall("print_bool", [e])  -> 
           L.build_call print_func [| int_format_str builder; ((build_expr local_vars) builder e)|]
           "printf" builder
+      | SFuncCall("print_list", [e])  -> 
+          L.build_call print_list_func [| ((build_expr local_vars) builder e) |]
+          "print_list" builder
       | SFuncCall("str_len", [e])  -> 
             L.build_call str_len_func [| ((build_expr local_vars) builder e)|]
             "str_len" builder

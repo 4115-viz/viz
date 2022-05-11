@@ -33,3 +33,17 @@ void push(int* arr, int value){
     
     return;
 }
+void print_list(int* arr){
+    int i = list_len_int(arr);
+    int j;
+    printf("[");
+    for( j = 0; j < i; j++){
+      printf("%d", arr[j]);
+      if(j+1 != i){
+        printf(",");
+      }
+   }
+    printf("]\n");
+    
+    return;
+}

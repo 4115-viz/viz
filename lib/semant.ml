@@ -46,13 +46,14 @@ let check ((structs: struct_def list), (functions: func_def list)) =
                                                                (NoneType, "print_float", [FloatType, "x"]);
                                                                (NoneType, "print_bool", [BoolType, "x"]);
                                                                (NoneType, "println", []);
+                                                               (NoneType,"print_list", [(ListType (Some(IntType), None)), "x"]);
                                                                (IntType, "str_len", [StrType, "x"]);
                                                                (StrType, "to_upper", [StrType, "x"]);
                                                                (StrType, "to_lower", [StrType, "x"]);
                                                                (IntType, "list_len", [StrType, "x"]);
                                                                (IntType, "list_len_int", [(ListType (Some(IntType), None)), "x"]);
                                                                (IntType, "pop", [(ListType (Some(IntType), None)), "x"]);
-                                                               (NoneType, "push", [(ListType (Some(IntType), None)), "x"; IntType,"x"]);
+                                                               (StrType, "push", [(ListType (Some(IntType), None)), "x"; IntType,"x"]);
                                                                ]
   in
 
@@ -245,7 +246,7 @@ let check ((structs: struct_def list), (functions: func_def list)) =
             | StrType -> "print"
             | BoolType -> "print_bool"
             | NoneType -> failwith "Does not support print None type"
-            | ListType _ -> failwith "Does not support print List type"
+            | ListType _ -> "print_list"
             | StructType _ -> failwith "Does not support print custom Struct type"
           )
         | "str_len" -> 

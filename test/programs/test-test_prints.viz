@@ -5,6 +5,8 @@ func test_prints(@x: float, @y: int, @z: string, @h: bool): none {
     println();
     print(@h);
     print(false);
+    println();
+    print([1,2,3,4,5]);
 }
 
 func main(): none {
