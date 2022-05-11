@@ -230,16 +230,14 @@ let translate (structs, functions) =
           )
           | _ -> L.type_of (List.hd all_elem)
         in
-        let ptr = L.build_malloc lllist_t "" builder 
+        let ptr = L.build_array_malloc lllist_t (L.const_int i32_t num_elems) "" builder 
         in
         ignore (List.fold_left (fun i elem ->
-            let idx = L.const_int i32_t i in
-            let eptr = L.build_gep ptr [|idx|] "" builder in
-            let cptr = L.build_pointercast eptr 
-                (L.pointer_type (L.type_of elem)) "" builder in
-            let _ = (L.build_store elem cptr builder) 
-            in i+1)
-            0 all_elem); ptr
+          let idx = L.const_int i32_t i in
+          let list_gep = L.build_in_bounds_gep ptr [|idx|] "" builder in
+          let _ = (L.build_store elem list_gep builder) 
+          in i+1)
+        0 all_elem); ptr
       | SAssign (l_spe, r_e) -> 
         let r_val = (build_expr local_vars) builder r_e in
         (match l_spe with
