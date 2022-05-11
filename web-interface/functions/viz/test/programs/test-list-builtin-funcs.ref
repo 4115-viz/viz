@@ -1,0 +1,25 @@
+original list len
+-------------------------
+11
+popping value off list
+-------------------------
+11
+new list len
+-------------------------
+10
+popping all values off list
+-------------------------
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+popping empty value off list
+will return 0
+-------------------------
+0

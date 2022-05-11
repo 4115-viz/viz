@@ -1,0 +1,14 @@
+Hello,
+                        World! This is a
+                        Multiline String
+                        without line continuation.
+
+expecting: Hello, World! This is a Multiline String.
+Hello World! This is a Multiline String.
+
+implicit multi_line func call
+800
+explicit multi_line func call
+1800
+multi line math expr
+20000

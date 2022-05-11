@@ -1,0 +1,27 @@
+func main(): none {
+    @a: list |int| = [1,2,4,5,7,8,10];
+
+    print("Int list");
+    print("----------------");
+    print("length of list = " + |as string| list_len(@a));
+    
+    @idx: int = 0;
+    @len: int = list_len(@a);
+    print(@len);
+    println();
+    
+    print("----------------");
+    print("let's iterate through the list"); 
+    @tmp: int = @a[@idx];
+    for @idx in 0 ... < @len {
+        @tmp = @a[@idx]; 
+        if ( @tmp % 2 == 0) {
+            print(|as string| @tmp + " is an even number :)");
+        } else {
+            print(|as string| @tmp + " is an odd number :(");
+        }
+        
+    }
+    
+
+}

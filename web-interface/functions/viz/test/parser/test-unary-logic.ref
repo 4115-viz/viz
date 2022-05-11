@@ -1,0 +1,8 @@
+
+Function Declartion: Type(None) main()
+{
+  not BoolLit(true)
+  not BoolLit(false)
+  not BoolLit(false) and BoolLit(true)
+}
+

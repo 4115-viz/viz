@@ -1,0 +1,32 @@
+func hello(): none {
+
+    print("hello guys");
+    return;
+}
+
+func hello2(): string {
+    return "hello my friends";
+}
+
+func hello3(): int {
+    return 1;
+}
+
+func hello4(): float {
+    return 1.0;
+}
+func hello5(): bool {
+    return true;
+}
+func main(): none {
+
+    hello(); // returns void
+    print(hello2()); // returns string
+    print(hello3()); // returns int
+    print(hello4()); // returns float
+    print(hello5()); // returns bool
+    
+    
+    // we could also type, for a void function
+    //return;
+}

@@ -1,0 +1,30 @@
+func main(): none {
+
+    @x: int = -(-5);
+    @y: int = -7;
+
+    print("x = -(-5). expecting 5");
+    print(@x);
+
+    print("value of @y is -7");
+    print(@y);
+    
+    @y = - @y;
+    print("negated value of @y, it is now 7");
+    print(@y);
+
+    print("expecting 0");
+    print(5 - 5);
+
+    print("expecting 10");
+    print(5 - (-5));
+
+    @xf: float = -(-5.0);
+    @yf: float = -7.0;
+
+    print("xf = -(-5.0). expecting 5.0");
+    print(@xf);
+
+    print("value of @yf is -7.0");
+    print(@y);
+}

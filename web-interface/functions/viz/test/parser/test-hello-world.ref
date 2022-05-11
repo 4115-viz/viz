@@ -1,0 +1,7 @@
+
+Function Declartion: Type(None) main()
+{
+  FuncCall(name: "print", args: StrLit("Hello World"))
+
+}
+

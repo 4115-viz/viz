@@ -1,0 +1,13 @@
+func main() : none {
+    @x: int = 500;
+    print("x before nested scope = " + |as string| @x);
+    {
+        print("====================");
+        print("inside nested scope");
+        print("x before redeclare = " + |as string| @x);
+        @x: int = 600;
+        print("x after redeclare = " + |as string| @x);
+        print("====================");
+    };
+    print("x after nested scope = " + |as string| @x);
+}

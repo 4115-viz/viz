@@ -1,0 +1,8 @@
+// single line comment
+/* multi
+line
+comment */
+
+// we do not allow nested multi line comments within a multi line 
+// but the below is okay!
+// /* take away single line comment and this fails */

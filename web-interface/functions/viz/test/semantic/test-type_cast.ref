@@ -1,0 +1,112 @@
+
+Type(None) main()
+{
+Type(Int) my_int = uninitialized;
+Type(Bool) my_bool = uninitialized;
+Type(Str) my_str = uninitialized;
+Type(Float) my_float = uninitialized;
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting 5.0 to int"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Float) : FloatLit(5.))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting (5.0 * 2.0) to int"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Float) : (Type(Float) : FloatLit(5.)) * (Type(Float) : FloatLit(2.)))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting 500 to int (this is trivial)"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Int) : IntLit(500))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting false to int"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Bool) : BoolLit(false))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting true to int"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Bool) : BoolLit(true))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting string to int"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Str) : (StrLit("5"))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting string to int"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Str) : (StrLit("99Hello"))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting string to int"))));
+  (Type(Int) : Assign(Id(my_int) = (Type(Int) : (Casting (Type(Str) : (StrLit("ABC"))->Type(Int)
+)));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(my_int))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting int to float"))));
+  (Type(Float) : Assign(Id(my_float) = (Type(Float) : (Casting (Type(Int) : (Type(Int) : (Type(Int) : IntLit(5)) + (Type(Int) : IntLit(10))) + (Type(Int) : IntLit(150)))->Type(Float)
+)));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(my_float))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting float to float"))));
+  (Type(Float) : Assign(Id(my_float) = (Type(Float) : (Casting (Type(Float) : FloatLit(5.))->Type(Float)
+)));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(my_float))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting string to float"))));
+  (Type(Float) : Assign(Id(my_float) = (Type(Float) : (Casting (Type(Str) : (StrLit("5.897"))->Type(Float)
+)));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(my_float))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting string to float"))));
+  (Type(Float) : Assign(Id(my_float) = (Type(Float) : (Casting (Type(Str) : (StrLit("190.45Hello"))->Type(Float)
+)));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(my_float))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting string to float"))));
+  (Type(Float) : Assign(Id(my_float) = (Type(Float) : (Casting (Type(Str) : (StrLit("Hello"))->Type(Float)
+)));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(my_float))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting bool to string"))));
+  (Type(Str) : (Assign(Id(my_str) = (Type(Str) : ((Casting (Type(Bool) : BoolLit(true))->Type(Str)
+)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting bool to string"))));
+  (Type(Str) : (Assign(Id(my_str) = (Type(Str) : ((Casting (Type(Bool) : BoolLit(false))->Type(Str)
+)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting int to string"))));
+  (Type(Str) : (Assign(Id(my_str) = (Type(Str) : ((Casting (Type(Int) : IntLit(5898))->Type(Str)
+)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting float to string"))));
+  (Type(Str) : (Assign(Id(my_str) = (Type(Str) : ((Casting (Type(Float) : (Type(Float) : FloatLit(5.)) + (Type(Float) : FloatLit(5.)))->Type(Str)
+)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting string to string"))));
+  (Type(Str) : (Assign(Id(my_str) = (Type(Str) : ((Casting (Type(Str) : (StrLit("hello world"))->Type(Str)
+)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting float to int to string"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("5.89 --> 5 --> 5"))));
+  (Type(Str) : (Assign(Id(my_str) = (Type(Str) : ((Casting (Type(Int) : (Casting (Type(Float) : FloatLit(5.89))->Type(Int)
+)->Type(Str)
+)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=============="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("casting variable @x: int = 567 to float"))));
+Type(Int) x = (Type(Int) : IntLit(567));
+  (Type(Float) : Assign(Id(my_float) = (Type(Float) : (Casting (Type(Int) : Id(x))->Type(Float)
+)));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(my_float))));
+}
+

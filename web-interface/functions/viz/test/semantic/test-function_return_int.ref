@@ -1,0 +1,13 @@
+
+Type(Int) ret_number()
+{
+return (Type(Int) : IntLit(4115));
+}
+
+Type(None) main()
+{
+Type(Int) x = (Type(Int) : IntLit(1));
+  (Type(Int) : Assign(Id(x) = (Type(Int) : FuncCall(name: "ret_number", args: ))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(x))));
+}
+

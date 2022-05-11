@@ -1,0 +1,56 @@
+func main(): none {
+    @a: list |int| = [1,2,3,4];
+
+    print("List before reaassignment");
+    print("----------------");
+    print(@a[0]);
+    print(@a[1]);
+    print(@a[2]);
+    print(@a[3]);
+
+    /* this will work */
+    @a = [5,6,7,8];
+
+    print("");
+    print("List after reaassignment");
+    print("----------------");
+    print(@a[0]);
+    print(@a[1]);
+    print(@a[2]);
+    print(@a[3]);
+
+    /* neither of these will not work, reassignment must be of same length  */
+    @a = [9,10,11];
+    print("");
+    print("List after reaassignment");
+    print("----------------");
+    print(@a[0]);
+    print(@a[1]);
+    print(@a[2]);
+
+    @a = [12,13,14,15];
+    print("");
+    print("List after reaassignment");
+    print("----------------");
+    print(@a[0]);
+    print(@a[1]);
+    print(@a[2]);
+    print(@a[3]);
+
+    @a[0] = @a[1] + @a[2];
+    print("");
+    print("List after reaassignment");
+    print("----------------");
+    print(@a[0]);
+    
+    @a = [1,2,3,4, 5];
+    print("");
+    print("List after reaassignment");
+    print("----------------");
+    print(@a[0]);
+    print(@a[1]);
+    print(@a[2]);
+    print(@a[3]);
+    print(@a[4]);
+
+}

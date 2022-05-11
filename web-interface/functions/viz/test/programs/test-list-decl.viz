@@ -1,0 +1,15 @@
+func main(): none {
+
+    // this file tests the list length method
+
+    @a: list |int| = [1,4,5,7,5,12,12];
+    //@b: list |bool| = [true, false, true]; // deprecated, not supported
+    //@c: list |float| = [1.2, 1.3, 1.4, 1.5]; // deprecated, not supported
+    //@d: list |string| = ["hello", "world", "4115"]; // deprecated, not supported
+
+    print("length of int list = " + |as string| list_len(@a));
+    //print("length of bool list = " + |as string| list_len(@b));
+    //print("length of float list = " + |as string| list_len(@c));
+    //print("length of string list = " + |as string| list_len(@d));
+
+}

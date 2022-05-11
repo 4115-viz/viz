@@ -1,0 +1,5 @@
+Assigning bool expressions to variables
+printing result of `not true`
+0
+printing result of `not false`
+1

@@ -1,0 +1,27 @@
+func main(): none {
+    @a: list |int| = [1,4,5,7,8,9,10];
+
+    print("Int list");
+    print("----------------");
+    print("length of list = " + |as string| list_len(@a));
+    
+    print("testing pop");
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("tail val = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("======================");
+
+    print("testing push");
+    print("pushing val = " + |as string| 50);
+    push(@a, 50);
+    print("pushing val = " + |as string| 55);
+    push(@a, 55);
+    
+    print("@a[0] = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    print("@a[1] = " + |as string| pop(@a) + " " + "list len = " + |as string| list_len(@a)  );
+    
+}

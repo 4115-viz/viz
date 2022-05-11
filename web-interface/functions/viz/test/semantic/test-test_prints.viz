@@ -1,0 +1,15 @@
+func test_prints(@x: float, @y: int, @z: string, @h: bool): none {
+    print(@x);
+    print(@y);
+    print(@z);
+    println();
+    print(@h);
+    print(false);
+}
+
+func main(): none {
+    @b: float = 0.0;
+    @b = -10.00;
+    print(@b);
+    test_prints(-10.5, 100, "Hello world", true);
+}

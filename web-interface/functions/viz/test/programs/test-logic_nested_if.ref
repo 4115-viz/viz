@@ -1,0 +1,10 @@
+=========================
+logic test 1: enter true block
+if -> true block
+nested if -> true block
+
+=========================
+logic test 2: 2 nested if blocks
+if statment
+first nested if statment
+second nested if statment

@@ -1,0 +1,17 @@
+(include_subdirs unqualified)
+
+(library
+ (name lib)
+ (libraries llvm llvm.analysis))
+
+(rule
+ (targets parser.ml parser.mli)
+ (deps    parser.mly)
+ (action  (chdir %{workspace_root}
+           (run %{bin:ocamlyacc} %{deps}))))
+
+(rule
+ (target scanner.ml)
+ (deps   scanner.mll)
+ (action (chdir %{workspace_root}
+          (run %{bin:ocamllex} -q -o %{target} %{deps}))))

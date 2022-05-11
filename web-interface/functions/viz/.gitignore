@@ -1,0 +1,17 @@
+.DS_Store
+output.txt
+_build
+
+lib/parser.ml
+lib/parser.mli
+lib/parser.output
+viz.opam
+
+# llvm code
+**/*.ll
+**/**/*.o
+
+# static library
+**/*.a
+
+hot_test.viz

@@ -1,0 +1,128 @@
+func main(): none {
+
+    @my_int: int;
+    @my_bool: bool;
+    @my_str: string;
+    @my_float: float;
+    
+    //
+    // INT CASTINGS
+    //
+
+    print("==============");
+    print("casting 5.0 to int");
+    @my_int = |as int| 5.0;
+    print(@my_int);
+
+    print("==============");
+    print("casting (5.0 * 2.0) to int");
+    @my_int = |as int| (5.0 * 2.0);
+    print(@my_int);
+
+    print("==============");
+    print("casting 500 to int (this is trivial)");
+    @my_int = |as int| (500); 
+    print(@my_int);
+
+    print("==============");
+    print("casting false to int");
+    @my_int = |as int| false;
+    print(@my_int);
+
+    print("==============");
+    print("casting true to int");
+    @my_int = |as int| true;
+    print(@my_int);
+
+    print("==============");
+    print("casting string to int");
+    @my_int = |as int| "5"; // from int string 
+    print(@my_int);
+
+    print("==============");
+    print("casting string to int");
+    @my_int = |as int| "99Hello"; // C like, this is legal, returns 99
+    print(@my_int);
+
+    print("==============");
+    print("casting string to int");
+    @my_int = |as int| "ABC"; // C like, this is legal. Programmer needs to be careful. returns 0
+    print(@my_int);
+
+    //
+    // FLOAT CASTINGS
+    //
+
+    print("==============");
+    print("casting int to float");
+    @my_float = |as float| (5 + 10 + 150); 
+    print(@my_float);
+    
+    print("==============");
+    print("casting float to float");
+    @my_float = |as float| 5.0; 
+    print(@my_float);
+    
+    // string to float 
+    print("==============");
+    print("casting string to float");
+    @my_float = |as float| "5.897"; 
+    print(@my_float);
+
+    // string to float 
+    print("==============");
+    print("casting string to float");
+    @my_float = |as float| "190.45Hello"; // C like, this is legal returns 190.45
+    print(@my_float);
+
+    // string to float 
+    print("==============");
+    print("casting string to float");
+    @my_float = |as float| "Hello"; // C like, this is legal returns 0. be careful ...
+    print(@my_float);
+
+    //
+    // STRING CASTINGS
+    //
+
+    print("==============");
+    print("casting bool to string");
+    @my_str = |as string| true; // string from bool 
+    print(@my_str);
+
+    print("==============");
+    print("casting bool to string");
+    @my_str = |as string| false; // string from bool
+    print(@my_str);
+
+    print("==============");
+    print("casting int to string");
+    @my_str = |as string| 5898; // string from int 
+    print(@my_str);
+
+    print("==============");
+    print("casting float to string");
+    @my_str = |as string| (5.0 + 5.0); // string from float
+    print(@my_str);
+
+    print("==============");
+    print("casting string to string");
+    @my_str = |as string| "hello world"; // string from string
+    print(@my_str);
+
+    // 
+    // try a compound cast
+    //
+    print("==============");
+    print("casting float to int to string");
+    print("5.89 --> 5 --> 5");
+    @my_str = |as string| (|as int| 5.89);
+    print(@my_str);
+    
+    print("==============");
+    print("casting variable @x: int = 567 to float");
+    @x: int = 567;
+    @my_float = |as float| @x;
+    print(@my_float); 
+    
+}

@@ -1,0 +1,18 @@
+func main(): int {
+    
+    // map this infinite_loop to while (true)
+    // this will be parsed as a while loop where
+    // true is the condition
+    @i: int = 0;
+    infinite_loop {
+        if (@i == 15) {
+            return 0;
+        } else {
+            print("let do this forever, or until I count to 15 LOL");
+        }
+        
+        @i += 1;
+    }
+    
+    return 0;
+}

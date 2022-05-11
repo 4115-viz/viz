@@ -1,0 +1,91 @@
+// want an if with elif statement too
+
+func main(): none {
+
+    /*
+        if/else
+    */
+    print("Test Number 1");
+    if (3 < 4) {
+        print("this is true"); // want to print this
+        
+        /*
+            nested if/else
+        */
+        if (true) {
+            print("nested if"); // want to print this
+        } else {
+            print("nested else");
+        }
+    
+    } else {
+        print("this is false");
+        
+        /* 
+            if/no else
+        */
+        if (true) {
+            print("nested if with no else stmt");
+        }
+    }
+    print("------------------------");
+    print("Test Number 2");
+
+    /*
+        if/else
+    */
+    if (3 < 4) {
+        print("this is true"); // want to print this
+        
+        /*
+            nested if/else
+        */
+        if (true == false) {
+            print("nested if");
+        } else if (true == true) {
+            print("nested elif");
+        } else {
+            print("nested else"); // want to print this
+        }
+    
+    } else {
+        print("this is false");
+        
+        /* 
+            if/no else
+        */
+        if (true) {
+            print("nested if with no else stmt");
+        }
+    }
+    print("------------------------");
+    print("Test Number 3");
+    /*
+        if/else
+    */
+    if (3 > 4) {
+        print("this is true"); 
+        
+        /*
+            nested if/else/elif
+        */
+        if (true == false) {
+            print("nested if");
+        } else {
+            print("nested else");
+        }
+    
+    } else {
+        print("this is false"); // want to print this
+        
+        /* 
+            if/no else
+        */
+        if (true) {
+            print("nested if with no else stmt"); // want to print this
+        }
+    }
+    print("------------------------");
+
+}
+

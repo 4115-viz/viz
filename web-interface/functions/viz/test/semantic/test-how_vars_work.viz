@@ -1,0 +1,6 @@
+func main(): none {
+    @i: int;
+    @i = 2;
+    @i += 2; // this is legal
+    print(@i);
+}

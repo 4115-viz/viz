@@ -1,0 +1,1 @@
+Fatal error: exception Failure("Cast type not supported from Type(Bool) to Type(Float)")

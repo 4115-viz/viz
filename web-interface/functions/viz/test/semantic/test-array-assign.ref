@@ -1,0 +1,20 @@
+
+Type(None) main()
+{
+Type(List<Type(Int)>[4]) a = (Type(List<Type(Int)>[4]) : ListLit[(Type(Int) : IntLit(1)), (Type(Int) : IntLit(4)), (Type(Int) : IntLit(5)), (Type(Int) : IntLit(7))]);
+Type(List<Type(Str)>[4]) b = (Type(List<Type(Str)>[4]) : ListLit[(Type(Str) : (StrLit("Hello")), (Type(Str) : (StrLit("from")), (Type(Str) : (StrLit("viz")), (Type(Str) : (StrLit("team"))]);
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Int list"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("----------------"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a)[(Type(Int) : IntLit(0))])));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a)[(Type(Int) : IntLit(1))])));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a)[(Type(Int) : IntLit(2))])));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(a)[(Type(Int) : IntLit(3))])));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit(" "))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("String list"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("----------------"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(b)[(Type(Int) : IntLit(0))])));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(b)[(Type(Int) : IntLit(1))])));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(b)[(Type(Int) : IntLit(2))])));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(b)[(Type(Int) : IntLit(3))])));
+}
+

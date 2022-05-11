@@ -1,0 +1,5 @@
+func main(): none {
+  // x: string = "Hello World";
+  // print(x);
+  print("Hello World");
+}

@@ -1,0 +1,37 @@
+func main(): none {
+    
+    // variable decls
+    //@i: int = 0; // this doesnt work yet
+    @i: int = 0;
+    @i = 0;
+
+    print("==========================");
+    print("loop counting up");    
+    // normal while loop construct
+    while (@i < 10) {
+        print(@i);
+        @i = @i + 1;
+    }
+
+    print("==========================");
+    print("loop counting down");
+    while (@i > 0) {
+        print(@i);
+        @i = @i - 1;
+    }
+    print("==========================");
+    print("testing nested while loop");
+    
+    // testing nested while loop
+    @i = 10;
+    @j: int = 10;
+    while (@i > 0) {
+        print(@i);
+        while (@j > 0) {
+            print("nested loop");
+            print(@j);
+            @j -= 1;
+        }
+        @i -= 1;
+    }
+}

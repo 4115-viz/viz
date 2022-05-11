@@ -1,0 +1,55 @@
+# This shell script shamelessly borrow lot from pocaml: 
+# https://github.com/Pocaml/Pocaml/blob/main/pocamlc
+# Thank you, pocaml team! 
+
+#!/usr/bin/env bash
+
+# stop script when a command returns with non-zero
+set -e
+
+DOCKER_TAG=viz
+DOCKER_WORK_DIR=/home/viz
+
+Usage() {
+  echo
+  echo "usage: viz <name_of_file.viz>"
+  echo 
+
+  exit 0;
+}
+
+Run() {
+  echo
+  echo "---"
+  echo "Building the docker image using Dockerfile, it will take a while..." 
+  docker build -t $DOCKER_TAG .
+  if [ $? -ne 0 ]; then
+    echo "docker build failed"
+    exit;
+  else
+    set -e
+  fi
+  echo
+  echo "Done."
+  echo
+  echo "---"
+  echo "Starting the docker container..."
+  echo
+  echo
+  echo ">>> Running in the docker container \"$DOCKER_TAG\" <<<"
+  docker run --rm -v "$(pwd)":"$DOCKER_WORK_DIR" -w="$DOCKER_WORK_DIR" $DOCKER_TAG /bin/bash -c "./viz $fpath"
+  echo 
+}
+
+[ $# -eq 0 ] && Usage
+
+
+fpath=$1
+fname=${fpath##*/}
+[[ $fname != *.viz ]] && Usage
+
+Run
+
+
+
+

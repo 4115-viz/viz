@@ -1,0 +1,23 @@
+func main(): none {
+
+    @x: int = 0;
+    @y: float = 0.0;
+    @z: bool = false;
+    @a: bool = true;
+    @b: string = "";
+
+    @x = 1;
+    @y = 1.0;
+    @z = true;
+    @a = false;
+    @b = "Hello World";  
+    
+    print("Assigning literals to variables");
+    print("Accessing the variables and printing values");
+    print(@x);
+    print(@y);
+    print(@z);
+    print(@a);
+    print(@b);
+
+}

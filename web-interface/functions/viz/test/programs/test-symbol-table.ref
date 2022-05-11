@@ -1,0 +1,7 @@
+x before nested scope = 500
+====================
+inside nested scope
+x before redeclare = 500
+x after redeclare = 600
+====================
+x after nested scope = 500

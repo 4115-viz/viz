@@ -1,0 +1,14 @@
+func main(): none {    
+    /*
+        lets try ternary if / else
+    */
+
+    // do need the semi to end the stmt
+    true == true ? print("correct") : print("incorrect");
+    true != true ? print("correct") : print("incorrect");
+    
+    // these are now errors
+    //1 < 2 ? print("yes"); : print("no");
+    //false == false ? while (true) { print("correct"); print("yay"); } : print("incorrect")
+
+}

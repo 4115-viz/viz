@@ -1,0 +1,53 @@
+
+Type(None) main()
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("concatenating two string literals"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : ((Type(Str) : (StrLit("Hello ")) + (Type(Str) : (StrLit("World!")))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+variable initializer list: 
+Type(Str) str3 = uninitialized;
+Type(Str) str2 = uninitialized;
+Type(Str) str1 = uninitialized;
+
+  (Type(Str) : (Assign(Id(str1) = (Type(Str) : (StrLit("Hello "))));
+  (Type(Str) : (Assign(Id(str2) = (Type(Str) : (StrLit("World! "))));
+  (Type(Str) : (Assign(Id(str3) = (Type(Str) : ((Casting (Type(Int) : IntLit(4115))->Type(Str)
+)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("concatenating three string variables"))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : ((Type(Str) : ((Type(Str) : (Id(str1)) + (Type(Str) : (Id(str2))) + (Type(Str) : (Id(str3)))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing str_len(). expecting 17"))));
+Type(Int) len = (Type(Int) : FuncCall(name: "str_len", args: (Type(Str) : ((Type(Str) : ((Type(Str) : (Id(str1)) + (Type(Str) : (Id(str2))) + (Type(Str) : (Id(str3)))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : Id(len))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing to_upper()."))));
+Type(Str) my_str = (Type(Str) : (StrLit("i'm yelling"));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (FuncCall(name: "to_upper", args: (Type(Str) : (Id(my_str))))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing strlen again. expecting 11"))));
+  (Type(None) : FuncCall(name: "print_int", args: (Type(Int) : FuncCall(name: "str_len", args: (Type(Str) : (FuncCall(name: "to_upper", args: (Type(Str) : (Id(my_str))))))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("testing to_lower()."))));
+Type(Str) my_str = (Type(Str) : (StrLit("I'M YelLinG"));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (Id(my_str))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (FuncCall(name: "to_lower", args: (Type(Str) : (Id(my_str))))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("=================="))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) == (Type(Str) : (StrLit("hello")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) == (Type(Str) : (StrLit("Hello")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) != (Type(Str) : (StrLit("APPLE")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) != (Type(Str) : (StrLit("hello")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) > (Type(Str) : (StrLit("apple")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) < (Type(Str) : (StrLit("apple")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) < (Type(Str) : (StrLit("zebra")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) > (Type(Str) : (StrLit("zebra")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) > (Type(Str) : (StrLit("hello")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("hello")) >= (Type(Str) : (StrLit("hello")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("apple")) <= (Type(Str) : (StrLit("hello")))));
+  (Type(None) : FuncCall(name: "print_bool", args: (Type(Bool) : (Type(Str) : (StrLit("zeta")) <= (Type(Str) : (StrLit("columbia")))));
+}
+

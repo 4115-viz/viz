@@ -1,0 +1,36 @@
+==================
+concatenating two string literals
+Hello World!
+==================
+==================
+concatenating three string variables
+Hello World! 4115
+==================
+==================
+testing str_len(). expecting 17
+17
+==================
+==================
+testing to_upper().
+i'm yelling
+I'M YELLING
+testing strlen again. expecting 11
+11
+==================
+==================
+testing to_lower().
+I'M YelLinG
+i'm yelling
+==================
+1
+0
+1
+0
+1
+0
+1
+0
+0
+1
+1
+0

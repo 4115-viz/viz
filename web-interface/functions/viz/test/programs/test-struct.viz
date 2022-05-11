@@ -1,0 +1,76 @@
+struct Person {
+    @name: string;
+    @age: int;
+    @major: string;
+    @school: string;
+    @graduated: bool;
+}
+
+struct Friends {
+    @friend1: Person;
+    @friend2: Person;
+}
+
+func init_person(@name: string, @age: int, @major: string, @school: string, @graduated: bool): Person {
+    
+    print("using parameters, passed in instantiate struct and return it");
+    
+    @my_person: Person;
+    @my_person.name = @name;
+    @my_person.age = @age;
+    @my_person.major = @major;
+    @my_person.school = @school;
+    @my_person.graduated = @graduated;
+
+    return @my_person;
+
+}
+
+func show_person_details(@my_person: Person): none {
+    
+    print("passing struct to function, and printing the members");
+
+    print(@my_person.name);
+    print(@my_person.age);
+    print(@my_person.major);
+    print(@my_person.school);
+    if (@my_person.graduated) {
+        print(@my_person.name + " has graduated :)");
+    } else {
+        print(@my_person.name + " has not graduated :(");
+    }
+
+}
+
+func main(): none {
+
+    // manipulate a struct directly
+    @matt: Person;
+    @matt.name = "matt";
+    @matt.age = 29;
+    @matt.major = "Computer Science";
+    @matt.school = "Columbia University";
+    @matt.graduated = true; // in one week!!!!
+
+    // print the struct members 
+    show_person_details(@matt);
+    print("=======");
+
+    @yanhao: Person = init_person("yanhao", 25, "Software Systems", "Columbia SEAS", true);
+    show_person_details(@yanhao);
+    print("=======");
+
+    @my_group: Friends;
+    @my_group.friend1   = @yanhao;
+    @my_group.friend2   = @matt; 
+
+    print("printing friends from Friends Struct");
+    println();
+    print("Friends.friend1");
+    show_person_details(@my_group.friend1);
+    
+    println();
+    print("Friends.friend2");
+    show_person_details(@my_group.friend2);
+    print("=======");
+}

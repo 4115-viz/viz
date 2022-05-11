@@ -1,0 +1,6 @@
+func main(): none {
+
+  print("Hello World from Viz Dev Team!");
+  println();
+  
+}

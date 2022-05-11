@@ -1,0 +1,8 @@
+
+Type(None) main()
+{
+Type(Float) b = (Type(Float) : neg (Type(Float) : FloatLit(10.5)));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("Printing a float: -10.5"))));
+  (Type(None) : FuncCall(name: "print_float", args: (Type(Float) : Id(b))));
+}
+

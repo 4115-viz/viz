@@ -1,0 +1,10 @@
+func ret_string(): string {
+    return "hello world from viz dev team";
+}
+
+func main(): int {
+    @x: string = "True";
+    @x = ret_string();
+    print(@x);
+    return 0;
+}

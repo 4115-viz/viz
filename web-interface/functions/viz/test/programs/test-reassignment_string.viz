@@ -1,0 +1,13 @@
+func main(): int {
+
+    @x: string = "PLT";
+    print("declaring and assigning variable");
+    print("x before re-assignment");
+    print(@x);
+
+    print("x after re-assignment");
+    @x = "Programming Languages And Translators";
+    print(@x);
+
+    return 0;
+}

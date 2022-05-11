@@ -1,0 +1,14 @@
+func main(): none {
+    @a: list |int| = [1,4,5,7];
+
+    /* 
+    can only assign at declaration
+    */
+    @a[3] = 89;
+    print(@a[3]);
+
+    @a[3] = 8;
+    print(@a[3]);
+    print(@a[3] + @a[1]);
+    print(1 + @a[1] + 2);
+}

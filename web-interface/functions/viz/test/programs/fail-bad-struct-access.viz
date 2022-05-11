@@ -1,0 +1,10 @@
+struct Test {
+    @grade: int;
+}
+
+func main(): none {
+    @seas: Test;
+    
+    // field member does not exist
+    @seas.num_student = 1234;
+}

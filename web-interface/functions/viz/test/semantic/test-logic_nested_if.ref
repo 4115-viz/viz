@@ -1,0 +1,30 @@
+
+Type(None) main()
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("logic test 1: enter true block"))));
+if ((Type(Bool) : (Type(Int) : IntLit(3)) < (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("if -> true block"))));
+if ((Type(Bool) : BoolLit(true)))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("nested if -> true block"))));
+ }
+ }
+  (Type(None) : FuncCall(name: "println", args: ));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("========================="))));
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("logic test 2: 2 nested if blocks"))));
+if ((Type(Bool) : (Type(Int) : IntLit(3)) < (Type(Int) : IntLit(4))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("if statment"))));
+if ((Type(Bool) : BoolLit(true)))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("first nested if statment"))));
+if ((Type(Bool) : not (Type(Bool) : BoolLit(false))))
+{
+  (Type(None) : FuncCall(name: "print", args: (Type(Str) : (StrLit("second nested if statment"))));
+ }
+ }
+ }
+}
+
