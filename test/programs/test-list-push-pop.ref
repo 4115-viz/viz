@@ -1,0 +1,18 @@
+Int list
+----------------
+length of list = 6
+testing pop
+tail val = 10 list len = 5
+tail val = 54 list len = 4
+tail val = 7 list len = 3
+tail val = 5 list len = 2
+tail val = 4 list len = 1
+tail val = 1 list len = 0
+======================
+testing push
+pushing val = 50
+in push = 50
+pushing val = 55
+in push = 55
+@a[0] = 0 list len = 0
+@a[1] = 0 list len = 0
