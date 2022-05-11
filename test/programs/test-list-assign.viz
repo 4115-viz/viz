@@ -1,6 +1,6 @@
 func main(): none {
+    
     @a: list |int| = [1,4,5,7];
-    //@b: list |float| = [4.5, 5.3, 4.3224];
 
     print("Int list");
     print("----------------");
@@ -9,11 +9,4 @@ func main(): none {
     print(@a[2]);
     print(@a[3]);
 
-    //print(" ");
-    //print("float list");
-    //print("----------------");
-    //print(@b[0]);
-    //print(@b[1]);
-    //print(@b[2]);
-    //print(list_len(@b));
 }

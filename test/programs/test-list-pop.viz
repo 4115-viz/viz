@@ -1,6 +1,6 @@
 func main(): none {
     @a: list |int| = [1,4,5,7];
-    @b: list |bool| = [true, false, false];
+    //@b: list |bool| = [true, false, false]; // deprecated, doesnt work
 
     print("Int list");
     print("----------------");
