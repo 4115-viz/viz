@@ -23,6 +23,7 @@ In order to run the project locally, it requires that the machine has both node 
 Local Run Commands:
 
 # Start Backend Server
+npm install
 node server.js
 
 # Start Frontend Server
